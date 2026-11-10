@@ -1,0 +1,16 @@
+# The public repository is documentation-only.
+reference/
+manifests/
+scripts/
+tests/
+runs/
+datasets/
+models/
+.env*
+*.zip
+*.tar
+*.gz
+*.safetensors
+*.pt
+*.pth
+*.log
