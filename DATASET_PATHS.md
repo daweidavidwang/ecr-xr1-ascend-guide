@@ -1,6 +1,6 @@
 # 41 个训练数据根目录
 
-> **Public documentation edition / 公开文档版。** This repository publishes the training guide only. The executable scripts, frozen training source, private dataset manifests, model hashes, raw results and internal receipts are distributed separately to authorized collaborators in the v3 handoff bundle. Obtain that bundle before running the commands below. No data or model access is granted by this repository. See [Private execution inputs](PRIVATE_INPUTS.md).
+> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
 
 路径中的 `$WORK` 在 Ascend 上映射为自选的 `ECR_ROOT`。
 

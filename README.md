@@ -1,6 +1,6 @@
 # ECR · Xiaomi XR‑1 最佳模型在 Ascend 上的训练复现与对比指南
 
-> **Public documentation edition / 公开文档版。** This repository publishes the training guide only. The executable scripts, frozen training source, private dataset manifests, model hashes, raw results and internal receipts are distributed separately to authorized collaborators in the v3 handoff bundle. Obtain that bundle before running the commands below. No data or model access is granted by this repository. See [Private execution inputs](PRIVATE_INPUTS.md).
+> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
 
 版本：v3 · 核对日期：2026-11-10 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员
 
@@ -122,10 +122,10 @@ ModelScope 官方 SDK 支持按 revision 下载单文件或仓库，并支持 `M
 
 ### 3.3 Human：已有确切下载 pins
 
-10 个私有仓库的 repo、revision、archive SHA、payload manifest SHA 已保存于 [human10.json（私有配套文件）](PRIVATE_INPUTS.md)。例如 TurnOffStove：
+10 个私有仓库的 repo、revision、archive SHA、payload manifest SHA 已保存于 [human10.json](downloads/human10.json)。例如 TurnOffStove：
 
 ```text
-repo:     <PRIVATE_MODELSCOPE_REPOSITORY>
+repo:     dvdnh2026/ds-robocasa365-target-turnoffstove-human-51f148772b84
 revision: 35aec5baa9032b2febfa884714980d7f82543074
 ```
 
@@ -146,7 +146,7 @@ revision: 35aec5baa9032b2febfa884714980d7f82543074
 | 输入 | 已核对的云端覆盖 | 下一步 |
 |---|---|---|
 | Human 10 任务 | 本包已有逐仓库 revision 和哈希 | 按 3.3 下载并验收 |
-| 第一轮 recovery | 18 个所需 LeRobot 根目录均找到映射；仓库 `<PRIVATE_MODELSCOPE_REPOSITORY>` | 使用已提供的 `round1-download.jsonl.gz` 下载全部 205,003 文件，随后核验冻结 manifest |
+| 第一轮 recovery | 18 个所需 LeRobot 根目录均找到映射；仓库 `dvdnh2026/ds-ecr-g16-recovery-unified-9task-v1-20261022` | 使用已提供的 `round1-download.jsonl.gz` 下载全部 205,003 文件，随后核验冻结 manifest |
 | 第二轮 recovery | 13 个所需根目录在这份归档映射中均无记录 | 使用正在进行的训练数据上传，补齐 repo、revision、逐文件映射 |
 | A3 s1 续训 20k 父模型 | 三个权重分片的固定 SHA 在整份归档映射中均未命中 | 另行提供完整 22 文件模型；训练配置和日志不能代替权重 |
 
@@ -161,7 +161,7 @@ revision: 35aec5baa9032b2febfa884714980d7f82543074
   manifests/archive-metadata-download.jsonl --root "$ECR_ROOT"
 ```
 
-元数据仓库为 `<PRIVATE_MODELSCOPE_REPOSITORY>`，目录为 `<PRIVATE_ARCHIVE_MANIFEST_PREFIX>/`，固定 revision 为 `<PRIVATE_ARCHIVE_MANIFEST_REVISION>`。该 revision **仅用于这些元数据**，不能填到 R1 数据仓库的下载记录里。R1 使用显式 `sha256_locked_branch` 模式从 `master` 读取，文件 SHA256/字节数取自冻结清单；不是不可变仓库 revision，也不会接受内容已改变的文件。元数据中的 `summary.json` 写于最后上传前，保留历史 phase；最终完成状态见本包 [独立验收回执（私有配套文件）](PRIVATE_INPUTS.md)。
+元数据仓库为 `dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023`，目录为 `snapshots/20261109/ecr-g16-ms-incremental-r1/_manifests/`，固定 revision 为 `d530e9b77c290307643c517aaf09dab27e1b2480`。该 revision **仅用于这些元数据**，不能填到 R1 数据仓库的下载记录里。R1 使用显式 `sha256_locked_branch` 模式从 `master` 读取，文件 SHA256/字节数取自冻结清单；不是不可变仓库 revision，也不会接受内容已改变的文件。元数据中的 `summary.json` 写于最后上传前，保留历史 phase；最终完成状态见本包 [独立验收回执（私有配套文件）](PRIVATE_INPUTS.md)。
 
 训练数据新上传完成后，请交付以下信息：
 

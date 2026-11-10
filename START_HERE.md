@@ -1,6 +1,6 @@
 # Ascend 集群 Codex 执行入口
 
-> **Public documentation edition / 公开文档版。** This repository publishes the training guide only. The executable scripts, frozen training source, private dataset manifests, model hashes, raw results and internal receipts are distributed separately to authorized collaborators in the v3 handoff bundle. Obtain that bundle before running the commands below. No data or model access is granted by this repository. See [Private execution inputs](PRIVATE_INPUTS.md).
+> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
 
 目标：复现 ECR 最佳 Xiaomi XR‑1 第二轮 Continue s1，并与原 GPU 的 **455/500（91.0%）** 比较效果和耗时。默认只迁移最后一阶段：加载固定的 **A3 s1 续训 20k 父模型**，再训练 **10,000 optimizer steps**。完整科学配方和历史证据见 [README.md](README.md)。
 
@@ -11,6 +11,10 @@
 > 请执行这份交接包。先读 START_HERE.md、README.md 和 UPLOAD_REPORT.md，再依次进行本机环境探测、下载已就绪输入、逐文件核验、NPU 适配、数值检查、20 步冒烟、600 步吞吐试跑、正式 10k、dev200 选点和 test500 对比。原始 GPU 参考源码保持原样，适配写入独立工作目录。通过前一阶段后自主继续；普通路径选择、安装隔离环境、适配和修复无需反复询问。使用平台已分配的设备，遵守该集群的调度和访问规则。遇到缺失数据、私有仓库读取权限或缺少评测节点等外部条件时，记录准确缺项并推进不依赖它的工作；不要虚构输入，也不要把候选代码当成已验证移植。每个阶段保存日志、配置、代码哈希、起止时间和结果。不得静默更换训练起点、比例、loss 或测试 seed，也不得把 Fresh 对照当作 Continue 复现。
 
 这里的“立即开始”指接手后立即执行准备和适配；**当前已核对的上传报告不支持直接启动完整 10k**：R2 recovery 和 20k 父模型权重尚无云路径。详见 [缺失输入交付单](MISSING_INPUTS.md)。这不是要求重新批准实验，而是缺少实际文件。
+
+## 只有 GitHub 链接时先做什么
+
+先打开 [DOWNLOADS.md](DOWNLOADS.md)。其中的 `downloads/` 命令可以直接从本公开仓库下载 Human 和 R1；以下 `scripts/`、`manifests/` 和 `reference/` 命令必须在完整 v3 ZIP 解压目录中执行。ZIP 的准确文件名、校验值和交付方式也列在该页。
 
 ## 0 先核对包和本机环境
 

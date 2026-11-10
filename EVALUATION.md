@@ -1,6 +1,6 @@
 # Ascend 训练后的固定 GPU 评测流程
 
-> **Public documentation edition / 公开文档版。** This repository publishes the training guide only. The executable scripts, frozen training source, private dataset manifests, model hashes, raw results and internal receipts are distributed separately to authorized collaborators in the v3 handoff bundle. Obtain that bundle before running the commands below. No data or model access is granted by this repository. See [Private execution inputs](PRIVATE_INPUTS.md).
+> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
 
 为了比较训练后端，使用原 GPU RoboCasa evaluator。固定模型服务、仿真代码、场景 seeds 和视频设置；不要同时迁移仿真环境并把差异全部归因于训练。
 

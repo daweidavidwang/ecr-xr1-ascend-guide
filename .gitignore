@@ -1,4 +1,4 @@
-# The public repository is documentation-only.
+# Public guide and explicit download helpers; keep downloaded content out of Git.
 reference/
 manifests/
 scripts/
@@ -14,3 +14,9 @@ models/
 *.pt
 *.pth
 *.log
+
+.venv*/
+__pycache__/
+*.pyc
+input-maps/
+cloud-manifests/
