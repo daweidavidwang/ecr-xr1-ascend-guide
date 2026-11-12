@@ -1,6 +1,6 @@
 # 41 个训练数据根目录
 
-> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
+> **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 路径中的 `$WORK` 在 Ascend 上映射为自选的 `ECR_ROOT`。
 

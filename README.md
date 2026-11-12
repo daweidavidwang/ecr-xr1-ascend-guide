@@ -1,10 +1,10 @@
 # ECR · Xiaomi XR‑1 最佳模型在 Ascend 上的训练复现与对比指南
 
-> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
+> **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
-版本：v3 · 核对日期：2026-11-10 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员
+版本：v3（原包不变）· 云端访问与接手审计更新：2026-11-12 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员
 
-**执行入口：[START_HERE.md](START_HERE.md)**。将另行获得的完整私有交接包带到集群，按入口依次下载、校验、适配、冒烟、训练和评测。最新上传范围见 [UPLOAD_REPORT.md](UPLOAD_REPORT.md)。
+**执行入口：[START_HERE.md](START_HERE.md)**。按 [DOWNLOADS.md](DOWNLOADS.md) 下载并校验完整私有云端交接包，按入口依次下载、校验、适配、冒烟、训练和评测。最新上传范围见 [UPLOAD_REPORT.md](UPLOAD_REPORT.md)。
 
 **本次复现目标是第二轮 Continue s1：test500 为 455/500（91.0%），导航 46/50，非导航 409/450。最直接的复现方式是加载其固定的第一轮续训父模型，再用 Human:R1:R2 = 1:0.5:0.5 的配方训练 10,000 步。** 父模型已经完成 20,000 步 SFT，因此该模型累计 SFT 为 30,000 步。
 
@@ -209,7 +209,7 @@ unset MODELSCOPE_API_TOKEN
 
 ## 4. 必须保持一致的训练配方
 
-原第二轮源码来自 `项目私有训练仓库（由 owner 单独提供）` 的 commit **`45e7476b4d0ead4fa545da1d3fa390a0bfbdbaf7`**，子目录 `training/rc365_xr1_20261006/`；本包提供完整子目录快照 [source-round2（私有配套文件）](PRIVATE_INPUTS.md)。XR‑1 上游辅助代码固定为 **`0dd7aef8dc87296246aae812a1f59ccb708e5546`**，原路径 `$LEGACY_WORK/code/rc365_xr1_20261006/Xiaomi-Robotics-1`，需另行取得该完整源码。不要用随时间变化的主分支代替。
+原第二轮源码固定于项目训练仓库的 commit **`45e7476b4d0ead4fa545da1d3fa390a0bfbdbaf7`**，子目录 `training/rc365_xr1_20261006/`；本包提供完整子目录快照 [source-round2（私有配套文件）](PRIVATE_INPUTS.md)。XR‑1 上游辅助代码固定为 **`0dd7aef8dc87296246aae812a1f59ccb708e5546`**，原路径 `$LEGACY_WORK/code/rc365_xr1_20261006/Xiaomi-Robotics-1`，需按 START_HERE 第 3 节获取这一公开上游。私有项目训练子目录已经包含在 ZIP 中，无需另行等待源码交付。不要用随时间变化的主分支代替。
 
 | 参数 | 第二轮 Continue s1 实际设置 |
 |---|---|

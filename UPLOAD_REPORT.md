@@ -1,5 +1,13 @@
 # Archive upload status and training readiness
 
+## Handoff bundle update — 12 November 2026
+
+The original v3 ZIP is now stored in the existing private ModelScope archive at revision `6bbf6a71afc2c39f78fc3e2a35e584c67be875cf`. Its 11,563,326 bytes were fully downloaded again and SHA256-verified against `9e52a2342ad542af952376326bafdecd2fc43704301efbe461922e71fabe1466`. [Download and access instructions](DOWNLOADS.md) include the exact file path, pinned manifest, permission checks and extraction steps. The archive is unchanged; no dataset or parent-model weights were added to it.
+
+See [HANDOFF_STATUS.md](HANDOFF_STATUS.md) for the current handoff audit and its limits. This upload resolves delivery of the code/evidence bundle; it does not establish full training readiness.
+
+## Historical data archive operation — 10 November 2026
+
 Status reviewed on **10 November 2026**, from a completion report timestamped **18:41 UTC / 13:41 Toronto**.
 
 The reviewed incremental archive operation completed 284 batches, adding 71,995 cloud paths and 44,787,578,352 bytes. The full mapping covers 370,075 logical source paths, including previously archived content and content aliases. Five final metadata files total 40,393,249 bytes. New payload verification used per-file sizes/hashes and 284 actual download samples; existing content relied on its frozen listing evidence, not a new full readback.

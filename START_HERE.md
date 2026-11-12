@@ -1,10 +1,10 @@
 # Ascend 集群 Codex 执行入口
 
-> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
+> **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 目标：复现 ECR 最佳 Xiaomi XR‑1 第二轮 Continue s1，并与原 GPU 的 **455/500（91.0%）** 比较效果和耗时。默认只迁移最后一阶段：加载固定的 **A3 s1 续训 20k 父模型**，再训练 **10,000 optimizer steps**。完整科学配方和历史证据见 [README.md](README.md)。
 
-把**整个 ZIP 解压目录**放到集群；不能只转发这一个 Markdown，否则会缺源码、配置、下载清单和校验工具。v1/v2 保留，本版为 v3。
+先按 [DOWNLOADS.md](DOWNLOADS.md) 下载云端完整包，将**整个 ZIP 解压目录**放到集群；不能只转发这一个 Markdown，否则会缺源码、配置、下载清单和校验工具。v1/v2 保留，本版为 v3。
 
 ## 给接手 Codex 的指令
 
@@ -14,15 +14,15 @@
 
 ## 只有 GitHub 链接时先做什么
 
-先打开 [DOWNLOADS.md](DOWNLOADS.md)。其中的 `downloads/` 命令可以直接从本公开仓库下载 Human 和 R1；以下 `scripts/`、`manifests/` 和 `reference/` 命令必须在完整 v3 ZIP 解压目录中执行。ZIP 的准确文件名、校验值和交付方式也列在该页。
+先按 [DOWNLOADS.md 第 0 节](DOWNLOADS.md#0-先取得完整包并验证读取权限) 验证 12 个私有仓库的小文件访问，再按第 5 节下载并校验完整 ZIP。GitHub 根目录记为 `$ECR_GUIDE`，完整包根目录记为 `$ECR_BUNDLE`；以下 `scripts/`、`manifests/` 和 `reference/` 命令全部在 `$ECR_BUNDLE` 内执行。无需先取得私有训练源码仓库。开始前阅读 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)，逐项记录当前机器的权限、输入和环境状态。
 
 ## 0 先核对包和本机环境
 
-在交接包根目录执行；`ECR_ROOT` 选为用户有权限的高速存储目录，可由集群 Codex 自动选择。下面 `/data/ecr-ascend` 只是可替换的本机工作根目录，不是历史服务器挂载。
+先 `cd "$ECR_BUNDLE"`，在交接包根目录执行；`ECR_ROOT` 选为用户有权限的高速存储目录，可由集群 Codex 自动选择。下面默认复用下载阶段的 `ECR_ROOT`；未设置时使用 `$HOME/ecr-ascend`。这是当前机器的恢复目录，不是历史服务器挂载。
 
 ```bash
 set -euo pipefail
-export ECR_ROOT=/data/ecr-ascend
+export ECR_ROOT="${ECR_ROOT:-$HOME/ecr-ascend}"
 sha256sum -c SHA256SUMS > bundle-check.log
 python3 scripts/cluster_preflight.py --root "$ECR_ROOT" --output cluster-preflight.json
 ```
@@ -113,7 +113,7 @@ python "$ECR_ROOT/code/ecr-ascend/scripts/round2_input_check.py" \
 
 以下命令在平台**已分配的单节点设备**内执行；脚本不申请资源，不接管其他作业。4 卡布局从 micro-batch=12 开始；如需 8 卡，可用 micro-batch=6 保持 accumulation=4、global batch=192。低显存时降低 micro-batch 并增加累积，记录在对比报告。不要默认所有可见 NPU 都可占用。
 
-先做固定 batch/noise/time 的数值比较，然后启动 20 步。没有 GPU 数值参考时，先做可执行诊断并记录缺项，不虚构 numerical parity：
+注意：包内 `launch_stage.py` 的 smoke、benchmark、train 三种模式都要求 R1/R2 完整性回执和完整输入检查通过；缺 R2 或父模型时不能用这个入口冒烟，只能先做环境和独立算子诊断。固定 batch/noise/time 的 GPU 数值参考尚未作为现成 fixture 随包交付，需按 [HANDOFF_STATUS.md](HANDOFF_STATUS.md) 与 GPU 评测执行方生成并记录。先完成数值比较，再启动 20 步。没有 GPU 数值参考时，先做可执行诊断并记录缺项，不虚构 numerical parity：
 
 ```bash
 python scripts/launch_stage.py smoke --root "$ECR_ROOT" \

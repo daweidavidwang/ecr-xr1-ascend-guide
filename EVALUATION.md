@@ -1,8 +1,10 @@
 # Ascend 训练后的固定 GPU 评测流程
 
-> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
+> **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 为了比较训练后端，使用原 GPU RoboCasa evaluator。固定模型服务、仿真代码、场景 seeds 和视频设置；不要同时迁移仿真环境并把差异全部归因于训练。
+
+开始前先按 [HANDOFF_STATUS.md](HANDOFF_STATUS.md) 确认 GPU evaluator 的执行方、可用节点、环境/资产和模型导出交付路径。ZIP 没有打包仿真资产或完整环境镜像；缺少这些时仍无法完成 dev200/test500。
 
 评测方需要本包 `reference/source-round2/`、公开 XR‑1 commit `0dd7aef8dc87296246aae812a1f59ccb708e5546`，以及已验证的 RoboCasa `456174f62b89b8fca99eaaf33949c29fec9cfc2a` / robosuite `5ce6643f3092639d08f7b0f90ed1c6a84f50552c` 环境与资产。原 `env.sh` 仅适配旧主机：在独立副本中修改本地路径/环境入口，不能原样在 Ascend 调用。原 `build_envs.sh` 是历史参考，其中 CUDA wheel 不能装到 NPU 训练环境。
 

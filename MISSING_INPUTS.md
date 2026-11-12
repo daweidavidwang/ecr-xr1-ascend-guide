@@ -1,8 +1,10 @@
 # Continue 复现尚缺的上传输入
 
-> **Public guide with download entry points / 公开指南与下载入口。** Known ModelScope addresses, fixed download pins and generic download tools are available in [DOWNLOADS.md](DOWNLOADS.md). Dataset repositories remain private. Frozen training source, NPU execution tools and GPU comparison evidence remain in the separately transferred v3 handoff ZIP; see [PRIVATE_INPUTS.md](PRIVATE_INPUTS.md).
+> **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
-这份交付单针对已核对的 2026-11-10 13:41 多伦多上传完成报告。它不否认其他仓库可能存在这些文件；如果另有新报告，先按完整路径与 SHA 对账，避免重传。
+**2026-11-12 复核：完整 ZIP 已在云端，但以下两项仍没有可交给接手 agent 的已核验下载映射。** 本次检查了冻结包、最新公开交接资料和本机相关上传/归档记录；未发现能关闭这两项缺口的新回执，不表示已穷举其他仓库。
+
+这份数据覆盖交付单以 2026-11-10 13:41 多伦多上传完成报告为基线。它不否认其他仓库可能存在这些文件；如果另有新报告，先按完整路径与 SHA 对账，避免重传。
 
 | 输入 | 原始源目录 | Ascend 恢复目录 | 验收要求 |
 |---|---|---|---|
@@ -18,3 +20,5 @@ R2 manifest 的 SHA256：`aeb4d7271114522d7dc0e2c85ac3f1b26a93ff8b3d40baa014f380
 **不要从最终 455/500 模型再训练 10k。** 它累计已经 30k，会变成新一轮实验。不要替换成 A3 s2 446/500；那是不同父分支。也不要在输入不齐时把 Fresh 10k 的结果命名为 Continue。
 
 当前 agent 可以自行完成环境检查、已知输入下载、原版算子诊断和适配；在这两项输入核验通过前不能将正式 Continue 训练标为 ready。本文件仅说明所需交付范围，不自动对旧服务器执行复制或云上传。
+
+权限、数值参考、NPU 环境和 GPU evaluator 等其他接手条件，统一见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。ZIP 下载成功不会自动补齐本页两项输入。

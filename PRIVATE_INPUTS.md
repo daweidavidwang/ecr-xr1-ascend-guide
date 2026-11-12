@@ -1,24 +1,20 @@
-# Private inputs required for execution
+# 完整私有交接包与访问边界
 
-This public repository contains documentation and the standalone download tools and known input catalog described in [DOWNLOADS.md](DOWNLOADS.md). Authorized collaborators need the **XR1 Ascend reproduction v3 handoff bundle** from the project owner to execute the full training and evaluation workflow. The download commands in DOWNLOADS.md work from the public checkout. Keep that bundle outside this public Git repository.
+完整 `XR1-Ascend训练复现指南-v3.zip` 已于 **2026-11-12** 上传至现有私有 ModelScope 归档仓库。按 [DOWNLOADS.md 第 5 节](DOWNLOADS.md#5-完整训练交接包已上传按固定版本下载) 获取固定 revision 的文件、读取权限和可复制下载命令。无需等待 owner 手工传送 ZIP，也无需访问旧训练节点。文件不在 GitHub Releases。
 
-The private supplement supplies:
+ZIP 为 11,563,326 bytes，SHA256 `9e52a2342ad542af952376326bafdecd2fc43704301efbe461922e71fabe1466`。已实际重新下载，大小、ZIP SHA256 与原文件一致；原 v3 未重新打包。
 
-- `scripts/`: download, extraction, integrity checks, configuration generation, environment probing, NPU candidate generation, stage launching, evaluation comparison and timing tools.
-- `manifests/`: exact private ModelScope repository/file mappings and content hashes for Human and first-round recovery, plus public-base model pins.
-- `reference/source-round2/`, `reference/a3-first/`, `reference/a3-continue/`: frozen project training source and configurations.
-- `reference/model-pins-base-parent.json` and related files: exact model identity checks, including all 22 files of the 20k parent.
-- `reference/gpu-test500-episodes.jsonl`, selection and timing evidence: the frozen GPU comparison records.
-- `SHA256SUMS`: the private package checksum list. It is distinct from this repository's `PUBLIC_SHA256SUMS`.
+包内提供：
 
-Links to private training and evaluation evidence lead here. Known data download locations are published in [DOWNLOADS.md](DOWNLOADS.md). Their filenames in command examples refer to the supplementary bundle, not to files shipped in this public repository. Historical paths beginning with `$LEGACY_WORK` are logical placeholders; actual server paths are supplied privately.
+- `scripts/`：下载、解包、完整性检查、配置生成、环境探测、NPU 候选生成、分阶段启动和比较工具。
+- `manifests/`：Human 和 R1 的冻结下载映射、公开原版模型 pins，以及明确标为待补的 R2/父模型信息。
+- `reference/source-round2/`、`reference/a3-first/`、`reference/a3-continue/`：冻结训练源码和配置；从包内快照开始，无需另取私有训练 Git 仓库。
+- `reference/model-pins-base-parent.json`：父模型完整 22 文件的预期身份；pins 是校验信息，不是权重文件。
+- GPU 逐局结果、选点、训练计时与相关冻结证据。
+- `SHA256SUMS`：包内文件校验表；与本公开仓库的 `PUBLIC_SHA256SUMS` 区别使用。
 
-## Outstanding requirements as of 10 November 2026
+包内**不提供**训练数据本体、20k 父模型权重、Ascend 驱动/CANN 镜像、已验收的 NPU 移植、GPU 仿真资产或可直接搬用的完整环境镜像。固定公开 XR-1 上游仍按 START_HERE 中的 commit 另行取得。
 
-The latest reviewed archive completion report covers first-round recovery, but not the second-round recovery directory or the 20k parent model's weight shards. Their upload mappings must be supplied and verified before formal Continue training. See [required inputs](MISSING_INPUTS.md).
+公开 GitHub 文档不附带私有仓库权限。接手者需获得 ZIP 仓库、R1 仓库及十个 Human 仓库的读取权限；首次访问先运行 [12 仓库小文件探测](DOWNLOADS.md#0-先取得完整包并验证读取权限)。不要把 owner 的 token 贴进文档或共享链接。
 
-Ascend hardware validation is also pending. The provided candidate is a starting point for a reviewed port, not a tested NPU release. Start with [the execution guide](START_HERE.md), and use the allocated cluster environment and private repository access provided to you.
-
-Known repository addresses, the small pinned download catalog and generic download helpers are public. Credentials, dataset contents, model weights, the large private archive map, training source and internal receipts are not published here.
-
-The exact supplemental archive is `XR1-Ascend训练复现指南-v3.zip` (11,563,326 bytes), SHA256 `9e52a2342ad542af952376326bafdecd2fc43704301efbe461922e71fabe1466`. It must be transferred by the owner through an existing file-transfer channel; it is not a GitHub Release asset and has no published HTTP download URL.
+完整阻塞项、核验范围与阶段完成条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。
