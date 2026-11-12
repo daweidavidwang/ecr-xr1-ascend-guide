@@ -397,4 +397,4 @@ run/
 
 本包 SHA256 总清单为 `SHA256SUMS`，本地来源和哈希见 [evidence-index.json（私有配套文件）](PRIVATE_INPUTS.md)。其中历史 `dataset-catalog.json` 的 `preparation_state` 是提交时的 pending 状态；后来成功的 g10 暂存以 `round2-readiness.json` 为准。它证明历史训练输入曾通过验收，不证明本轮 ModelScope 下载或 Ascend 环境已经就绪。
 
-原 v3 封包时的离线工具检查保留于 `verification.json`。2026-11-12 已补齐 R2/20k 父模型的真实云端映射并独立对账，公开下载工具的映射和样本访问测试通过；全量 payload 回下载尚待验收。最新结果见 [补传核验摘要](downloads/round2-parent-verification.json)。尚未在 Ascend 上训练或完成 NPU 算子验收；目标平台和 GPU evaluator 条件仍见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。v3 补入完整 R1 下载清单、集群执行入口、环境探测、NPU 候选生成、分阶段启动器、数据验收和 test500 对比工具；v1/v2 原包保留。
+原 v3 封包时的离线工具检查保留于 `verification.json`。2026-11-12 已补齐 R2/20k 父模型的云端映射并完整回下载验收，结果见 [补传验收摘要](downloads/round2-parent-verification.json)；Human/R1 未在本次操作中全量重下载。**尚未在 Ascend 上训练或完成 NPU 算子验收**；目标硬件、数值与运行检查以及 GPU evaluator 条件仍见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。训练目标和科学对照协议保持不变。v3 补入完整 R1 下载清单、集群执行入口、环境探测、NPU 候选生成、分阶段启动器、数据验收和 test500 对比工具；v1/v2 原包保留。

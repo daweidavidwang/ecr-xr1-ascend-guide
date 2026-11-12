@@ -6,11 +6,11 @@ The original v3 ZIP is now stored in the existing private ModelScope archive at 
 
 See [HANDOFF_STATUS.md](HANDOFF_STATUS.md) for the current handoff audit and its limits. This upload resolves delivery of the code/evidence bundle; it does not establish full training readiness.
 
-## R2 and fixed 20k parent supplement — upload verified, readback pending
+## R2 and fixed 20k parent supplement — 12 November 2026
 
-All 24,270 files / 15,683,968,143 bytes have been uploaded and checked against source pins at immutable cloud revisions. The complete mapping was independently downloaded and checked against the frozen file set. **Full payload cloud readback has not yet passed.** [Download instructions](DOWNLOADS.md#6-r2-和固定-20k-父模型补传下载与独立验收) and [current verification status](downloads/round2-parent-verification.json) are available now; final acceptance will be recorded when complete.
+The two missing inputs are now delivered in the [private supplement repository](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112). All 24,270 files / 15,683,968,143 bytes were checked at source, uploaded with immutable payload revisions, downloaded again into an empty directory, and checked against the frozen R2 manifest and all 22 parent pins. Source files were retained and rehashed after upload.
 
-Mapping revision: `203223f41d3de33efdc1c0587de28075ddac963a`. Private repository: [dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112). Recipient permissions and hardware readiness are separate conditions.
+The complete mapping is separately pinned at `203223f41d3de33efdc1c0587de28075ddac963a` with SHA256 `fcce42bbf84728ca0b3545360e33be50353a24368e60ed8c8903d7bcb12d6b91`. [Executable download instructions](DOWNLOADS.md#6-r2-和固定-20k-父模型补传下载与独立验收), [mapping metadata](downloads/round2-parent-metadata-download.jsonl), and [verification details](downloads/round2-parent-verification.json) identify the exact paths, counts and verification methods. Hardware readiness and recipient permissions remain separate conditions.
 
 ## Historical data archive operation — 10 November 2026
 
@@ -22,8 +22,8 @@ The reviewed incremental archive operation completed 284 batches, adding 71,995 
 |---|---|
 | Human demonstrations | [Public download entry](DOWNLOADS.md) contains pins for all ten tasks |
 | Round 1 recovery | Complete mapping: 205,003 files, 49,789,441,549 bytes |
-| Round 2 recovery | Not included in this archive operation; separate upload mapping required |
-| Fixed 20k parent model | Weight shards not present in the reviewed mapping; separate complete model mapping required |
+| Round 2 recovery | Not included in this historical operation; delivered by the 12 November supplement above |
+| Fixed 20k parent model | Weight shards absent from this historical mapping; all 22 files delivered by the 12 November supplement above |
 | Xiaomi original base | Download pins available in `downloads/xiaomi-base-download.jsonl` for diagnostics or alternative training tracks |
 | Ascend port | Candidate preparation is available; hardware validation remains pending |
 

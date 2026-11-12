@@ -125,8 +125,7 @@
   ],
   "limits": [
     "No recipient account or target cluster access was tested",
-    "No full Human/R1 payload download in this audit",
-    "R2/parent full payload readback is pending; the complete mapping and public helper samples passed separately",
+    "No full Human/R1 payload download in this audit; R2/parent full readback is recorded separately",
     "No Ascend hardware training or GPU simulation evaluation executed"
   ],
   "bundle_verified_at_utc": "2026-11-12T15:25:03.606358+00:00",

@@ -1,11 +1,16 @@
 {
-  "state": "uploaded_full_readback_pending",
-  "checked_at_utc": "2026-11-12T16:40:54.526272+00:00",
+  "verified_at_utc": "2026-11-12T17:09:48.112461+00:00",
+  "state": "complete",
   "repo_id": "dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112",
   "repo_type": "dataset",
   "visibility": "private",
-  "uploaded_files_fixed_revision_verified": 24270,
+  "files": 24270,
   "bytes": 15683968143,
+  "r2_payload_files": 24245,
+  "r2_payload_bytes": 5557378683,
+  "r2_control_files": 3,
+  "parent_files": 22,
+  "parent_bytes": 10122587755,
   "mapping": {
     "repo_id": "dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112",
     "repo_type": "dataset",
@@ -17,9 +22,39 @@
   },
   "mapping_download_url": "https://modelscope.cn/api/v1/datasets/dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112/repo?Revision=203223f41d3de33efdc1c0587de28075ddac963a&FilePath=manifests%2Fround2-parent-download.jsonl.gz",
   "source_full_hashes_verified": true,
-  "independent_full_mapping_coverage_verified": true,
-  "fresh_full_cloud_download_verified": false,
-  "public_downloader_version": "modelscope-hub==0.6.1",
-  "public_downloader_mapping_and_payload_probes_passed": true,
-  "limitation": "All files uploaded and mapping independently verified; full payload cloud readback has not yet passed. Owner credentials were used; recipient access is separate."
+  "sources_retained_and_post_upload_hashes_verified": true,
+  "cloud_fixed_revision_size_sha_verified": true,
+  "fresh_full_cloud_download_verified": true,
+  "fresh_full_acceptance": {
+    "passed": true,
+    "map_sha256": "fcce42bbf84728ca0b3545360e33be50353a24368e60ed8c8903d7bcb12d6b91",
+    "files": 24270,
+    "bytes": 15683968143,
+    "r2_payload_files": 24245,
+    "r2_payload_bytes": 5557378683,
+    "parent_files": 22,
+    "parent_bytes": 10122587755,
+    "scope": "Complete R2 and fixed 20k parent identity and local content; not Human/R1 or NPU acceptance"
+  },
+  "full_readback_method": "ModelScope Hub API 0.4.5 equivalent download calls, force=True in a new directory, then the published verify_round2_parent.py",
+  "verification_tool_sha256": "c9cc43e4bc4b052bd6081c2af505777f1efcfdc3d8c19c4171e77e6707e96b32",
+  "independent_mapping_coverage_verified": true,
+  "public_downloader_validation": {
+    "sdk_version": "0.6.1",
+    "full_private_mapping_downloaded_and_verified": true,
+    "additional_payload_files_downloaded": 7,
+    "additional_payload_bytes": 271374480,
+    "repository_access_probes_passed": 13
+  },
+  "scope_limits": [
+    "Verified with existing owner credentials; recipient access is separate",
+    "Human/R1 full payloads were not redownloaded in this operation",
+    "No NPU hardware, numerical parity, training or GPU simulation evaluation was performed"
+  ],
+  "acceptance_command_exit_code": 0,
+  "returned_evidence_sha256": {
+    "fresh-full-acceptance.json": "3406524008f176647e9b01e9fd3cdebddb5d8c989cdb4ae397431214ec02d427",
+    "cloud-state.json": "c90b58d5a4656d440b7df50b350fbaba985b576b10d8851bb87533e2b614c81f",
+    "acceptance-command.json": "96eafad7c7f7b9bfa7cb80b28aed752b37d8c8dd70834a3a6a3b893c3a1dc518"
+  }
 }
