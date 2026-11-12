@@ -1,0 +1,25 @@
+{
+  "state": "uploaded_full_readback_pending",
+  "checked_at_utc": "2026-11-12T16:40:54.526272+00:00",
+  "repo_id": "dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112",
+  "repo_type": "dataset",
+  "visibility": "private",
+  "uploaded_files_fixed_revision_verified": 24270,
+  "bytes": 15683968143,
+  "mapping": {
+    "repo_id": "dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112",
+    "repo_type": "dataset",
+    "revision": "203223f41d3de33efdc1c0587de28075ddac963a",
+    "remote_path": "manifests/round2-parent-download.jsonl.gz",
+    "local_path": "input-maps/round2-parent-download.jsonl.gz",
+    "bytes": 1193185,
+    "sha256": "fcce42bbf84728ca0b3545360e33be50353a24368e60ed8c8903d7bcb12d6b91"
+  },
+  "mapping_download_url": "https://modelscope.cn/api/v1/datasets/dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112/repo?Revision=203223f41d3de33efdc1c0587de28075ddac963a&FilePath=manifests%2Fround2-parent-download.jsonl.gz",
+  "source_full_hashes_verified": true,
+  "independent_full_mapping_coverage_verified": true,
+  "fresh_full_cloud_download_verified": false,
+  "public_downloader_version": "modelscope-hub==0.6.1",
+  "public_downloader_mapping_and_payload_probes_passed": true,
+  "limitation": "All files uploaded and mapping independently verified; full payload cloud readback has not yet passed. Owner credentials were used; recipient access is separate."
+}

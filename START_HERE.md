@@ -10,11 +10,11 @@
 
 > 请执行这份交接包。先读 START_HERE.md、README.md 和 UPLOAD_REPORT.md，再依次进行本机环境探测、下载已就绪输入、逐文件核验、NPU 适配、数值检查、20 步冒烟、600 步吞吐试跑、正式 10k、dev200 选点和 test500 对比。原始 GPU 参考源码保持原样，适配写入独立工作目录。通过前一阶段后自主继续；普通路径选择、安装隔离环境、适配和修复无需反复询问。使用平台已分配的设备，遵守该集群的调度和访问规则。遇到缺失数据、私有仓库读取权限或缺少评测节点等外部条件时，记录准确缺项并推进不依赖它的工作；不要虚构输入，也不要把候选代码当成已验证移植。每个阶段保存日志、配置、代码哈希、起止时间和结果。不得静默更换训练起点、比例、loss 或测试 seed，也不得把 Fresh 对照当作 Continue 复现。
 
-这里的“立即开始”指接手后立即执行准备和适配；**当前已核对的上传报告不支持直接启动完整 10k**：R2 recovery 和 20k 父模型权重尚无云路径。详见 [缺失输入交付单](MISSING_INPUTS.md)。这不是要求重新批准实验，而是缺少实际文件。
+**R2 recovery 和固定 20k 父模型已完成云端补传；全量回下载尚待验收**，见 [输入交付单](MISSING_INPUTS.md)。接手后可以按固定清单恢复全部输入；正式 10k 仍须完成本机权限/数据检查、Ascend 环境和 NPU 数值/运行验收。这里列的是技术条件，不是要求重新批准已授权的工作。
 
 ## 只有 GitHub 链接时先做什么
 
-先按 [DOWNLOADS.md 第 0 节](DOWNLOADS.md#0-先取得完整包并验证读取权限) 验证 12 个私有仓库的小文件访问，再按第 5 节下载并校验完整 ZIP。GitHub 根目录记为 `$ECR_GUIDE`，完整包根目录记为 `$ECR_BUNDLE`；以下 `scripts/`、`manifests/` 和 `reference/` 命令全部在 `$ECR_BUNDLE` 内执行。无需先取得私有训练源码仓库。开始前阅读 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)，逐项记录当前机器的权限、输入和环境状态。
+先按 [DOWNLOADS.md 第 0 节](DOWNLOADS.md#0-先取得完整包并验证读取权限) 验证 13 个私有仓库的小文件访问，再按第 5 节下载并校验完整 ZIP。GitHub 根目录记为 `$ECR_GUIDE`，完整包根目录记为 `$ECR_BUNDLE`；以下 `scripts/`、`manifests/` 和 `reference/` 命令全部在 `$ECR_BUNDLE` 内执行。无需先取得私有训练源码仓库。开始前阅读 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)，逐项记录当前机器的权限、输入和环境状态。
 
 ## 0 先核对包和本机环境
 
@@ -27,23 +27,25 @@ sha256sum -c SHA256SUMS > bundle-check.log
 python3 scripts/cluster_preflight.py --root "$ECR_ROOT" --output cluster-preflight.json
 ```
 
-读取 `cluster-preflight.json`，确认 CPU 架构、NPU 型号、设备可见性、PyTorch / torch-npu / CANN 和空间。预检查不会申请卡，也不会开训。优先使用平台已配套的镜像；不要覆盖系统驱动或全局 Python。训练环境和下载环境分开。R1 单独 49.79 GB，R2 约 5.56 GB，父模型约 10.12 GB；还要计入 Human、SDK 缓存、3 个导出及导出临时副本。Human 下载清单没有可靠体积，不能仅凭上述三项之和预留磁盘。
+读取 `cluster-preflight.json`，确认 CPU 架构、NPU 型号、设备可见性、PyTorch / torch-npu / CANN 和空间。预检查不会申请卡，也不会开训。优先使用平台已配套的镜像；不要覆盖系统驱动或全局 Python。训练环境和下载环境分开。R1 单独 49.79 GB，R2 约 5.56 GB，父模型约 10.12 GB；还要计入 Human、SDK 缓存、3 个导出及导出临时副本。Human 十个 tar 的云端固定版本体积已核实为 12.93 GB；按当前工具保留缓存、tar 与解包内容，加上其他输入缓存/副本，全部训练输入约需 170 GB 基线空间，代码/环境、导出与临时文件另算，详见 DOWNLOADS 第 1 节。
 
 ## 1 下载已经可以定位的输入
 
 ```bash
-python3.12 -m venv .venv-download
-.venv-download/bin/python -m pip install 'modelscope-hub==0.6.1'
-read -rsp 'ModelScope read token: ' MODELSCOPE_API_TOKEN
+# 复用 DOWNLOADS 第 0 节在 GitHub checkout 建立的下载环境。
+test -x "$ECR_GUIDE/.venv-download/bin/python"
+if [ -z "${MODELSCOPE_API_TOKEN:-}" ]; then
+  read -rsp 'ModelScope read token: ' MODELSCOPE_API_TOKEN; echo
+fi
 export MODELSCOPE_API_TOKEN
 
-.venv-download/bin/python scripts/download_files.py \
+"$ECR_GUIDE/.venv-download/bin/python" scripts/download_files.py \
   manifests/human10-download.jsonl --root "$ECR_ROOT" --workers 4
-.venv-download/bin/python scripts/unpack_human.py --root "$ECR_ROOT"
+"$ECR_GUIDE/.venv-download/bin/python" scripts/unpack_human.py --root "$ECR_ROOT"
 
-.venv-download/bin/python scripts/download_files.py \
+"$ECR_GUIDE/.venv-download/bin/python" scripts/download_files.py \
   manifests/round1-download.jsonl.gz --root "$ECR_ROOT" --workers 8
-.venv-download/bin/python scripts/verify_recovery.py \
+"$ECR_GUIDE/.venv-download/bin/python" scripts/verify_recovery.py \
   --root "$ECR_ROOT" --round round1 --output "$ECR_ROOT/checks/round1-integrity.json"
 ```
 
@@ -52,7 +54,7 @@ R1 下载清单含 **205,003 个文件**，已从冻结云映射完整提取。�
 需要原版权重做算子诊断或完整 30k 路线时，使用已冻结的清单：
 
 ```bash
-.venv-download/bin/python scripts/download_files.py \
+"$ECR_GUIDE/.venv-download/bin/python" scripts/download_files.py \
   manifests/xiaomi-base-download.jsonl --root "$ECR_ROOT" --workers 4
 ```
 
@@ -60,23 +62,19 @@ R1 下载清单含 **205,003 个文件**，已从冻结云映射完整提取。�
 
 ## 2 接入第二轮数据和父模型
 
-当前上传报告只证明旧归档完成；**不能从旧的 3,000 局 rollout 重新“推导”出 R2 recovery，也不能拿最终 30k best 权重替代 20k 父模型。**
+按 [DOWNLOADS.md 第 6 节](DOWNLOADS.md#6-r2-和固定-20k-父模型补传下载与独立验收) 获取补传映射、恢复全部 R2 和 22 个父模型文件，并生成 `round2-parent-integrity.json`、`round2-integrity.json`。不需要接手者自行猜测地址或制作清单，也不修改原 v3 的 `manifests/`。
 
-取得新上传的 repo / 文件映射后，按 [MISSING_INPUTS.md](MISSING_INPUTS.md) 生成 `manifests/round2-parent-download.jsonl`。本文件必须包含 R2 整个源目录（包括原始 `MANIFEST.sha256`、`meta.json`、README）和父模型全部 22 文件。用本文提供的 `download_files.py` 执行，并用冻结 manifest 和父模型 pins 验收；不要人工复制一个不完整子集。
+**不能从旧的 3,000 局 rollout 重新推导 R2 recovery，也不能拿最终 30k best 权重替代 20k 父模型。** 原 ZIP 的 `cloud-inputs.pending.json` 是封包时的历史状态；实际交付状态以最新 GitHub [交付单](MISSING_INPUTS.md) 为准。
+
+Human、R1、R2 和父模型全部恢复后，在完整包内生成配置：
 
 ```bash
-.venv-download/bin/python scripts/download_files.py \
-  manifests/round2-parent-download.jsonl --root "$ECR_ROOT" --check-only
-.venv-download/bin/python scripts/download_files.py \
-  manifests/round2-parent-download.jsonl --root "$ECR_ROOT" --workers 8
-.venv-download/bin/python scripts/verify_recovery.py \
-  --root "$ECR_ROOT" --round round2 --output "$ECR_ROOT/checks/round2-integrity.json"
-.venv-download/bin/python scripts/prepare_config.py \
+cd "$ECR_BUNDLE"
+"$ECR_GUIDE/.venv-download/bin/python" scripts/prepare_config.py \
   --root "$ECR_ROOT" --out "$ECR_ROOT/configs/round2-502525.json"
-unset MODELSCOPE_API_TOKEN
 ```
 
-`prepare_config.py` 会核验 22 个父模型文件，并把固定的 41 个数据根目录改为本机路径。已有结果文件不覆盖：复查已有回执，或用独立 attempt 目录保存新结果；不要删除历史回执来使命令通过。
+`prepare_config.py` 会再次核验 22 个父模型文件，并把固定的 41 个数据根目录改为本机路径。已有结果文件不覆盖：复查已有回执，或用独立 attempt 目录保存新结果；不要删除历史回执来使命令通过。
 
 ## 3 获取固定上游并生成 NPU 适配候选
 

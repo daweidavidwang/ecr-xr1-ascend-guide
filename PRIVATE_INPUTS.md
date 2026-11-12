@@ -7,7 +7,7 @@ ZIP 为 11,563,326 bytes，SHA256 `9e52a2342ad542af952376326bafdecd2fc43704301ef
 包内提供：
 
 - `scripts/`：下载、解包、完整性检查、配置生成、环境探测、NPU 候选生成、分阶段启动和比较工具。
-- `manifests/`：Human 和 R1 的冻结下载映射、公开原版模型 pins，以及明确标为待补的 R2/父模型信息。
+- `manifests/`：Human 和 R1 的冻结下载映射、公开原版模型 pins，以及 v3 封包时标为待补的 R2/父模型信息。该历史状态保持原样，最新补传入口以 [交付单](MISSING_INPUTS.md) 为准。
 - `reference/source-round2/`、`reference/a3-first/`、`reference/a3-continue/`：冻结训练源码和配置；从包内快照开始，无需另取私有训练 Git 仓库。
 - `reference/model-pins-base-parent.json`：父模型完整 22 文件的预期身份；pins 是校验信息，不是权重文件。
 - GPU 逐局结果、选点、训练计时与相关冻结证据。
@@ -15,6 +15,6 @@ ZIP 为 11,563,326 bytes，SHA256 `9e52a2342ad542af952376326bafdecd2fc43704301ef
 
 包内**不提供**训练数据本体、20k 父模型权重、Ascend 驱动/CANN 镜像、已验收的 NPU 移植、GPU 仿真资产或可直接搬用的完整环境镜像。固定公开 XR-1 上游仍按 START_HERE 中的 commit 另行取得。
 
-公开 GitHub 文档不附带私有仓库权限。接手者需获得 ZIP 仓库、R1 仓库及十个 Human 仓库的读取权限；首次访问先运行 [12 仓库小文件探测](DOWNLOADS.md#0-先取得完整包并验证读取权限)。不要把 owner 的 token 贴进文档或共享链接。
+公开 GitHub 文档不附带私有仓库权限。接手者需获得 ZIP 仓库、R1 仓库、十个 Human 仓库及 R2/父模型补传仓库的读取权限；首次访问先运行 [13 仓库小文件探测](DOWNLOADS.md#0-先取得完整包并验证读取权限)。不要把 owner 的 token 贴进文档或共享链接。
 
 完整阻塞项、核验范围与阶段完成条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。

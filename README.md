@@ -8,7 +8,7 @@
 
 **本次复现目标是第二轮 Continue s1：test500 为 455/500（91.0%），导航 46/50，非导航 409/450。最直接的复现方式是加载其固定的第一轮续训父模型，再用 Human:R1:R2 = 1:0.5:0.5 的配方训练 10,000 步。** 父模型已经完成 20,000 步 SFT，因此该模型累计 SFT 为 30,000 步。
 
-配套私有交接包已固定原训练源码、数据目录、模型文件校验值、开发集选点结果、test500 逐局结果和 GPU 训练计时证据。**Ascend 适配尚未实现或实机验证**；v3 提供可生成的 NPU 适配候选、差异文件和分阶段启动器；候选尚需在目标设备上完成数值/算子/导出验收。现有 ECR 云归档已完成，但其最终映射未包含第二轮 recovery 和本次所需的父模型权重。训练数据的新上传仍需另行对账，详见第 3.4 节；未确认的仓库 / revision 保留为待填写。
+配套私有交接包已固定原训练源码、数据目录、模型文件校验值、开发集选点结果、test500 逐局结果和 GPU 训练计时证据。**Ascend 适配尚未实现或实机验证**；v3 提供可生成的 NPU 适配候选、差异文件和分阶段启动器；候选尚需在目标设备上完成数值/算子/导出验收。R2 recovery 和固定 20k 父模型的最新交付状态、下载清单及验收结果见 [DOWNLOADS.md](DOWNLOADS.md) 和 [MISSING_INPUTS.md](MISSING_INPUTS.md)。包内 `cloud-inputs.pending.json` 保留 v3 冻结时的状态；补传入口以最新公开说明为准。
 
 ## 1. 建议执行顺序与待补信息
 
@@ -21,7 +21,7 @@
 | 尚待补齐的项目 | 对执行的影响 |
 |---|---|
 | Ascend 型号 / 卡数 / 每卡显存 / CANN 镜像 | 决定适配栈、micro-batch 和并行布局；目前不能给可信 NPU ETA |
-| 训练输入的 ModelScope 下载 pins | Human 已有 pins；R1 已有完整逐文件下载清单；R2 和 20k 父模型需新上传的准确地址 |
+| 训练输入和读取权限 | 按 [DOWNLOADS.md](DOWNLOADS.md) 的固定清单恢复 Human、R1、R2 和 20k 父模型，保存本机完整验收回执 |
 | NPU 适配 commit 和冒烟报告 | 原脚本含 CUDA、NCCL、FlashAttention 2 路径，需要修改并验收 |
 
 这些是执行输入，并不改变已经确定的模型、数据和训练配方。配置清单见 [cloud-inputs.pending.json（私有配套文件）](PRIVATE_INPUTS.md)。
@@ -139,62 +139,24 @@ revision: 35aec5baa9032b2febfa884714980d7f82543074
 
 上述流程下载每个仓库的 `lerobot.tar` 和 `SHA256SUMS`，检查固定哈希，解压到 `payload/`，逐文件核验内容和文件集合，最后核对 episode / frame 数。已有同路径文件必须校验一致，不自动覆盖不同内容。下载过程中还会保留 SDK 缓存和压缩包，磁盘预算需计入这部分空间。
 
-### 3.4 R1、R2 和 20k 父模型：按最终上传映射下载
+### 3.4 R1、R2 和 20k 父模型：按固定清单下载
 
-**最新核对：既有 ECR 增量归档已完成；本次训练包仍未齐。** 对最终 370,075 条源路径映射进行了本地扫描，并核验了 5 份清单的大小和 SHA256：
+最新可执行下载命令统一放在 [DOWNLOADS.md](DOWNLOADS.md)，避免把旧归档完成报告当成本次输入交付证明。
 
-| 输入 | 已核对的云端覆盖 | 下一步 |
+| 输入 | 下载入口 | 内容验收 |
 |---|---|---|
-| Human 10 任务 | 本包已有逐仓库 revision 和哈希 | 按 3.3 下载并验收 |
-| 第一轮 recovery | 18 个所需 LeRobot 根目录均找到映射；仓库 `dvdnh2026/ds-ecr-g16-recovery-unified-9task-v1-20261022` | 使用已提供的 `round1-download.jsonl.gz` 下载全部 205,003 文件，随后核验冻结 manifest |
-| 第二轮 recovery | 13 个所需根目录在这份归档映射中均无记录 | 使用正在进行的训练数据上传，补齐 repo、revision、逐文件映射 |
-| A3 s1 续训 20k 父模型 | 三个权重分片的固定 SHA 在整份归档映射中均未命中 | 另行提供完整 22 文件模型；训练配置和日志不能代替权重 |
+| R1 recovery | DOWNLOADS 第 3 节；也可用完整 v3 的 `manifests/round1-download.jsonl.gz` | 205,003 文件、49,789,441,549 bytes；原包 `scripts/verify_recovery.py --round round1` |
+| R2 recovery 与固定 20k 父模型 | [两项补传交付单](MISSING_INPUTS.md)，使用其链接的冻结下载清单 | R2 原始 manifest 的全部 24,245 数据文件和顶层控制文件；父模型全部 22 文件 |
 
-上述缺失只针对这份归档映射，不表示其他正在上传的仓库没有这些文件。具体根目录计数和权重检查见 [cloud-training-coverage.json（私有配套文件）](PRIVATE_INPUTS.md)。R1 的完整下载命令及 manifest 验收命令见 START_HERE 第 1 节；云映射核对不替代下载后的内容验收。
+R1 原始 manifest SHA256 为 `ad34dd82983b3f22036218b7129ab9d2d3ab5d3243018a86ef4d513f0683a8b5`；R2 为 `aeb4d7271114522d7dc0e2c85ac3f1b26a93ff8b3d40baa014f380bbae112676`。它们是清单本身的哈希，每个数据文件仍须匹配清单中的大小和 SHA256。
 
-如需查看完整云目录映射，可先下载 **5 份元数据、约 40.39 MB**：
+补传映射放在 `$ECR_ROOT/input-maps/`，不修改原 ZIP 内文件。父模型恢复到 `$ECR_ROOT/models/xr1-a3-s1-cont-20k/`，与原包 `reference/model-pins-base-parent.json` 的 `continue` 条目一致。公开 `downloads/verify_round2_parent.py` 可独立验收这两项，不依赖 Human/R1；正式训练仍要求全部输入通过检查。
 
-```bash
-.venv-download/bin/python scripts/download_files.py \
-  manifests/archive-metadata-download.jsonl --root "$ECR_ROOT" --check-only
-.venv-download/bin/python scripts/download_files.py \
-  manifests/archive-metadata-download.jsonl --root "$ECR_ROOT"
-```
+下载器成功仅证明清单所列文件已通过校验。还须完成冻结文件集合对账，不能使用少了视频、parquet 或权重分片的清单。恢复时保留完整逻辑路径，不按 basename 合并；使用新的验收输出路径，保留已有回执。
 
-元数据仓库为 `dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023`，目录为 `snapshots/20261109/ecr-g16-ms-incremental-r1/_manifests/`，固定 revision 为 `d530e9b77c290307643c517aaf09dab27e1b2480`。该 revision **仅用于这些元数据**，不能填到 R1 数据仓库的下载记录里。R1 使用显式 `sha256_locked_branch` 模式从 `master` 读取，文件 SHA256/字节数取自冻结清单；不是不可变仓库 revision，也不会接受内容已改变的文件。元数据中的 `summary.json` 写于最后上传前，保留历史 phase；最终完成状态见本包 [独立验收回执（私有配套文件）](PRIVATE_INPUTS.md)。
+如需查看历史 370,075 条归档映射，按 DOWNLOADS 第 3 节下载五份 metadata。历史 metadata revision `d530e9b77c290307643c517aaf09dab27e1b2480` 只属于归档元数据，不能填到 R1 数据仓库。R1 仍使用显式 `sha256_locked_branch` 从 `master` 读取并逐文件锁定内容。R2/父模型补传单独记录实际 revision，不从旧归档地址推测。
 
-训练数据新上传完成后，请交付以下信息：
-
-- 每个逻辑源文件对应的 `repo_id`、`repo_type`、revision、仓库内路径、SHA256、字节数；优先确切 revision，旧分支必须显式声明 `revision_mode=sha256_locked_branch` 并锁定全部内容。
-- R1 / R2 原始完整文件清单；R1 manifest SHA 为 `ad34dd82983b3f22036218b7129ab9d2d3ab5d3243018a86ef4d513f0683a8b5`，R2 为 `aeb4d7271114522d7dc0e2c85ac3f1b26a93ff8b3d40baa014f380bbae112676`。这两个值是 manifest 文件的哈希，不能当作每个数据文件的哈希。
-- 父模型 22 个文件的对应云路径；内容必须匹配本包的 `continue` pins。
-
-如果复用 ECR 的分批增量封存，文件可能位于多个 repo 的 `snapshots/.../bNNNNNN/`，被去重的文件也可能仍在历史位置。需要按最终 `source-cloud-map` 恢复逻辑目录和别名，不能只下载最新 prefix，也不能按 basename 合并。上传进度达到 100% 仍需核对必需文件是否在最终验收范围内。
-
-整理成 `manifests/cloud-files.jsonl`，每行是本包规定的下载记录；以下仅展示 schema，尖括号必须由真实回执替换：
-
-```json
-{"repo_id":"<owner/repo>","repo_type":"dataset","revision":"<40位revision>","remote_path":"<仓库内完整路径>","local_path":"datasets/ecr-recovery-unified-9task/v3-round2-20261101/<export>/lerobot/meta/info.json","sha256":"<64位SHA256>","bytes":1234}
-```
-
-父模型记录的 `local_path` 应以 `models/xr1-a3-s1-cont-20k/` 开头。`repo_type` 按实际上传仓库填写，权重即使封存在 dataset repo 中也不能误填为 model。完成映射后执行：
-
-```bash
-.venv-download/bin/python scripts/download_files.py \
-  manifests/cloud-files.jsonl --root "$ECR_ROOT" --check-only
-.venv-download/bin/python scripts/download_files.py \
-  manifests/cloud-files.jsonl --root "$ECR_ROOT"
-unset MODELSCOPE_API_TOKEN
-```
-
-下载器完成只证明 **清单中的文件** 已核验。还必须将清单和冻结的 R1 / R2 manifest 作集合对账，确保全部训练 parquet、视频和元数据均覆盖；不能把一份不完整的清单标成全量数据就绪。第二轮历史验收覆盖 24,245 文件、5,557,378,683 bytes，细项见 [round2-readiness.json（私有配套文件）](PRIVATE_INPUTS.md)。
-
-可选：若要从 Xiaomi 原版走完整三阶段，执行下列已固定单文件 revision 和 SHA 的下载；仅复现最后一阶段不需要再次下载原版：
-
-```bash
-.venv-download/bin/python scripts/download_files.py \
-  manifests/xiaomi-base-download.jsonl --root "$ECR_ROOT"
-```
+原版模型仅用于原版起点的路线或算子诊断，下载入口见 DOWNLOADS 第 4 节；正式 Continue 仍从固定 20k 父模型开始。
 
 ### 3.5 生成机器本地配置
 
@@ -435,4 +397,4 @@ run/
 
 本包 SHA256 总清单为 `SHA256SUMS`，本地来源和哈希见 [evidence-index.json（私有配套文件）](PRIVATE_INPUTS.md)。其中历史 `dataset-catalog.json` 的 `preparation_state` 是提交时的 pending 状态；后来成功的 g10 暂存以 `round2-readiness.json` 为准。它证明历史训练输入曾通过验收，不证明本轮 ModelScope 下载或 Ascend 环境已经就绪。
 
-附带下载 / 解压 / 配置 / 计时工具已进行本地离线检查；**没有在本次交接中实际下载私有数据、提交 Ascend 训练或验证 NPU 算子**。工具检验范围及输出见 `verification.json`。训练输入映射与 Ascend 硬件信息确定后，补齐下载 pins 并完成 NPU 适配验收，训练目标和科学对照协议保持不变。v3 补入完整 R1 下载清单、集群执行入口、环境探测、NPU 候选生成、分阶段启动器、数据验收和 test500 对比工具；v1/v2 原包保留。
+原 v3 封包时的离线工具检查保留于 `verification.json`。2026-11-12 已补齐 R2/20k 父模型的真实云端映射并独立对账，公开下载工具的映射和样本访问测试通过；全量 payload 回下载尚待验收。最新结果见 [补传核验摘要](downloads/round2-parent-verification.json)。尚未在 Ascend 上训练或完成 NPU 算子验收；目标平台和 GPU evaluator 条件仍见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。v3 补入完整 R1 下载清单、集群执行入口、环境探测、NPU 候选生成、分阶段启动器、数据验收和 test500 对比工具；v1/v2 原包保留。

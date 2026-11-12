@@ -6,6 +6,12 @@ The original v3 ZIP is now stored in the existing private ModelScope archive at 
 
 See [HANDOFF_STATUS.md](HANDOFF_STATUS.md) for the current handoff audit and its limits. This upload resolves delivery of the code/evidence bundle; it does not establish full training readiness.
 
+## R2 and fixed 20k parent supplement — upload verified, readback pending
+
+All 24,270 files / 15,683,968,143 bytes have been uploaded and checked against source pins at immutable cloud revisions. The complete mapping was independently downloaded and checked against the frozen file set. **Full payload cloud readback has not yet passed.** [Download instructions](DOWNLOADS.md#6-r2-和固定-20k-父模型补传下载与独立验收) and [current verification status](downloads/round2-parent-verification.json) are available now; final acceptance will be recorded when complete.
+
+Mapping revision: `203223f41d3de33efdc1c0587de28075ddac963a`. Private repository: [dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112). Recipient permissions and hardware readiness are separate conditions.
+
 ## Historical data archive operation — 10 November 2026
 
 Status reviewed on **10 November 2026**, from a completion report timestamped **18:41 UTC / 13:41 Toronto**.
@@ -21,6 +27,6 @@ The reviewed incremental archive operation completed 284 batches, adding 71,995 
 | Xiaomi original base | Download pins available in `downloads/xiaomi-base-download.jsonl` for diagnostics or alternative training tracks |
 | Ascend port | Candidate preparation is available; hardware validation remains pending |
 
-This completion report establishes archival progress, not full readiness for the Continue experiment. Environment setup and available-input downloads can begin; formal training requires the missing inputs and NPU validation described in [START_HERE.md](START_HERE.md).
+This completion report establishes archival progress, not full readiness for the Continue experiment. Environment setup and available-input downloads can begin; formal training requires target-side input checks and NPU validation described in [START_HERE.md](START_HERE.md).
 
 Known repository identifiers and download instructions are published in [DOWNLOADS.md](DOWNLOADS.md). The complete archive file map is downloaded from its private ModelScope repository. Training source and operational evidence remain in the [private handoff bundle](PRIVATE_INPUTS.md).

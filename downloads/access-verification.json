@@ -1,5 +1,5 @@
 {
-  "verified_at_utc": "2026-11-12T15:25:03.606358+00:00",
+  "verified_at_utc": "2026-11-12T16:00:30.811881+00:00",
   "python": "3.11",
   "modelscope_hub_version": "0.6.1",
   "credential_scope": "Existing project owner credentials; recipient account access must be checked separately",
@@ -7,7 +7,7 @@
     "repo_id": "dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023",
     "repo_type": "dataset",
     "revision": "6bbf6a71afc2c39f78fc3e2a35e584c67be875cf",
-    "remote_path": "handoffs/xr1-ascend-v3-20261112-9e52a2342ad5/XR1-Ascend训练复现指南-v3.zip",
+    "remote_path": "handoffs/xr1-ascend-v3-20261112-9e52a2342ad5/XR1-Ascend\u8bad\u7ec3\u590d\u73b0\u6307\u5357-v3.zip",
     "bytes": 11563326,
     "sha256": "9e52a2342ad542af952376326bafdecd2fc43704301efbe461922e71fabe1466",
     "download_url": "https://modelscope.cn/api/v1/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023/repo?Revision=6bbf6a71afc2c39f78fc3e2a35e584c67be875cf&FilePath=handoffs%2Fxr1-ascend-v3-20261112-9e52a2342ad5%2FXR1-Ascend%E8%AE%AD%E7%BB%83%E5%A4%8D%E7%8E%B0%E6%8C%87%E5%8D%97-v3.zip"
@@ -15,7 +15,7 @@
   "bundle_full_download_verified": true,
   "bundle_member_checksums_passed": 244,
   "bundle_offline_tests_passed": 6,
-  "repository_probe_count": 12,
+  "repository_probe_count": 13,
   "repository_probes_passed": true,
   "repository_probes": [
     {
@@ -113,12 +113,24 @@
       "bytes_downloaded": 352,
       "sha256_verified": "4cf971d29f7531b1529225b8bfb182abfa4c8867caf5fa646a620f7b1057c6ea",
       "passed": true
+    },
+    {
+      "repo_id": "dvdnh2026/ds-ecr-xr1-ascend-r2-parent-20261112",
+      "revision": "59d16db791e800eea15d363cb30a40e4bb522d99",
+      "remote_path": "payload/b0001/datasets/ecr-recovery-unified-9task/v3-round2-20261101/ArrangeTea_xr1_r2_close_cabinet_doors_v05/lerobot/extras/dataset_meta.json",
+      "bytes_downloaded": 13301,
+      "sha256_verified": "d9e926d9ea90bb049923a8b9d1db878ba247ba0da778e60a5794eaa63493afc8",
+      "passed": true
     }
   ],
   "limits": [
     "No recipient account or target cluster access was tested",
-    "No full Human/R1/R2 dataset download in this audit",
-    "No R2 or fixed 20k parent download mapping verified",
+    "No full Human/R1 payload download in this audit",
+    "R2/parent full payload readback is pending; the complete mapping and public helper samples passed separately",
     "No Ascend hardware training or GPU simulation evaluation executed"
-  ]
+  ],
+  "bundle_verified_at_utc": "2026-11-12T15:25:03.606358+00:00",
+  "repository_probe_total_bytes": 4779999,
+  "repository_probe_manifest_sha256": "8512d244dd823cd017768e083953b79a2c792998e48e42e6d0fff642e0dbc6dc",
+  "supplement_verification": "round2-parent-verification.json"
 }
