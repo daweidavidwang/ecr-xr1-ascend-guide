@@ -4,7 +4,7 @@
 
 ## 1. 新的私有源码补充包
 
-**包已在owner工作站生成；尚无已验证的云端下载地址。请由owner通过私有渠道交给接手者。** 不要把旧ModelScope v3 ZIP的下载链接改名后当作Target50包。公开GitHub不包含私有训练实现或git历史。
+**包已在owner工作站生成并通过全部103项内部SHA校验；ModelScope上传已获批准，但上传环境缺少有效API凭据，尚未上传。** 用户已确认接手者使用现有已授权账号。当前没有可用的云端下载链接；若先通过私有渠道取得该ZIP，可按下文固定哈希校验。 不要把旧ModelScope v3 ZIP的下载链接改名后当作Target50包。公开GitHub不包含私有训练实现或git历史。
 
 | 字段 | 固定值 |
 |---|---|
@@ -15,7 +15,7 @@
 | source文件数 | 101 |
 | 内容 | Target50 Human reader/sampler/trainer/restart、B300运行参考、评测与采集准备代码、必要历史loss/数据混合实现；包内SOURCE_MANIFEST和SHA256SUMS |
 | 不包含 | 数据载荷、权重、凭据、git历史、已验证NPU实现 |
-| 云下载 | **未交付；不可填写猜测URL/revision** |
+| 云下载 | **尚未上传；revision / download URL 为 null**，见[机器可读交付状态](source-delivery.json) |
 
 owner本地交付文件：
 
@@ -42,7 +42,20 @@ export ECR_TARGET50_SOURCE="$ECR_TARGET50_BUNDLE/source"
 
 新私有源包还包含未完成的采集研究代码；存在文件不意味着它已经实机验收。读 [评测状态](EVALUATION_AND_ROLLOUT.md) 后再选择生产入口。
 
-当前Target50独立私有归档路线此前回执为 `blocked_missing_configured_openapi_token`（2026-11-13 11:43 UTC），尚无本次新源码包上传成功证据。账号在别的机器登录，不代表Monitor进程已有可用API凭据。凭据通过既有私有secret机制配置，禁止写到Git或公开文档。原有v3云包已经交付，但内容冻结于旧10-task；其可下载不解决新源码缺口。
+### 本次上传检查：2026-11-13 22:10 UTC / 17:10 Toronto
+
+本包请求 `ecr-target50-ascend-source-cloud-20261113-r1` 的真实回执为 `blocked_missing_configured_openapi_token`。329,314 bytes、ZIP外层SHA、104个成员和103项内部SHA已通过；标准SDK凭据加载保留有效期检查，未取得可用token。**尚未发起上传，也未完成当前远端权限、仓库可见性或回下载验收。** [交付状态](source-delivery.json)中保留这些未完成字段；不要把仓库主页当作本ZIP的下载链接。
+
+已批准目标为既有私有仓库 [dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023)，计划新增路径：
+
+```text
+handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip
+```
+
+这是**计划路径，当前不是可下载文件**。既有账号不需要再次申请本次上传授权；需在上传工作站为Monitor配置有效的ModelScope API凭据。账号在其他机器登录，不代表上传进程或Ascend下载环境已有凭据。使用平台secret或官方凭据机制，不把token发到聊天、Git、URL或命令行参数。
+
+凭据就绪后继续同一请求：核验仓库私有性 → 上传上述单一文件 → 记录实际固定revision → 在空缓存完整回下载 → 验外层SHA和103项内部SHA → 发布固定下载链接与可执行清单。保留原ZIP和旧云包。原有v3云包已交付，但内容冻结于旧10-task；其历史成功不能证明本次Target50包已上传。
+
 
 ## 2. 源码和运行版本关系
 

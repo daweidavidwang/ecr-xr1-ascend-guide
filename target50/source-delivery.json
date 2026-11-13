@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-13T22:10:21.464560+00:00",
+  "state": "blocked_missing_configured_openapi_token",
+  "request_id": "ecr-target50-ascend-source-cloud-20261113-r1",
+  "source": {
+    "file": "xr1-target50-ascend-20261113-v1.zip",
+    "source_verified": true,
+    "bytes": 329314,
+    "sha256": "be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7",
+    "zip_members": 104,
+    "internal_sha256_passed": 103
+  },
+  "destination": {
+    "repo_id": "dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023",
+    "repo_type": "dataset",
+    "required_visibility": "private",
+    "planned_remote_path": "handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip"
+  },
+  "recipient_access": "User confirmed the existing authorized ModelScope account; no new account grant or visibility change requested.",
+  "upload_attempted": false,
+  "revision": null,
+  "download_url": null,
+  "remote_access_and_visibility_verified": false,
+  "fresh_network_readback_verified": false,
+  "blocker": "The uploader standard SDK credential mechanism has no currently usable OpenAPI token. Account authorization alone does not provision the uploader process credential.",
+  "next_action": "Configure a valid token for the existing account through the private credential mechanism on the upload workstation. Resume the existing request; verify private visibility, upload this single ZIP, pin the actual revision, download to a fresh cache, and verify the outer and all 103 inner SHA256 values before publishing a usable download URL."
+}
