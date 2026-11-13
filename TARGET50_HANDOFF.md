@@ -4,6 +4,8 @@
 
 **接手目标：先在 Ascend 从原始 Xiaomi checkpoint 重新训练完整 Target50 Human SFT，训练 seeds 1、2，各 48,000 updates；在 19,200 / 33,600 / 48,000 做 dev1000，按 dev 选点后做 test2500；随后按三轮 recovery 计划推进。** 对比同配方 GPU 与 NPU 的效果和训练时间。Ascend 实机适配尚未完成，不能把本文件当作已经验证的 NPU 一键启动器。
 
+**源码交付更新（2026-11-13 22:10 UTC）：** 新Target50 ZIP已校验，用户已批准上传且接手者使用现有授权账号；上传进程当前缺少有效ModelScope API token，因此**尚未上传、尚无下载链接**。实际检查与下一步见[源码交付状态](target50/SOURCE_AND_STATUS.md)及[机器可读回执](target50/source-delivery.json)。此更新不改变下述科学实验快照。
+
 ## 1. 当前已经做到哪里
 
 状态证据截至 **2026-11-13 21:04 UTC / 16:04 Toronto**；队列观测截至 **20:38 UTC**。这是冻结交接快照，接手时重新读取实际作业状态。
