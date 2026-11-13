@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "snapshot_utc": "2026-11-13T21:04:20Z",
+  "science_contract": {
+    "model": "XR-1-RoboCasa365",
+    "tasks": 50,
+    "frames": 14957899,
+    "episodes": 25307,
+    "train_seeds": [
+      1,
+      2
+    ],
+    "updates_per_stage": 48000,
+    "warmup": 2400,
+    "global_batch": 192,
+    "micro_batch_reference": 12,
+    "world_size_reference": 4,
+    "accumulation_reference": 4,
+    "dev_steps": [
+      19200,
+      33600,
+      48000
+    ],
+    "dev_episodes": 1000,
+    "test_episodes": 2500,
+    "action_horizon": 16,
+    "raw_action_dim": 12,
+    "model_state_action_dim": 60,
+    "rollouts_per_round": 15000,
+    "rounds": 3
+  },
+  "gpu_human_steps": {
+    "s1": 10000,
+    "s2": 10000
+  },
+  "official_target50_scores": null,
+  "npu_implementation_validated": false,
+  "target50_recovery_available": false,
+  "private_source_bundle": {
+    "file": "xr1-target50-ascend-20261113-v1.zip",
+    "bytes": 329314,
+    "sha256": "be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7",
+    "source_revision": "4bf26d9831a355651b820eb116d8b02ea44f300d",
+    "cloud_url": null
+  }
+}

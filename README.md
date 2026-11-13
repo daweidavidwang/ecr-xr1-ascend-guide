@@ -1,5 +1,7 @@
 # ECR · Xiaomi XR‑1 最佳模型在 Ascend 上的训练复现与对比指南
 
+> **新增：50-task 实验请从 [TARGET50_HANDOFF.md](TARGET50_HANDOFF.md) 开始。** 包含当前Human50全量SFT、固定公开数据下载、48k配方、Ascend适配、dev1000/test2500、三轮recovery及源码交付状态。下文保留旧10-task实验说明，不是Target50启动入口。
+
 > **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 版本：v3（原包不变）· 云端访问与接手审计更新：2026-11-12 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员

@@ -1,0 +1,459 @@
+{
+  "schema_version": 1,
+  "task_set": "target50",
+  "split": "target",
+  "robocasa_commit": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+  "source_sha256": "23e8e31bb56bae80de86c34eafadfe32dd1e1eba6608376152ba9fdda5532a4b",
+  "tasks": [
+    {
+      "task": "CloseBlenderLid",
+      "group": "atomic_seen",
+      "target50_index": 0,
+      "horizon": 900,
+      "historical10": false,
+      "registry_key": "target/atomic/CloseBlenderLid/20250822/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/7anj5ckrlitmvwbexhh9elt9tof9v8sh"
+    },
+    {
+      "task": "CloseFridge",
+      "group": "atomic_seen",
+      "target50_index": 1,
+      "horizon": 900,
+      "historical10": false,
+      "registry_key": "target/atomic/CloseFridge/20250816/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/6yw8qwkwufg7di063v7e5zbcyhgn8nlf"
+    },
+    {
+      "task": "CloseToasterOvenDoor",
+      "group": "atomic_seen",
+      "target50_index": 2,
+      "horizon": 450,
+      "historical10": false,
+      "registry_key": "target/atomic/CloseToasterOvenDoor/20250818/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/86caoedy7compqenfh5a8ry62xebruyh"
+    },
+    {
+      "task": "CoffeeSetupMug",
+      "group": "atomic_seen",
+      "target50_index": 3,
+      "horizon": 600,
+      "historical10": true,
+      "registry_key": "target/atomic/CoffeeSetupMug/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/rhrr67a994a16o25iprsfec07a1wmwm2"
+    },
+    {
+      "task": "NavigateKitchen",
+      "group": "atomic_seen",
+      "target50_index": 4,
+      "horizon": 450,
+      "historical10": true,
+      "registry_key": "target/atomic/NavigateKitchen/20250821/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/z1td67netd0yyi9iiglws8hzxl9ueklj"
+    },
+    {
+      "task": "OpenCabinet",
+      "group": "atomic_seen",
+      "target50_index": 5,
+      "horizon": 1050,
+      "historical10": false,
+      "registry_key": "target/atomic/OpenCabinet/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/b15gbqq99i6kx8bogkdkq9lvurhbg9xw"
+    },
+    {
+      "task": "OpenDrawer",
+      "group": "atomic_seen",
+      "target50_index": 6,
+      "horizon": 750,
+      "historical10": false,
+      "registry_key": "target/atomic/OpenDrawer/20250816/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/mpztcjagk0fqs7e5360znjvhs08hnyjp"
+    },
+    {
+      "task": "OpenStandMixerHead",
+      "group": "atomic_seen",
+      "target50_index": 7,
+      "horizon": 450,
+      "historical10": false,
+      "registry_key": "target/atomic/OpenStandMixerHead/20250818/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/uf8tqixdm6elig7t3kgqnioxdnunxxqd"
+    },
+    {
+      "task": "PickPlaceCounterToCabinet",
+      "group": "atomic_seen",
+      "target50_index": 8,
+      "horizon": 750,
+      "historical10": false,
+      "registry_key": "target/atomic/PickPlaceCounterToCabinet/20250811/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/ersnvqs6rcy6yge2fy5hmna7d954v9ty"
+    },
+    {
+      "task": "PickPlaceCounterToStove",
+      "group": "atomic_seen",
+      "target50_index": 9,
+      "horizon": 600,
+      "historical10": false,
+      "registry_key": "target/atomic/PickPlaceCounterToStove/20250818/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/9zy06e4dcaxezsq35l6qpe39zi0uaqvh"
+    },
+    {
+      "task": "PickPlaceDrawerToCounter",
+      "group": "atomic_seen",
+      "target50_index": 10,
+      "horizon": 750,
+      "historical10": false,
+      "registry_key": "target/atomic/PickPlaceDrawerToCounter/20250820/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/xec45dl0meig2yl1v4cmi1hqxw3eu74l"
+    },
+    {
+      "task": "PickPlaceSinkToCounter",
+      "group": "atomic_seen",
+      "target50_index": 11,
+      "horizon": 900,
+      "historical10": false,
+      "registry_key": "target/atomic/PickPlaceSinkToCounter/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/gtxm57dfse72c6zwbel05zhjritt1scq"
+    },
+    {
+      "task": "PickPlaceToasterToCounter",
+      "group": "atomic_seen",
+      "target50_index": 12,
+      "horizon": 600,
+      "historical10": false,
+      "registry_key": "target/atomic/PickPlaceToasterToCounter/20250817/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/4gn9j4llpxb2v8pk2r00im1a1zz7qqqm"
+    },
+    {
+      "task": "SlideDishwasherRack",
+      "group": "atomic_seen",
+      "target50_index": 13,
+      "horizon": 450,
+      "historical10": false,
+      "registry_key": "target/atomic/SlideDishwasherRack/20250820/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/4mrm925oekfrlfyjlg9c8wflqktwla6y"
+    },
+    {
+      "task": "TurnOffStove",
+      "group": "atomic_seen",
+      "target50_index": 14,
+      "horizon": 750,
+      "historical10": true,
+      "registry_key": "target/atomic/TurnOffStove/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/xsvs8uazyfwoeqij298gsax3b400b4h8"
+    },
+    {
+      "task": "TurnOnElectricKettle",
+      "group": "atomic_seen",
+      "target50_index": 15,
+      "horizon": 450,
+      "historical10": false,
+      "registry_key": "target/atomic/TurnOnElectricKettle/20250817/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/ctirlg0mryjz511rb2pntdgmwir2m3vw"
+    },
+    {
+      "task": "TurnOnMicrowave",
+      "group": "atomic_seen",
+      "target50_index": 16,
+      "horizon": 450,
+      "historical10": false,
+      "registry_key": "target/atomic/TurnOnMicrowave/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/ta8tufw9408tzx3fxffwr5lh1hknp8fz"
+    },
+    {
+      "task": "TurnOnSinkFaucet",
+      "group": "atomic_seen",
+      "target50_index": 17,
+      "horizon": 600,
+      "historical10": true,
+      "registry_key": "target/atomic/TurnOnSinkFaucet/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/g0gamv85pvi4ab220szfhr72wg7tioap"
+    },
+    {
+      "task": "DeliverStraw",
+      "group": "composite_seen",
+      "target50_index": 18,
+      "horizon": 2550,
+      "historical10": false,
+      "registry_key": "target/composite/DeliverStraw/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/tza1gj7kvysu3b7v7pe3ccsi4by8qkey"
+    },
+    {
+      "task": "GetToastedBread",
+      "group": "composite_seen",
+      "target50_index": 19,
+      "horizon": 3000,
+      "historical10": false,
+      "registry_key": "target/composite/GetToastedBread/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/zxh96llta6cdh9amc9wo2hbdu7u706q1"
+    },
+    {
+      "task": "KettleBoiling",
+      "group": "composite_seen",
+      "target50_index": 20,
+      "horizon": 1500,
+      "historical10": true,
+      "registry_key": "target/composite/KettleBoiling/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/r3rwnzdw6caab3vivwv6uknl9sr8ru6j"
+    },
+    {
+      "task": "LoadDishwasher",
+      "group": "composite_seen",
+      "target50_index": 21,
+      "horizon": 1800,
+      "historical10": true,
+      "registry_key": "target/composite/LoadDishwasher/20250811/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/k1qxg8rgjs0le1cnv98xylysh9t0dd8z"
+    },
+    {
+      "task": "PackIdenticalLunches",
+      "group": "composite_seen",
+      "target50_index": 22,
+      "horizon": 3900,
+      "historical10": false,
+      "registry_key": "target/composite/PackIdenticalLunches/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/ic9q7o0s99boxmpqcl04iurj9dyt2lck"
+    },
+    {
+      "task": "PreSoakPan",
+      "group": "composite_seen",
+      "target50_index": 23,
+      "horizon": 2400,
+      "historical10": false,
+      "registry_key": "target/composite/PreSoakPan/20250809/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/krqwe33yytnrse06xchr5e41sap41xfv"
+    },
+    {
+      "task": "PrepareCoffee",
+      "group": "composite_seen",
+      "target50_index": 24,
+      "horizon": 1800,
+      "historical10": false,
+      "registry_key": "target/composite/PrepareCoffee/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/6h5x8zxnzdd20h9kz7h85mz1bfo3u1lv"
+    },
+    {
+      "task": "RinseSinkBasin",
+      "group": "composite_seen",
+      "target50_index": 25,
+      "horizon": 1350,
+      "historical10": false,
+      "registry_key": "target/composite/RinseSinkBasin/20250816/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/blk33oaca11933xgre1sxemmtluo46eo"
+    },
+    {
+      "task": "ScrubCuttingBoard",
+      "group": "composite_seen",
+      "target50_index": 26,
+      "horizon": 1200,
+      "historical10": false,
+      "registry_key": "target/composite/ScrubCuttingBoard/20250816/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/yixaacen8dwnvlqmm9rmgf301nnwq6gk"
+    },
+    {
+      "task": "SearingMeat",
+      "group": "composite_seen",
+      "target50_index": 27,
+      "horizon": 4350,
+      "historical10": false,
+      "registry_key": "target/composite/SearingMeat/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/p2tngueixoz7v9jup2cr7905vbbbs77r"
+    },
+    {
+      "task": "SetUpCuttingStation",
+      "group": "composite_seen",
+      "target50_index": 28,
+      "horizon": 2400,
+      "historical10": false,
+      "registry_key": "target/composite/SetUpCuttingStation/20250817/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/pqckoqqbkthmoph3zm3vmmyq1st3owrh"
+    },
+    {
+      "task": "StackBowlsCabinet",
+      "group": "composite_seen",
+      "target50_index": 29,
+      "horizon": 2100,
+      "historical10": false,
+      "registry_key": "target/composite/StackBowlsCabinet/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/ifg8homjllollqodp7atye0mzq7bsazb"
+    },
+    {
+      "task": "SteamInMicrowave",
+      "group": "composite_seen",
+      "target50_index": 30,
+      "horizon": 2100,
+      "historical10": true,
+      "registry_key": "target/composite/SteamInMicrowave/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/orr1n70ald5dsep2kpdfnxo7jogcjqls"
+    },
+    {
+      "task": "StirVegetables",
+      "group": "composite_seen",
+      "target50_index": 31,
+      "horizon": 2400,
+      "historical10": false,
+      "registry_key": "target/composite/StirVegetables/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/f54ihxkmiiihnxnjvia54or0vqqorriw"
+    },
+    {
+      "task": "StoreLeftoversInBowl",
+      "group": "composite_seen",
+      "target50_index": 32,
+      "horizon": 2550,
+      "historical10": false,
+      "registry_key": "target/composite/StoreLeftoversInBowl/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/n69gzwudustsz0hc3txhqzhclnbpab6r"
+    },
+    {
+      "task": "WashLettuce",
+      "group": "composite_seen",
+      "target50_index": 33,
+      "horizon": 1650,
+      "historical10": false,
+      "registry_key": "target/composite/WashLettuce/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/jmcowh1gtmshr52sc55p2ww265y97doh"
+    },
+    {
+      "task": "ArrangeBreadBasket",
+      "group": "composite_unseen",
+      "target50_index": 34,
+      "horizon": 4350,
+      "historical10": false,
+      "registry_key": "target/composite/ArrangeBreadBasket/20250809/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/7jgzm2brzvyknka6xge83ot21rwws9rd"
+    },
+    {
+      "task": "ArrangeTea",
+      "group": "composite_unseen",
+      "target50_index": 35,
+      "horizon": 2250,
+      "historical10": true,
+      "registry_key": "target/composite/ArrangeTea/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/1slqmm2stz2g0a3bavj6ums7ek64ht2m"
+    },
+    {
+      "task": "BreadSelection",
+      "group": "composite_unseen",
+      "target50_index": 36,
+      "horizon": 1950,
+      "historical10": false,
+      "registry_key": "target/composite/BreadSelection/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/6o1ox753ry7wavwhc4fh34y3v1pczx3r"
+    },
+    {
+      "task": "CategorizeCondiments",
+      "group": "composite_unseen",
+      "target50_index": 37,
+      "horizon": 1650,
+      "historical10": false,
+      "registry_key": "target/composite/CategorizeCondiments/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/xuzdf1lfm9vzeoipi56iorzg2tt53y1a"
+    },
+    {
+      "task": "CuttingToolSelection",
+      "group": "composite_unseen",
+      "target50_index": 38,
+      "horizon": 1200,
+      "historical10": false,
+      "registry_key": "target/composite/CuttingToolSelection/20250814/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/k05932wjpc1xjvg6wyfengklxj7fokq4"
+    },
+    {
+      "task": "GarnishPancake",
+      "group": "composite_unseen",
+      "target50_index": 39,
+      "horizon": 2700,
+      "historical10": false,
+      "registry_key": "target/composite/GarnishPancake/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/wshjpqv739wxu0zu47mtnlzehmm6ktoq"
+    },
+    {
+      "task": "GatherTableware",
+      "group": "composite_unseen",
+      "target50_index": 40,
+      "horizon": 2250,
+      "historical10": false,
+      "registry_key": "target/composite/GatherTableware/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/aihrp20s9yoc73ngob1l6royp5gspldb"
+    },
+    {
+      "task": "HeatKebabSandwich",
+      "group": "composite_unseen",
+      "target50_index": 41,
+      "horizon": 2700,
+      "historical10": false,
+      "registry_key": "target/composite/HeatKebabSandwich/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/wwot1hszlxuptxjvcwkpu4q2xpg2ogsx"
+    },
+    {
+      "task": "MakeIceLemonade",
+      "group": "composite_unseen",
+      "target50_index": 42,
+      "horizon": 3000,
+      "historical10": true,
+      "registry_key": "target/composite/MakeIceLemonade/20250813/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/spj7rp3j0q8qu1ncj5lc8bosnebmlpwl"
+    },
+    {
+      "task": "PanTransfer",
+      "group": "composite_unseen",
+      "target50_index": 43,
+      "horizon": 1800,
+      "historical10": false,
+      "registry_key": "target/composite/PanTransfer/20250817/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/734jsqsgy5uu66gufuj6ltl0oyjybf28"
+    },
+    {
+      "task": "PortionHotDogs",
+      "group": "composite_unseen",
+      "target50_index": 44,
+      "horizon": 2250,
+      "historical10": false,
+      "registry_key": "target/composite/PortionHotDogs/20250816/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/vggfiwfep4n0jnm59a18qq3tcvmn8ccd"
+    },
+    {
+      "task": "RecycleBottlesByType",
+      "group": "composite_unseen",
+      "target50_index": 45,
+      "horizon": 2850,
+      "historical10": false,
+      "registry_key": "target/composite/RecycleBottlesByType/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/iexgdqiq7tahatl4y98zwi5wu1ejj1sf"
+    },
+    {
+      "task": "SeparateFreezerRack",
+      "group": "composite_unseen",
+      "target50_index": 46,
+      "horizon": 2400,
+      "historical10": false,
+      "registry_key": "target/composite/SeparateFreezerRack/20250815/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/qf9mnd9kixmwt0hnciqtm8gpm3sqoy56"
+    },
+    {
+      "task": "WaffleReheat",
+      "group": "composite_unseen",
+      "target50_index": 47,
+      "horizon": 4050,
+      "historical10": false,
+      "registry_key": "target/composite/WaffleReheat/20250817/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/d3bwmx0r6h4nyuv7qhizsyy2380cu230"
+    },
+    {
+      "task": "WashFruitColander",
+      "group": "composite_unseen",
+      "target50_index": 48,
+      "horizon": 3150,
+      "historical10": true,
+      "registry_key": "target/composite/WashFruitColander/20250811/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/8omrgv8mqo2p5s1hqjmas67p30etsiic"
+    },
+    {
+      "task": "WeighIngredients",
+      "group": "composite_unseen",
+      "target50_index": 49,
+      "horizon": 3000,
+      "historical10": false,
+      "registry_key": "target/composite/WeighIngredients/20250812/lerobot.tar",
+      "box_url": "https://utexas.box.com/s/lbecgm6e5bk4icwylttsrkfxszh7d154"
+    }
+  ]
+}

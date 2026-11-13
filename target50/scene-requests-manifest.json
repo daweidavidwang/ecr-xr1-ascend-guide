@@ -1,0 +1,102 @@
+{
+  "bulk_execution_ready": false,
+  "catalog_sha256": "2fe915fba5feb4a2115a1e9302a0d04154c6b8f91c3dc75b238d4223d7a95562",
+  "cross_phase_requested_seed_overlap": 0,
+  "files": [
+    {
+      "bytes": 367380,
+      "file": "dev.jsonl",
+      "per_task": 20,
+      "phase": "dev",
+      "rollout_smoke_slots": 0,
+      "seed_max": 510049019,
+      "seed_min": 510000000,
+      "sha256": "4f4af1f0a1baa628b4f10ef9d906459d2bd955c4cbb573778be90fc6c4237cee",
+      "slots": 1000
+    },
+    {
+      "bytes": 924200,
+      "file": "test.jsonl",
+      "per_task": 50,
+      "phase": "test",
+      "rollout_smoke_slots": 0,
+      "seed_max": 520049049,
+      "seed_min": 520000000,
+      "sha256": "c312526053e6042b0d9963a91ebd5dea7c9cec12d21b20f16daba7c86ab53d3e",
+      "slots": 2500
+    },
+    {
+      "bytes": 5737600,
+      "file": "rollout_r1.jsonl",
+      "per_task": 300,
+      "phase": "rollout_r1",
+      "rollout_smoke_slots": 100,
+      "seed_max": 530049299,
+      "seed_min": 530000000,
+      "sha256": "aea25bc9507ffc209dd37d839d9990801b2c4ef93c3458753202c931f61fd317",
+      "slots": 15000
+    },
+    {
+      "bytes": 5737600,
+      "file": "rollout_r2.jsonl",
+      "per_task": 300,
+      "phase": "rollout_r2",
+      "rollout_smoke_slots": 100,
+      "seed_max": 540049299,
+      "seed_min": 540000000,
+      "sha256": "a838f2ca4c4d2291be9912a96b3004b39e9b44815c43b53654230f0ef4efac72",
+      "slots": 15000
+    },
+    {
+      "bytes": 5737600,
+      "file": "rollout_r3.jsonl",
+      "per_task": 300,
+      "phase": "rollout_r3",
+      "rollout_smoke_slots": 100,
+      "seed_max": 550049299,
+      "seed_min": 550000000,
+      "sha256": "8a5770839422bf4d3ab7f06d836741ddf1ddb714cbbb2eab9c97791f3ef7f136",
+      "slots": 15000
+    }
+  ],
+  "human_scene_overlap": "unresolved_pending_metadata_and_initial_state_audit",
+  "inference": {
+    "crop_ratio": 0.95,
+    "flow_steps": 5,
+    "history": 4,
+    "interval": 2,
+    "prompt_tag": "[human]",
+    "replan_steps": 16
+  },
+  "phase_bases": {
+    "dev": 510000000,
+    "rollout_r1": 530000000,
+    "rollout_r2": 540000000,
+    "rollout_r3": 550000000,
+    "test": 520000000
+  },
+  "physical_scene_independence_proven": false,
+  "robocasa_revision": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+  "runtime_required": [
+    "actual layout/style and native XML/model fingerprint",
+    "initial integration state and observation fingerprints",
+    "per-task full recording and cross-process recovery acceptance",
+    "native reset; no playback XML mass-changing reconstruction",
+    "technical retries retain same scene_id/seed with a new attempt"
+  ],
+  "schema": "ecr-target50-scene-requests-v1",
+  "seed_formula": "phase_base + 1000 * target50_index + slot",
+  "selection": {
+    "dev_slots": 1000,
+    "human_candidates": [
+      19200,
+      33600,
+      48000
+    ],
+    "test_slots": 2500,
+    "test_used_for_selection": false
+  },
+  "shared_across_training_seeds_and_models": true,
+  "strict_pairing_accepted": false,
+  "total_unique_requested_seeds": 48500
+}

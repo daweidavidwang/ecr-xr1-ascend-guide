@@ -1,0 +1,17 @@
+[
+  {
+    "file": "atomic_seen-episodes.jsonl",
+    "bytes": 11419396,
+    "sha256": "dae7a255d82f29409ecb5eccbf7ac30540c4d69156549a16825dda96e7a3b19e"
+  },
+  {
+    "file": "composite_seen-episodes.jsonl",
+    "bytes": 10666697,
+    "sha256": "0aea0c0ef7bf8b1820043f264ea67efee76f57b8a129c1d8a03d143a8a0ada1d"
+  },
+  {
+    "file": "composite_unseen-episodes.jsonl",
+    "bytes": 10818641,
+    "sha256": "b9af1c9ff6bdab1d88802639f5a2bbaeed3dba66bb8e3c877ff516435d52f2f4"
+  }
+]
