@@ -1,8 +1,5 @@
 {
   "schema_version": 1,
-  "snapshot_topic_commit": "a156b564c09bdb820f6083e4c726a341662a6341",
-  "source_manifest": "topics/wam-robocasa/manifests/human-hf-full-v1.json",
-  "source_manifest_sha256": "9c88221137e0f10333ef7bc70998c5983b62317b8c37d7611a4f0b4127a0a508",
   "files": [
     {
       "component": "atomic_seen",
@@ -3383,5 +3380,7 @@
     }
   ],
   "file_count": 307,
-  "total_bytes": 43253612263
+  "total_bytes": 43253612263,
+  "snapshot_at": "2026-11-13T21:22:11.397770+00:00",
+  "note": "Self-contained fixed public input inventory. File records and source digests are unchanged."
 }

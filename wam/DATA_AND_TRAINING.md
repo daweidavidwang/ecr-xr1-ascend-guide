@@ -49,7 +49,7 @@ python3 wam/verify_inputs.py wam/pins/human-hf-full-v1.json --root "$WAM_ROOT"
 
 在指南仓库根执行。也可先加 `--component loopwam` 只验一个分组；全量验收仍要运行不带筛选的检查。`git_blob_sha1` 不是文件裸 SHA1：必须算 `SHA1(b"blob " + decimal_size + b"\0" + file_bytes)`；验证器已区分它与 SHA256，并为每个通过的文件输出 SHA256。输出可以重定向到新的验收文件，退出码非零就不能视作通过。
 
-已有私有研究树的 `tools/wam_stage_public_inputs.py` 实现固定清单、镜像、续传及摘要校验，但入口绑定原节点 hostname/root 和资源合同。Ascend 需在自己的适配分支配置新落点及预算，不能伪造原主机身份或删掉所有检查。
+下载器只需逐条读取本目录清单：保持 revision/path，写入独立 `.part`，按 bytes 与指定摘要验证，再原子发布；已存在但不一致的文件保留并报错。不要依赖另一个工程的节点专用入口。下载后统一运行上方公开验证器。
 
 ### 容量规划
 
@@ -74,11 +74,11 @@ python3 wam/verify_inputs.py wam/pins/human-hf-full-v1.json --root "$WAM_ROOT"
 | train | 25,012 | 14,783,844 |
 | validation | 295 | 174,055 |
 
-分区 seed=42。不要重新按帧随机拆分，不改变源 episode 身份，不将 validation 混入训练。应复用固定 config/episode catalog，并对照其内容 hash；相同随机 seed 不能代替相同目录顺序和确切 episode 集合。
+每个任务独立重置 NumPy `default_rng(42)`，按原 `source_episode_index` 排序后做99/1整 episode划分。精确排序、代码、源身份字段和校验计数见 [实现细节](IMPLEMENTATION_DETAILS.md)。不要按帧随机拆分，不将 validation 混入训练；相同 seed 不能代替相同源身份与排序。
 
 源为 LeRobot v3 共享 parquet/视频分片，不能直接当作“一段视频对应一个 episode”的 v2.1 数据。现有适配生成每任务/episode 的数值视图并复用源视频；**每个相机有自己的时间 offset**，必须按 `offset + control_step / 20` 读帧。不能只取首个相机的 offset，不把全分片起点当作 episode 起点，不打乱 parquet 行顺序。
 
-三视角为 `robot0_agentview_left`、`robot0_agentview_right`、`robot0_eye_in_hand`；使用源 meta 中精确的 camera key/path。原视图 256×256。维护工具在研究分支：`tools/wam_map_human_episodes.py`、`wam_build_human_views.py`、`wam_audit_human_full.py`、`wam_probe_human_reader.py`；Loop 分支含实际读取器修改。它们有原节点路径/回执约束，接手应保留数据语义、参数化路径并重新生成本机证据。
+三视角为 `robot0_agentview_left`、`robot0_agentview_right`、`robot0_eye_in_hand`；元数据 key 加 `observation.images.` 前缀。原视图256×256。[实现细节](IMPLEMENTATION_DETAILS.md) 直接给出转换规格、共享视频时间函数及其在公开 Loop 读取器中的插入位置；参数化本机路径后重新生成数值/解码证据。
 
 ## 3. Awomo RoboCasa 数据语义：不能套 RoboDojo 训练
 
@@ -93,7 +93,7 @@ python3 wam/verify_inputs.py wam/pins/human-hf-full-v1.json --root "$WAM_ROOT"
 - 窗口起点在 16 步网格；目标图像在 `start+16`；动作是 `[start,start+16)`。未来图像只能作 target，不能进入条件 prompt/历史。
 - 早期缺失 history 由 valid mask 表示。原生 processor 实际条件图像数随有效历史变化：0 history 是 1 图；4 history 是 5 图；9 history 是 10 图。不能为了 batch shape 把未来图像填成历史。
 
-实现入口：`awomo/data/robocasa/human_contract.py`、`human_pixels.py`、`training_sample.py`、`window_index.py`；原生参照是 `eval_robocasa365/common.py`、`awomo_05i/policy.py` 和 `awomo/awomo_05i/prompt.py`。
+本交接 [实现细节](IMPLEMENTATION_DETAILS.md) 内直接包含数值映射、像素请求重组、样本检查和采样辅助代码。公开原生参照是 `eval_robocasa365/common.py`、`eval_robocasa365/awomo_05i/policy.py` 和 `awomo/awomo_05i/prompt.py`；新增辅助代码需接入自己的分支。
 
 ### 已验证的样本范围
 
@@ -110,7 +110,7 @@ StoreLeftoversInBowl: c40f869f9ce2b949c57234fd17d92db526b4991eb8234a79f1ab47b4d9
 CategorizeCondiments: e07ad2288bdb58e6e197dfe149438713cd8ca200cb6bcdf2d3e4c1524738ab99
 ```
 
-NPZ 是私有 fixture，未附在公开指南内。通过私有证据索引找到生产回执/原路径，由资源 owner 转移；或在固定输入和代码下重新生成后逐数组/身份对照，不能拿随机数据冒充原样本。
+这三份历史 NPZ payload 未附带；其 SHA 是历史文件身份，不是下载入口。可按 [实现细节](IMPLEMENTATION_DETAILS.md) 中明确的 episode/start、固定公开输入和原生 processor 重新生成真实样本，保存数组的 shape/dtype/content hash。NPZ 容器或依赖改变可能影响文件字节；需要历史逐数组比较时，向原运行端取这三份按上述 SHA 标识的文件即可，无需工程仓库访问。不能拿随机数据冒充原样本。
 
 ### 全窗口与可恢复采样
 
@@ -126,7 +126,7 @@ a514224e5a149effa98279627b91fa25d3b19f33bff1b3fc9832dd76b2294b49
 
 ## 4. LoopWAM Human SFT 当前合同
 
-冻结初始配方在私有 `manifests/human-sft-initial-fixed-dose-v1.json`，该合同准备完成而正式训练未启动：
+冻结初始配方完整列在下表；该合同准备完成而正式训练未启动：
 
 | 项目 | 值 |
 |---|---|
@@ -145,7 +145,7 @@ GPU2 两卡短训练验收：原生 update1/2/3 loss 日志为 0.2796/0.2536/0.5
 
 ## 5. Awomo 真实训练诊断：实现已有，GPU 尚未通过
 
-固定源码 `6e9453a…`，入口 `scripts/probe_robocasa_human_training.py`；其内部训练函数是 `awomo/training/robocasa_probe.py`。原入口显式要求 B300/CUDA、固定环境 prefix、固定三份样本和 CPU 回执，所以不能拿 `--site b300` 在 Ascend 伪装运行。
+接手者需要基于公开 Awomo 源码建立本机训练诊断入口；原 GPU 实现的必要目标、输入和恢复语义完整写在下方及 [实现细节](IMPLEMENTATION_DETAILS.md)。这些是待移植合同，不能把公开上游误当成已包含 RoboCasa Human 训练入口。
 
 诊断语义如下，Ascend 适配先保持它：
 

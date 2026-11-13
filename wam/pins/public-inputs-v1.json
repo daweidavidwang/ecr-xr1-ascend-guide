@@ -1,8 +1,5 @@
 {
   "schema_version": 1,
-  "snapshot_topic_commit": "a156b564c09bdb820f6083e4c726a341662a6341",
-  "source_manifest": "topics/wam-robocasa/manifests/public-inputs-v1.json",
-  "source_manifest_sha256": "5c6bc073a71822b85258cf285ac465421d26fd7968f5cc261a320b3d461c71a7",
   "files": [
     {
       "component": "loopwam",
@@ -452,5 +449,7 @@
     }
   ],
   "file_count": 33,
-  "total_bytes": 54932913325
+  "total_bytes": 54932913325,
+  "snapshot_at": "2026-11-13T21:22:11.397770+00:00",
+  "note": "Self-contained fixed public input inventory. File records and source digests are unchanged."
 }

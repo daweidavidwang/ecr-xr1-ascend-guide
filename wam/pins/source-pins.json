@@ -1,33 +1,39 @@
 {
-  "schema_version": 1,
-  "private_repository": "https://github.com/daweidavidwang/auto_researcher",
-  "access": "Authenticated read access is required; public guide does not grant it. Source branches contain different repository trees.",
-  "branches": [
+  "schema_version": 2,
+  "access": "Public upstreams only. Additional engineering semantics and core helpers are included in the handover; they are not claimed to exist in upstream.",
+  "components": [
     {
-      "role": "topic",
-      "branch": "topic/wam-robocasa",
-      "commit": "a156b564c09bdb820f6083e4c726a341662a6341"
+      "role": "loopwam_published",
+      "repository": "https://github.com/loop-wam/LoopWAM",
+      "commit": "3400f1c1c1f7243cb9fbc3456ae05092964bc6cd"
     },
     {
-      "role": "loopwam-maintained",
-      "branch": "source/wam-loopwam-human-adapter",
-      "commit": "58af0fa417bda70c4f6ec070e7496ab3bd020364"
+      "role": "awomo_published",
+      "repository": "https://github.com/Awomo-WestlakeDI/Awomo-0.5",
+      "commit": "1145c18afd13a3876c6740f098bd734f5e35617a"
     },
     {
-      "role": "awomo-maintained",
-      "branch": "source/wam-awomo-human-adapter",
-      "commit": "ed7953074b3ec717b48dc563e1f775cfab4a0846"
+      "role": "awomo_public_sft_base",
+      "repository": "https://github.com/Awomo-WestlakeDI/Awomo-0.5",
+      "commit": "32353be48397614206d947b1994b39049e7f4fbe"
+    },
+    {
+      "role": "awomo_robocasa",
+      "repository": "https://github.com/robocasa/robocasa",
+      "commit": "4f8a2980def75a55dff96b990745b83540425f09"
+    },
+    {
+      "role": "ecr_common_robocasa",
+      "repository": "https://github.com/robocasa/robocasa",
+      "commit": "456174f62b89b8fca99eaaf33949c29fec9cfc2a"
+    },
+    {
+      "role": "awomo_and_ecr_robosuite",
+      "repository": "https://github.com/ARISE-Initiative/robosuite",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c"
     }
   ],
-  "frozen_components": {
-    "loopwam_published": "3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
-    "awomo_published": "1145c18afd13a3876c6740f098bd734f5e35617a",
-    "loopwam_native_two_rank_training": "3a2d13390f46d96078efa21fdb5c219a4e47c547",
-    "awomo_training_probe": "6e9453aed412a329d60f0d4047b04a6bb3d9f1e0",
-    "awomo_window_index": "cab88a10330bb2eb2350d13b2ab5802d68450b28",
-    "native_policy_target_probe": "61fa0107afaca740d9181ede8611271cb75d4bb0",
-    "full_target_entry": "ca2ab82593607cde5deb50eed0841d5bfe241a21",
-    "official_awomo_runner_in_loop_repository": "7a21b4299ff0fda07438b7a16d1b3d649ef2c8a0",
-    "awomo_public_sft_base": "32353be48397614206d947b1994b39049e7f4fbe"
-  }
+  "loopwam_simulator": "third_party/RoboCasa365/{robocasa,robosuite} in the pinned LoopWAM tree",
+  "engineering_specification": "../IMPLEMENTATION_DETAILS.md",
+  "gpu_environment_record": "../GPU_ENVIRONMENTS.md"
 }

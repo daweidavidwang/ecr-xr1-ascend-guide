@@ -29,9 +29,9 @@
 
 ## 2. ECR Target50 共同协议
 
-共同环境的 RoboCasa 固定 `456174f62b89b8fca99eaaf33949c29fec9cfc2a`；完整 robosuite/安装包/资产 hash 从私有环境合同恢复，不能单凭此一个commit重建所有依赖。
+共同环境固定 RoboCasa `456174f62b89b8fca99eaaf33949c29fec9cfc2a`、robosuite `5ce6643f3092639d08f7b0f90ed1c6a84f50552c`；完整包版本和资产验收边界见 [GPU环境](GPU_ENVIRONMENTS.md)。源码、软件和资产均需验收，不能单凭一个commit判断场景等价。
 
-私有研究树 `topics/wam-robocasa/manifests/ecr-scene-requests-v1/`：
+在 [实现细节](IMPLEMENTATION_DETAILS.md) 中运行内嵌生成器，可从本目录任务清单逐字节重建下列文件：
 
 | 文件 | 数量 | SHA256 |
 |---|---:|---|
@@ -46,12 +46,12 @@
 
 Awomo在共同target的策略RNG与大的environment seed分离：`(7+50*target_index+slot)*10000+replan`，避免超uint32；环境仍用冻结的大seed。此规则在共同target合同中单独声明，不能与官方pretrain seed公式混写。
 
-共同原生策略短诊断源 `61fa010…` 每模型两场景、每场景最多64步；完整入口源 `ca2ab825…` 使用完整horizon。快照时两者尚未完成真实GPU策略验收，剩余48类实际重建/覆盖也未完成。清单和CPU测试通过不放行全部5,000正式局；先完成同场景/动作包装、长历史和完整dev前置。
+共同原生策略短诊断每模型两场景、每场景最多64步；完整入口必须使用完整horizon，其进程、身份、观测与错误验收规格直接列于 [实现细节](IMPLEMENTATION_DETAILS.md)。快照时两者尚未完成真实GPU策略验收，剩余48类实际重建/覆盖也未完成。清单和CPU测试通过不放行全部5,000正式局；先完成同场景/动作包装、长历史和完整dev前置。
 
 ## 3. 已知故障与处理边界
 
 1. **B300 CUDA12.8/NVRTC 与架构兼容问题。** 原Awomo实际模型失败后，通过诊断确认compute目标相关，换到隔离的cu129环境后完整推理通过。不是模型权重错误，也不能照搬cu129到Ascend。
-2. **EGL用户态库与实际分配设备不一致。** 当前GPU运行使用独立私有库路径，核对实际GPU UUID/PCI与EGL映射，不修改共享系统栈。NPU不承接这个OpenGL后端；推荐保留GPU evaluator。
+2. **EGL用户态库与实际分配设备不一致。** 当前GPU运行使用隔离的库路径，核对实际GPU UUID/PCI与EGL映射，不修改共享系统栈。NPU不承接这个OpenGL后端；推荐保留GPU evaluator。
 3. **原生材质shininess越界/GL错误。** 曾导致正式任务中断；直接clamp材质会改变像素，因此没有用“修改材质后成绩”冒充原版。已做精确错误归类、保存动作重放和环境关闭/清理诊断。新Ascend复测仍需记录未知GL错误，不能全局吞掉GL异常。
 4. **Loop原CLI的Hydra导入方式。** 旧包装器失败发生在server启动/模型加载之前；后来通过直接以原脚本 `__main__` 启动解决。应复用冻结包装器思想，不用随意import代替原CLI。
 5. **训练checkpoint“变化见证”曾有误判。** 抽样/strided参数观察不能代替完整张量比较；保存/恢复需要全参数、optimizer与数据游标证据。

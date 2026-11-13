@@ -1,25 +1,65 @@
 {
+  "schema_version": 2,
+  "checked_at": "2026-11-13T22:16:24.512650+00:00",
+  "result": "passed",
   "checks": [
-    "sha256 correct",
-    "sha256 corruption rejected",
-    "git_blob_sha1 correct",
-    "git_blob_sha1 corruption rejected",
-    "unsafe path rejected",
-    "duplicate rejected",
-    "missing rejected",
-    "symlink rejected",
-    "all 340 input records identical to frozen manifests",
-    "25 private source evidence pins match frozen git objects",
-    "all frozen source commits locally present",
-    "50 task identities/groups checked",
-    "24 result rows and denominators checked",
-    "18 local documentation links checked"
+    "All 340 fixed input file records, revisions, bytes and source digests unchanged",
+    "All 9 inline Python blocks compile",
+    "Inline scene generator reproduces dev1000 and test2500 exactly, including frozen file SHA256",
+    "Inline per-task split matches 25,012/295 episode counts and all specified fixture episodes are train",
+    "Inline shared-video reader handles distinct offsets and rejects missing marker/camera and out-of-episode time",
+    "Inline Awomo numeric mapping roundtrips via pinned public decoder; 0/4/9 history and camera offsets checked",
+    "Inline request packet/sample shape and prompt boundaries checked with synthetic pixels only",
+    "Inline full-window/tail logic and serialized sampling resume checked for world sizes 1/2/8/16 with synthetic episodes",
+    "All 50 task identities, groups and exact Human source prefixes checked",
+    "Frozen 24 result rows and 860 completed-trial denominators preserved",
+    "All five GPU package-version records preserve exact installed package pins",
+    "All 43 local WAM documentation links resolve",
+    "Current repository content has no removed development-repository names, branches, paths or evidence-index dependencies",
+    "All six public upstream commit pins resolve through unauthenticated GitHub API"
+  ],
+  "public_source_checks": [
+    {
+      "role": "loopwam_published",
+      "sha": "3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
+      "url": "https://github.com/loop-wam/LoopWAM/commit/3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
+      "public_unauthenticated": true
+    },
+    {
+      "role": "awomo_published",
+      "sha": "1145c18afd13a3876c6740f098bd734f5e35617a",
+      "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/1145c18afd13a3876c6740f098bd734f5e35617a",
+      "public_unauthenticated": true
+    },
+    {
+      "role": "awomo_public_sft_base",
+      "sha": "32353be48397614206d947b1994b39049e7f4fbe",
+      "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/32353be48397614206d947b1994b39049e7f4fbe",
+      "public_unauthenticated": true
+    },
+    {
+      "role": "awomo_robocasa",
+      "sha": "4f8a2980def75a55dff96b990745b83540425f09",
+      "url": "https://github.com/robocasa/robocasa/commit/4f8a2980def75a55dff96b990745b83540425f09",
+      "public_unauthenticated": true
+    },
+    {
+      "role": "ecr_common_robocasa",
+      "sha": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+      "url": "https://github.com/robocasa/robocasa/commit/456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+      "public_unauthenticated": true
+    },
+    {
+      "role": "awomo_and_ecr_robosuite",
+      "sha": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "url": "https://github.com/ARISE-Initiative/robosuite/commit/5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "public_unauthenticated": true
+    }
   ],
   "limitations": [
-    "No Ascend runtime tested",
-    "No model/data payload downloaded in this documentation task",
-    "Validation helper exercised with synthetic files only; historical full input verification remains in cited private receipts"
-  ],
-  "date": "2026-11-13",
-  "source_refs_checked_on_github": true
+    "No Ascend runtime, model inference, simulation or training executed in this documentation update.",
+    "No model/data payload downloaded here. Historical research results remain the frozen 2026-11-13 21:22 UTC snapshot.",
+    "Inline helper behavior was checked with synthetic arrays and existing public task-count metadata; full Human parquet/video payloads were not re-read.",
+    "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
+  ]
 }

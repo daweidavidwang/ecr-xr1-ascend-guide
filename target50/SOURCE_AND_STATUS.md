@@ -55,7 +55,7 @@ export ECR_TARGET50_SOURCE="$ECR_TARGET50_BUNDLE/source"
 | 10000→19200衔接controller | `074f1755dcb2055ea397c5dd9797d14919fd285b` |
 | 当前完整准备源快照 | `4bf26d9831a355651b820eb116d8b02ea44f300d` |
 
-私有maintained repo为 `vla_sft`，工作分支 `work/ecr-target50-20261112`；这里只给身份，不承诺远端分支已经包含上述commit。不要依赖公开指南能克隆这个私有分支。补充包按commit导出必要文件，不包含历史；`SOURCE_MANIFEST.json`对每个文件记录SHA/bytes。训练时再保存实际run contract，防止后来准备代码替代原运行核心。
+源码交付以本页上方固定的补充包为准，无需访问开发仓库。补充包按表中快照导出必要文件，不包含历史；`SOURCE_MANIFEST.json`对每个文件记录SHA/bytes。训练时再保存实际run contract，防止后来准备代码替代原运行核心。
 
 ## 3. GPU参考模型路径
 

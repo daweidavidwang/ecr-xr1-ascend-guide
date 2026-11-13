@@ -28,10 +28,10 @@ execution: 精确 argv、环境变量名称及非敏感值、开始/结束、退
 | Loop policy | Python3.10、torch2.7.1+cu128、torchvision0.22.1+cu128 | 选平台兼容 torch/torch_npu 配对，替换 CUDA wheel |
 | Loop 上层 | transformers4.49.0、accelerate1.12.0、deepspeed0.18.5、numpy1.26.4、av16.0.1、pyarrow23.0.0 | 先尽量保留；逐项记录因 NPU/CPU 架构造成的变更 |
 | Awomo policy | Python3.11、torch2.8.0+cu129、torchvision0.23.0+cu129 | 选受支持 NPU 配对，不能装 cu129 包 |
-| Awomo 上层 | transformers5.5.0、diffusers0.39.0、accelerate1.15.0、numpy2.2.5 | 特别验证 Qwen3-VL、Flux2 API 和 private helper 兼容性 |
+| Awomo 上层 | transformers5.5.0、diffusers0.39.0、accelerate1.15.0、numpy2.2.5 | 特别验证 Qwen3-VL、Flux2 API 和内部 helper 兼容性 |
 | ECR 共同模拟器 | Python3.11.9、torch CPU2.7.1、numpy2.2.5、mujoco3.3.1，固定 RoboCasa/robosuite | 保持独立 evaluator；不在其环境安装 NPU/CUDA policy 依赖 |
 
-完整 GPU locks 在私有证据索引的 `b300-*-installed-20261112.txt`。Awomo `requirements-sft.txt` 原生 RoboDojo 环境与已验 RoboCasa inference 环境不同，不混装后声称依赖未变。
+完整 GPU 包版本直接列于 [GPU_ENVIRONMENTS.md](GPU_ENVIRONMENTS.md)，包括各 simulator 的公开源码 pins。Awomo `requirements-sft.txt` 原生 RoboDojo 环境与已验 RoboCasa inference 环境不同，不混装后声称依赖未变。
 
 Ascend 的 PyTorch 路线是 CANN + torch_npu，不要求先重写为 MindSpore。官方 [TorchNPU](https://github.com/Ascend/pytorch)、[DeepSpeed NPU setup](https://www.deepspeed.ai/tutorials/accelerator-setup-guide/#huawei-ascend-npu) 可作为起点；DeepSpeed 支持 NPU 不代表本项目固定配置的所有 op/ZeRO/保存路径自动通过。
 
@@ -54,6 +54,8 @@ RoPE 里存在 `freqs.device.type == 'npu'` 只说明有局部兼容分支；其
 
 ### Awomo-0.5I
 
+推理位置对应公开原版 commit；`awomo/training/` 对应另列的公开 SFT 基底，原版评测 checkout 不含此目录。
+
 | 位置 | 当前行为 | NPU 工作 |
 |---|---|---|
 | `awomo/awomo_05i/model.py` | Qwen3-VL、Flux2Transformer2DModel、Flux2 VAE，默认 CUDA、TF32 设置 | 显式 NPU device；单独测试 VLM hidden layers、VAE 和自定义图像/动作 tokens 的 DiT |
@@ -61,22 +63,15 @@ RoPE 里存在 `freqs.device.type == 'npu'` 只说明有局部兼容分支；其
 | `awomo/training/trainer.py` | 明确断言 CUDA、访问 CUDA 内存信息 | 改为目标设备 API，不能只替换字符串 |
 | `awomo/training/distributed/fsdp.py` | FSDP2/fully_shard，NCCL | 换 HCCL 并验证实际分片/通信/optimizer state |
 | `awomo/training/distributed/mesh_utils.py` | nccl→cuda，否则cpu | 必须新增真正 NPU mesh 分支，否则改 backend 后仍可能落到 CPU |
-| `scripts/probe_robocasa_human_training.py` | B300/单CUDA设备/路径/回执限制、CUDA autocast/RNG、Math SDPA | 新建有明确本机 provenance 的入口，保持训练目标与输入；不伪造 CPU 父回执 |
+| 本交接的训练诊断规格 | FP32 master、BF16 autocast、固定真实样本、完整恢复比较 | 按 [实现细节](IMPLEMENTATION_DETAILS.md) 建本机入口，保存输入/实现/运行证据 |
 
 Diffusers 文档已有 [`_native_npu` attention](https://huggingface.co/docs/diffusers/optimization/attention_backends)，昇腾有 [Qwen3-VL/FSDP 训练案例](https://www.hiascend.com/developer/techArticles/20260127-2)。这只支持“存在适配路线”的判断。Awomo 完整组合、特殊 bool mask、历史 tokens、前反向与固定版本仍需实测；其他型号/版本的 Qwen3-VL 成功不能替代当前4B模型验收。
 
 ## 3. 阶段 A：输入与 CPU 合同
 
-先校验 [模型/资产](pins/public-inputs-v1.json)、[Human](pins/human-hf-full-v1.json) 全部文件与 licenses，恢复冻结训练/验证划分、共享视频 offset 视图、模型配置与 tokenizer。私有证据缺失时明确记录，不能伪造回执放行。
+先校验 [模型/资产](pins/public-inputs-v1.json)、[Human](pins/human-hf-full-v1.json) 全部文件与 licenses，按 [实现细节](IMPLEMENTATION_DETAILS.md) 重建整 episode 划分、共享视频 offset 视图、Awomo 样本和采样游标。该页给出可复制辅助代码和公开原生参照；上游没有本项目新增测试集合，不能照抄不存在的测试命令。
 
-在各自依赖环境中运行纯数据/训练辅助测试，例如 Awomo：
-
-```bash
-cd "$WAM_ROOT/code/awomo"
-python -m unittest discover -s tests -p 'test_human_robocasa*.py'
-```
-
-该命令是源码自带 unittest 集合，不运行完整 GPU 诊断。记录实际 discovered/passed/skipped，不能把 skip 当通过。由于私有 NPU 分支可能已增加测试，数量按实际报告；历史完整集合对应源版本有43项 CPU tests，其中原两站执行无 skip。
+为本机实现建立并运行这些 CPU 验收：有效/非法动作与 state；每相机不同非零offset；episode边界；0/4/9历史槽；原生请求压缩与画布逐像素一致；原生与标准processor输出一致；无未来条件泄漏；train/validation身份不交叉；world1/2/8/16采样顺序和cursor恢复。记录实际检查数、失败和skip。历史完整集合两站各43项无skip只描述原GPU线前置，不能当作当前分支的结果。
 
 CPU 输出必须满足：动作 roundtrip、state 编码、相机 offset、history valid mask、future target 不入 prompt、训练/验证不交叉、采样 cursor 恢复。NPZ/元数据严格校验；这些不能替代下一阶段的神经网络前向。
 
