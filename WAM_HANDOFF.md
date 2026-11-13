@@ -12,7 +12,8 @@
 2. [数据与训练合同](wam/DATA_AND_TRAINING.md)：下载、读取器、动作/历史语义、训练诊断与未完成部分。
 3. [评测合同与 GPU 对照](wam/EVALUATION.md)：官方 pretrain 与共同 ECR target 的区别、逐任务结果、渲染和统计规则。
 4. [Ascend 执行手册](wam/ASCEND_RUNBOOK.md)：适配点、验收阶段、启动方式和回交材料。
-5. [固定源码](wam/pins/source-pins.json)、[私有证据索引](wam/pins/private-evidence-index.json)：精确 commit、路径、SHA256；不能只看分支最新 HEAD。
+5. [实现细节与可复制代码](wam/IMPLEMENTATION_DETAILS.md)：数据划分、共享视频读取、Awomo 样本/采样、场景请求生成与验收。
+6. [公开源码 pins](wam/pins/source-pins.json)、[GPU 完整包版本](wam/GPU_ENVIRONMENTS.md)：固定上游版本与对照环境。所有必要合同写在本目录，不依赖外部工程仓库。
 
 ## 2. 目标与先后关系
 
@@ -50,45 +51,34 @@ Awomo 早期历史原生 processor 的新 CPU 请求在冻结快照时已提交�
 
 公开上游：[LoopWAM](https://github.com/loop-wam/LoopWAM)、[Awomo-0.5](https://github.com/Awomo-WestlakeDI/Awomo-0.5)。Awomo 官方成绩说明：[RoboCasa leaderboard](https://github.com/robocasa-benchmark/leaderboard/blob/main/submissions_md/Awomo-0.5I_2026_10_09.md)。
 
-我们维护的改动在 **私有** [auto_researcher](https://github.com/daweidavidwang/auto_researcher)，三个分支的目录树不同，必须分开 checkout：
+本次接手只需要下列公开源码。原版评测和后续训练基底分别固定，不能拿后续训练代码替代原报告策略。
 
-| 用途 | 私有分支 | 本次固定 commit |
+| 用途 | 公开仓库 | 固定 commit |
 |---|---|---|
-| 研究合同、证据、准备工具 | `topic/wam-robocasa` | `a156b564c09bdb820f6083e4c726a341662a6341` |
-| Loop 源码及共同/官方评测工具 | `source/wam-loopwam-human-adapter` | `58af0fa417bda70c4f6ec070e7496ab3bd020364` |
-| Awomo Human 适配与训练诊断 | `source/wam-awomo-human-adapter` | `ed7953074b3ec717b48dc563e1f775cfab4a0846` |
+| Loop 官方策略和 bundled simulator | `loop-wam/LoopWAM` | `3400f1c1c1f7243cb9fbc3456ae05092964bc6cd` |
+| Awomo 官方策略 | `Awomo-WestlakeDI/Awomo-0.5` | `1145c18afd13a3876c6740f098bd734f5e35617a` |
+| Awomo 后续公开 SFT 基底 | 同上，独立 checkout | `32353be48397614206d947b1994b39049e7f4fbe` |
+| Awomo 官方 RoboCasa | `robocasa/robocasa` | `4f8a2980def75a55dff96b990745b83540425f09` |
+| ECR 共同 RoboCasa | `robocasa/robocasa` | `456174f62b89b8fca99eaaf33949c29fec9cfc2a` |
+| Awomo / ECR robosuite | `ARISE-Initiative/robosuite` | `5ce6643f3092639d08f7b0f90ed1c6a84f50552c` |
 
-各运行角色另有冻结版本，不能把最新维护 HEAD 当作旧实验源码：
-
-- Loop 官方策略：`3400f1c1c1f7243cb9fbc3456ae05092964bc6cd`。
-- Awomo 官方策略：`1145c18afd13a3876c6740f098bd734f5e35617a`。
-- Awomo 后续公开 SFT 基底：`32353be48397614206d947b1994b39049e7f4fbe`；不能用它替代原报告策略版本。
-- Loop 两卡原生训练：`3a2d13390f46d96078efa21fdb5c219a4e47c547`。
-- Awomo 真实训练诊断：`6e9453aed412a329d60f0d4047b04a6bb3d9f1e0`。
-- Awomo 全窗口索引：`cab88a10330bb2eb2350d13b2ab5802d68450b28`。
-- 共同 ECR 原生策略短诊断：`61fa0107afaca740d9181ede8611271cb75d4bb0`，在 Loop 源码分支。
-- 共同 ECR 完整评测入口：`ca2ab82593607cde5deb50eed0841d5bfe241a21`，在 Loop 源码分支。
-- Awomo 官方评测包装器：`7a21b4299ff0fda07438b7a16d1b3d649ef2c8a0`，也在 **Loop 源码分支**。
-
-获取示例，只在新目录执行；私有 GitHub 读取权限通过接手环境已有认证提供：
+只在新目录获取；已有目录先查 HEAD 和未提交修改：
 
 ```bash
 export WAM_ROOT=/data/wam-ascend
 mkdir -p "$WAM_ROOT/code"
-git clone --single-branch --branch topic/wam-robocasa \
-  https://github.com/daweidavidwang/auto_researcher.git "$WAM_ROOT/code/research"
-git -C "$WAM_ROOT/code/research" checkout --detach a156b564c09bdb820f6083e4c726a341662a6341
-git clone --single-branch --branch source/wam-loopwam-human-adapter \
-  https://github.com/daweidavidwang/auto_researcher.git "$WAM_ROOT/code/loopwam"
-git -C "$WAM_ROOT/code/loopwam" checkout --detach 58af0fa417bda70c4f6ec070e7496ab3bd020364
-git clone --single-branch --branch source/wam-awomo-human-adapter \
-  https://github.com/daweidavidwang/auto_researcher.git "$WAM_ROOT/code/awomo"
-git -C "$WAM_ROOT/code/awomo" checkout --detach ed7953074b3ec717b48dc563e1f775cfab4a0846
+git clone https://github.com/loop-wam/LoopWAM.git "$WAM_ROOT/code/loopwam"
+git -C "$WAM_ROOT/code/loopwam" checkout --detach 3400f1c1c1f7243cb9fbc3456ae05092964bc6cd
+git clone https://github.com/Awomo-WestlakeDI/Awomo-0.5.git "$WAM_ROOT/code/awomo"
+git -C "$WAM_ROOT/code/awomo" checkout --detach 1145c18afd13a3876c6740f098bd734f5e35617a
+git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 32353be48397614206d947b1994b39049e7f4fbe
 ```
 
-已有目录先查 HEAD 和未提交修改，不覆盖。适配工作从相应固定版本创建自己的分支，记录 base commit、适配 commit 与 diff。不要推到两个公开上游，也不要改写现有 B300 运行源码或不可变请求。
+模拟器按 [环境说明](wam/GPU_ENVIRONMENTS.md) 的公开 pins 单独安装。从固定版本创建自己的适配分支，保存 base commit、适配 diff 和新 commit；不要改写现有 B300 运行源码或不可变请求。
 
-**交付边界：本公开目录提供文档、公共输入 pins、公开任务协议及私有证据索引，不包含私有训练源码、原始 rollout、NPZ fixture、恢复数据或模型文件。** 没有私有仓库权限时，可准备公共原版推理，但不能声称已经复现本项目的数据适配和训练诊断。私有引用不存在不应以重新猜测参数替代。
+**工程改动的交付方式：** 本交接把 Human v3→v2.1 读取、Awomo RoboCasa 动作/历史/processor/窗口采样、诊断目标、恢复规则和 ECR 评测入口语义直接写在 [实现细节](wam/IMPLEMENTATION_DETAILS.md) 与各合同页。公开上游本身不包含这些新增工程模块；接手者按本文代码/规格实现并验收自己的 Ascend 分支，不能把原 GPU 验收结论自动赋给新实现。这里没有已完成的 NPU 训练启动器。
+
+**文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 
 ## 5. 现有落点与迁移方式
 
@@ -97,8 +87,7 @@ git -C "$WAM_ROOT/code/awomo" checkout --detach ed7953074b3ec717b48dc563e1f775cf
 | B300 节点 1 | `b300-1` / `gpu1`，根 `/data/ubuntu/wam-robocasa` | 输入与环境已有独立记录；不可默认空闲 |
 | B300 节点 2 | `b300-2` / `gpu2`，同名根 | Loop 两卡训练证据来自此节点 |
 | g11 | 根 `/mnt/fasterwam-data/david/wam-robocasa` | 已准备环境/输入；不要假设与 B300 同一存储 |
-| 控制机研究目录 | `/home/eai/code/auto_researcher-worktrees/wam-robocasa` | 台账、合同和已返回证据；不放大权重或训练进程 |
-| 资源 owner | `resource_control` Monitor | 旧节点执行、传输、GPU 分配由其统一协调 |
+| 资源 owner | 原集群资源调度负责人（Monitor） | 旧节点执行、传输、GPU 分配由其统一协调 |
 
 接手者可以从公共固定源重新下载；已有源节点文件需由当前资源 owner 按精确清单转移并校验。旧的 g10 内网路线、堡垒机和代理配置不代表新 Ascend 节点已可用，不把凭据或节点访问权限写进 GitHub。
 
@@ -106,7 +95,7 @@ git -C "$WAM_ROOT/code/awomo" checkout --detach ed7953074b3ec717b48dc563e1f775cf
 
 ## 6. 下一位 agent 的第一批可执行工作
 
-1. 校验本仓库 `PUBLIC_SHA256SUMS`，获取三棵固定源码树；核对公共输入清单，明确私有证据/fixture 的可访问性。
+1. 校验本仓库 `PUBLIC_SHA256SUMS`，获取公开的固定源码；核对公共输入清单，按实现细节重建划分和场景请求，再准备真实数值对照 fixture。
 2. 建立两个隔离的 NPU 策略环境，先做最小 NPU 算子、各组件加载和单次动作推理；保持原模型、动作维度、图像处理和采样步骤。
 3. 在开发输入上获取匹配的 GPU 数值参考。现有 CPU/像素证据可复用，但尚没有本次 Ascend 跨硬件前反向参考包。
 4. 先验证短闭环，再做原生长历史、完整 horizon 与训练/恢复测试。适配顺序和判定标准见 [执行手册](wam/ASCEND_RUNBOOK.md)。

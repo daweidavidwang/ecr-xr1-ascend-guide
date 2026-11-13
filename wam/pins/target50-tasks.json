@@ -8,350 +8,400 @@
       "group": "atomic_seen",
       "target50_index": 0,
       "horizon": 900,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/CloseBlenderLid/20250822"
     },
     {
       "task": "CloseFridge",
       "group": "atomic_seen",
       "target50_index": 1,
       "horizon": 900,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/CloseFridge/20250816"
     },
     {
       "task": "CloseToasterOvenDoor",
       "group": "atomic_seen",
       "target50_index": 2,
       "horizon": 450,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/CloseToasterOvenDoor/20250818"
     },
     {
       "task": "CoffeeSetupMug",
       "group": "atomic_seen",
       "target50_index": 3,
       "horizon": 600,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/atomic/CoffeeSetupMug/20250813"
     },
     {
       "task": "NavigateKitchen",
       "group": "atomic_seen",
       "target50_index": 4,
       "horizon": 450,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/atomic/NavigateKitchen/20250821"
     },
     {
       "task": "OpenCabinet",
       "group": "atomic_seen",
       "target50_index": 5,
       "horizon": 1050,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/OpenCabinet/20250813"
     },
     {
       "task": "OpenDrawer",
       "group": "atomic_seen",
       "target50_index": 6,
       "horizon": 750,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/OpenDrawer/20250816"
     },
     {
       "task": "OpenStandMixerHead",
       "group": "atomic_seen",
       "target50_index": 7,
       "horizon": 450,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/OpenStandMixerHead/20250818"
     },
     {
       "task": "PickPlaceCounterToCabinet",
       "group": "atomic_seen",
       "target50_index": 8,
       "horizon": 750,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/PickPlaceCounterToCabinet/20250811"
     },
     {
       "task": "PickPlaceCounterToStove",
       "group": "atomic_seen",
       "target50_index": 9,
       "horizon": 600,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/PickPlaceCounterToStove/20250818"
     },
     {
       "task": "PickPlaceDrawerToCounter",
       "group": "atomic_seen",
       "target50_index": 10,
       "horizon": 750,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/PickPlaceDrawerToCounter/20250820"
     },
     {
       "task": "PickPlaceSinkToCounter",
       "group": "atomic_seen",
       "target50_index": 11,
       "horizon": 900,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/PickPlaceSinkToCounter/20250813"
     },
     {
       "task": "PickPlaceToasterToCounter",
       "group": "atomic_seen",
       "target50_index": 12,
       "horizon": 600,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/PickPlaceToasterToCounter/20250817"
     },
     {
       "task": "SlideDishwasherRack",
       "group": "atomic_seen",
       "target50_index": 13,
       "horizon": 450,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/SlideDishwasherRack/20250820"
     },
     {
       "task": "TurnOffStove",
       "group": "atomic_seen",
       "target50_index": 14,
       "horizon": 750,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/atomic/TurnOffStove/20250812"
     },
     {
       "task": "TurnOnElectricKettle",
       "group": "atomic_seen",
       "target50_index": 15,
       "horizon": 450,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/TurnOnElectricKettle/20250817"
     },
     {
       "task": "TurnOnMicrowave",
       "group": "atomic_seen",
       "target50_index": 16,
       "horizon": 450,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/atomic/TurnOnMicrowave/20250813"
     },
     {
       "task": "TurnOnSinkFaucet",
       "group": "atomic_seen",
       "target50_index": 17,
       "horizon": 600,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/atomic/TurnOnSinkFaucet/20250812"
     },
     {
       "task": "DeliverStraw",
       "group": "composite_seen",
       "target50_index": 18,
       "horizon": 2550,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/DeliverStraw/20250813"
     },
     {
       "task": "GetToastedBread",
       "group": "composite_seen",
       "target50_index": 19,
       "horizon": 3000,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/GetToastedBread/20250812"
     },
     {
       "task": "KettleBoiling",
       "group": "composite_seen",
       "target50_index": 20,
       "horizon": 1500,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/KettleBoiling/20250814"
     },
     {
       "task": "LoadDishwasher",
       "group": "composite_seen",
       "target50_index": 21,
       "horizon": 1800,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/LoadDishwasher/20250811"
     },
     {
       "task": "PackIdenticalLunches",
       "group": "composite_seen",
       "target50_index": 22,
       "horizon": 3900,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/PackIdenticalLunches/20250815"
     },
     {
       "task": "PreSoakPan",
       "group": "composite_seen",
       "target50_index": 23,
       "horizon": 2400,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/PreSoakPan/20250809"
     },
     {
       "task": "PrepareCoffee",
       "group": "composite_seen",
       "target50_index": 24,
       "horizon": 1800,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/PrepareCoffee/20250812"
     },
     {
       "task": "RinseSinkBasin",
       "group": "composite_seen",
       "target50_index": 25,
       "horizon": 1350,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/RinseSinkBasin/20250816"
     },
     {
       "task": "ScrubCuttingBoard",
       "group": "composite_seen",
       "target50_index": 26,
       "horizon": 1200,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/ScrubCuttingBoard/20250816"
     },
     {
       "task": "SearingMeat",
       "group": "composite_seen",
       "target50_index": 27,
       "horizon": 4350,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/SearingMeat/20250812"
     },
     {
       "task": "SetUpCuttingStation",
       "group": "composite_seen",
       "target50_index": 28,
       "horizon": 2400,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/SetUpCuttingStation/20250817"
     },
     {
       "task": "StackBowlsCabinet",
       "group": "composite_seen",
       "target50_index": 29,
       "horizon": 2100,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/StackBowlsCabinet/20250815"
     },
     {
       "task": "SteamInMicrowave",
       "group": "composite_seen",
       "target50_index": 30,
       "horizon": 2100,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/SteamInMicrowave/20250814"
     },
     {
       "task": "StirVegetables",
       "group": "composite_seen",
       "target50_index": 31,
       "horizon": 2400,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/StirVegetables/20250814"
     },
     {
       "task": "StoreLeftoversInBowl",
       "group": "composite_seen",
       "target50_index": 32,
       "horizon": 2550,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/StoreLeftoversInBowl/20250813"
     },
     {
       "task": "WashLettuce",
       "group": "composite_seen",
       "target50_index": 33,
       "horizon": 1650,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/WashLettuce/20250814"
     },
     {
       "task": "ArrangeBreadBasket",
       "group": "composite_unseen",
       "target50_index": 34,
       "horizon": 4350,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/ArrangeBreadBasket/20250809"
     },
     {
       "task": "ArrangeTea",
       "group": "composite_unseen",
       "target50_index": 35,
       "horizon": 2250,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/ArrangeTea/20250812"
     },
     {
       "task": "BreadSelection",
       "group": "composite_unseen",
       "target50_index": 36,
       "horizon": 1950,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/BreadSelection/20250815"
     },
     {
       "task": "CategorizeCondiments",
       "group": "composite_unseen",
       "target50_index": 37,
       "horizon": 1650,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/CategorizeCondiments/20250814"
     },
     {
       "task": "CuttingToolSelection",
       "group": "composite_unseen",
       "target50_index": 38,
       "horizon": 1200,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/CuttingToolSelection/20250814"
     },
     {
       "task": "GarnishPancake",
       "group": "composite_unseen",
       "target50_index": 39,
       "horizon": 2700,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/GarnishPancake/20250815"
     },
     {
       "task": "GatherTableware",
       "group": "composite_unseen",
       "target50_index": 40,
       "horizon": 2250,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/GatherTableware/20250815"
     },
     {
       "task": "HeatKebabSandwich",
       "group": "composite_unseen",
       "target50_index": 41,
       "horizon": 2700,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/HeatKebabSandwich/20250813"
     },
     {
       "task": "MakeIceLemonade",
       "group": "composite_unseen",
       "target50_index": 42,
       "horizon": 3000,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/MakeIceLemonade/20250813"
     },
     {
       "task": "PanTransfer",
       "group": "composite_unseen",
       "target50_index": 43,
       "horizon": 1800,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/PanTransfer/20250817"
     },
     {
       "task": "PortionHotDogs",
       "group": "composite_unseen",
       "target50_index": 44,
       "horizon": 2250,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/PortionHotDogs/20250816"
     },
     {
       "task": "RecycleBottlesByType",
       "group": "composite_unseen",
       "target50_index": 45,
       "horizon": 2850,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/RecycleBottlesByType/20250812"
     },
     {
       "task": "SeparateFreezerRack",
       "group": "composite_unseen",
       "target50_index": 46,
       "horizon": 2400,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/SeparateFreezerRack/20250815"
     },
     {
       "task": "WaffleReheat",
       "group": "composite_unseen",
       "target50_index": 47,
       "horizon": 4050,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/WaffleReheat/20250817"
     },
     {
       "task": "WashFruitColander",
       "group": "composite_unseen",
       "target50_index": 48,
       "horizon": 3150,
-      "historical10": true
+      "historical10": true,
+      "human_source_prefix": "target/composite/WashFruitColander/20250811"
     },
     {
       "task": "WeighIngredients",
       "group": "composite_unseen",
       "target50_index": 49,
       "horizon": 3000,
-      "historical10": false
+      "historical10": false,
+      "human_source_prefix": "target/composite/WeighIngredients/20250812"
     }
   ]
 }
