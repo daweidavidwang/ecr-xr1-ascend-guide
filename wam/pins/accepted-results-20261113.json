@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "result_evidence_at": "2026-11-13T07:29:57.411525+00:00",
+  "accepted_snapshot_at": "2026-11-13T21:22:11.397770+00:00",
+  "official_completed": 860,
+  "official_planned": 4000,
+  "target_completed": 0,
+  "target_planned": 5000,
+  "formal_sft_updates": 0,
+  "ascend_runtime_tested": false,
+  "note": "Frozen accepted snapshot; not live job status. Partial trials excluded from completed-task totals; no overall reproduction conclusion.",
+  "tasks": [
+    {
+      "component": "awomo",
+      "task": "ArrangeBreadBasket",
+      "group": "composite_unseen",
+      "completed": 30,
+      "successes": 22,
+      "official_successes": 21,
+      "official_completed": 30,
+      "delta_successes": 1,
+      "receipt_sha256": "d91fb252c5a6da89258ebd60106557e631e201fa2ee01e8335e3ef65143ea943"
+    },
+    {
+      "component": "awomo",
+      "task": "ArrangeTea",
+      "group": "composite_unseen",
+      "completed": 30,
+      "successes": 14,
+      "official_successes": 18,
+      "official_completed": 30,
+      "delta_successes": -4,
+      "receipt_sha256": "9d4ec10efc90cc64d94e98aaca553c2884dbf94dbc838fd75afb8f66da98de26"
+    },
+    {
+      "component": "awomo",
+      "task": "CloseBlenderLid",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 12,
+      "official_successes": 12,
+      "official_completed": 30,
+      "delta_successes": 0,
+      "receipt_sha256": "5cabb7f0947f8252838dbaafae821df94e946b0b38477eaca7408396a425ba9e"
+    },
+    {
+      "component": "awomo",
+      "task": "CloseFridge",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 29,
+      "official_successes": 28,
+      "official_completed": 30,
+      "delta_successes": 1,
+      "receipt_sha256": "a5b81173f171cc4a55c64686f5cd4a91418594ff6e3dbc525ebf7b7fcf17f54f"
+    },
+    {
+      "component": "awomo",
+      "task": "CloseToasterOvenDoor",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 30,
+      "official_successes": 29,
+      "official_completed": 30,
+      "delta_successes": 1,
+      "receipt_sha256": "43530dfe886e382453ba411cebc87d98dd5cb831a14ce1c0359fe9d0ed88bc14"
+    },
+    {
+      "component": "awomo",
+      "task": "CoffeeSetupMug",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 25,
+      "official_successes": 26,
+      "official_completed": 30,
+      "delta_successes": -1,
+      "receipt_sha256": "f64fc4f4b59431ac0d451e84424b17ce31d12cd4fd68e229e3e7d059e1aafb49"
+    },
+    {
+      "component": "awomo",
+      "task": "DeliverStraw",
+      "group": "composite_seen",
+      "completed": 30,
+      "successes": 17,
+      "official_successes": 12,
+      "official_completed": 30,
+      "delta_successes": 5,
+      "receipt_sha256": "25a3ef01740cb40a404afdba58d3ad6b7ed48f623c7a4867726627886acd06fa"
+    },
+    {
+      "component": "loopwam",
+      "task": "BreadSelection",
+      "group": "composite_unseen",
+      "completed": 50,
+      "successes": 10,
+      "receipt_sha256": "cd23ca0e927936df3346d7033902143bfe372fe25d1b796b96aeb639b382e42c"
+    },
+    {
+      "component": "loopwam",
+      "task": "CategorizeCondiments",
+      "group": "composite_unseen",
+      "completed": 50,
+      "successes": 4,
+      "receipt_sha256": "7629743df70145d0cb56fae8b76e9fa51f988e0a3bb0dfc256837c23330fae01"
+    },
+    {
+      "component": "loopwam",
+      "task": "CloseBlenderLid",
+      "group": "atomic_seen",
+      "completed": 50,
+      "successes": 24,
+      "receipt_sha256": "bdadecbbb8a7e3ff93185966c4a189046936d8ca218e841be7b344b69fec2cec"
+    },
+    {
+      "component": "loopwam",
+      "task": "CloseFridge",
+      "group": "atomic_seen",
+      "completed": 50,
+      "successes": 49,
+      "receipt_sha256": "4271e5c69a0c96f7e8e78c777b01fe616b81f08f9f67cf32ef467a3711456c2d"
+    },
+    {
+      "component": "loopwam",
+      "task": "CloseToasterOvenDoor",
+      "group": "atomic_seen",
+      "completed": 50,
+      "successes": 41,
+      "receipt_sha256": "5ab6750e6805c9631419a390818f147c4e9ddf73f09f92010a606820e0028abc"
+    },
+    {
+      "component": "loopwam",
+      "task": "CoffeeSetupMug",
+      "group": "atomic_seen",
+      "completed": 50,
+      "successes": 23,
+      "receipt_sha256": "3b2f4f5a1ebbe13b70d2911ffce014d1212c804ec97fe84620a2597a6ad603b3"
+    },
+    {
+      "component": "loopwam",
+      "task": "CuttingToolSelection",
+      "group": "composite_unseen",
+      "completed": 50,
+      "successes": 12,
+      "receipt_sha256": "d2e12d7b649263651cb699467c94199e6d2b904d925a71b0221b81be96cf1482"
+    },
+    {
+      "component": "awomo",
+      "task": "NavigateKitchen",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 28,
+      "official_successes": 23,
+      "official_completed": 30,
+      "delta_successes": 5,
+      "receipt_sha256": "e17c71313b57aeb337240f7b217b6b4af2e30f561bfc84e47bcd6b45e2226fc2"
+    },
+    {
+      "component": "awomo",
+      "task": "OpenDrawer",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 25,
+      "official_successes": 26,
+      "official_completed": 30,
+      "delta_successes": -1,
+      "receipt_sha256": "a34b5f571b7e0816285c7eec969231356ac3d40050b187c8e99c7ff2561eca6f"
+    },
+    {
+      "component": "awomo",
+      "task": "OpenStandMixerHead",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 28,
+      "official_successes": 28,
+      "official_completed": 30,
+      "delta_successes": 0,
+      "receipt_sha256": "1defa1f37f7c08d5bd3032dd2ebf9b848d420c290e2945f0da655db55a668161"
+    },
+    {
+      "component": "awomo",
+      "task": "OpenCabinet",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 29,
+      "official_successes": 26,
+      "official_completed": 30,
+      "delta_successes": 3,
+      "receipt_sha256": "25fcd053c1431c2bb64df7ae71a2485ba41cae7a05bf7c30ee858230ac9c5a85"
+    },
+    {
+      "component": "awomo",
+      "task": "PickPlaceCounterToCabinet",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 26,
+      "official_successes": 25,
+      "official_completed": 30,
+      "delta_successes": 1,
+      "receipt_sha256": "88a6f0080c54cfd954e634cfe6f61da968a2a2fd9c4abda2283cc0c70e2055dc"
+    },
+    {
+      "component": "awomo",
+      "task": "PickPlaceCounterToStove",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 27,
+      "official_successes": 26,
+      "official_completed": 30,
+      "delta_successes": 1,
+      "receipt_sha256": "91d3570f706bc906b52b0b9694b15628a9ef54a959707285f08667fbc70e0c1c"
+    },
+    {
+      "component": "awomo",
+      "task": "PickPlaceDrawerToCounter",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 30,
+      "official_successes": 28,
+      "official_completed": 30,
+      "delta_successes": 2,
+      "receipt_sha256": "bb77ab4aecd6e8c184a640972cbd90b523868a280ab3dc39940167c4986e87eb"
+    },
+    {
+      "component": "awomo",
+      "task": "PickPlaceSinkToCounter",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 28,
+      "official_successes": 30,
+      "official_completed": 30,
+      "delta_successes": -2,
+      "receipt_sha256": "0648e529da55b2a75edd24a8637eef9de8ba6a32828bee3e92a7fb6f6c304987"
+    },
+    {
+      "component": "awomo",
+      "task": "PickPlaceToasterToCounter",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 25,
+      "official_successes": 25,
+      "official_completed": 30,
+      "delta_successes": 0,
+      "receipt_sha256": "01fdca37256e5b18d1aafa9d7aab84c3387f65d932a7e47e4c3837542ed7c345"
+    },
+    {
+      "component": "awomo",
+      "task": "SlideDishwasherRack",
+      "group": "atomic_seen",
+      "completed": 30,
+      "successes": 29,
+      "official_successes": 29,
+      "official_completed": 30,
+      "delta_successes": 0,
+      "receipt_sha256": "98c681ccfe7e45f1863c898dc70e7355c6aec78d171f157bd80a606ac295cd29"
+    }
+  ]
+}

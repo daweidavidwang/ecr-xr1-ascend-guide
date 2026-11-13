@@ -1,5 +1,7 @@
 # Ascend 集群 Codex 执行入口
 
+> **新增 WAM / Ascend 复测交接（2026-11-13）：[LoopWAM 与 Awomo-0.5I 接手入口](WAM_HANDOFF.md)。** 包含固定源码/公共输入清单、当前验证范围、Target50 协议、SFT 待办和 NPU 适配步骤；与下文 XR1 十任务配方独立。
+
 > **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 目标：复现 ECR 最佳 Xiaomi XR‑1 第二轮 Continue s1，并与原 GPU 的 **455/500（91.0%）** 比较效果和耗时。默认只迁移最后一阶段：加载固定的 **A3 s1 续训 20k 父模型**，再训练 **10,000 optimizer steps**。完整科学配方和历史证据见 [README.md](README.md)。

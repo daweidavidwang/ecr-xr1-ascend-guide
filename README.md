@@ -1,5 +1,7 @@
 # ECR · Xiaomi XR‑1 最佳模型在 Ascend 上的训练复现与对比指南
 
+> **新增 WAM / Ascend 复测交接（2026-11-13）：[LoopWAM 与 Awomo-0.5I 接手入口](WAM_HANDOFF.md)。** 包含固定源码/公共输入清单、当前验证范围、Target50 协议、SFT 待办和 NPU 适配步骤；与下文 XR1 十任务配方独立。
+
 > **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 版本：v3（原包不变）· 云端访问与接手审计更新：2026-11-12 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员

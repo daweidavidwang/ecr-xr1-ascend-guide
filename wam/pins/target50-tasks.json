@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "split": "target",
+  "robocasa_commit": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+  "tasks": [
+    {
+      "task": "CloseBlenderLid",
+      "group": "atomic_seen",
+      "target50_index": 0,
+      "horizon": 900,
+      "historical10": false
+    },
+    {
+      "task": "CloseFridge",
+      "group": "atomic_seen",
+      "target50_index": 1,
+      "horizon": 900,
+      "historical10": false
+    },
+    {
+      "task": "CloseToasterOvenDoor",
+      "group": "atomic_seen",
+      "target50_index": 2,
+      "horizon": 450,
+      "historical10": false
+    },
+    {
+      "task": "CoffeeSetupMug",
+      "group": "atomic_seen",
+      "target50_index": 3,
+      "horizon": 600,
+      "historical10": true
+    },
+    {
+      "task": "NavigateKitchen",
+      "group": "atomic_seen",
+      "target50_index": 4,
+      "horizon": 450,
+      "historical10": true
+    },
+    {
+      "task": "OpenCabinet",
+      "group": "atomic_seen",
+      "target50_index": 5,
+      "horizon": 1050,
+      "historical10": false
+    },
+    {
+      "task": "OpenDrawer",
+      "group": "atomic_seen",
+      "target50_index": 6,
+      "horizon": 750,
+      "historical10": false
+    },
+    {
+      "task": "OpenStandMixerHead",
+      "group": "atomic_seen",
+      "target50_index": 7,
+      "horizon": 450,
+      "historical10": false
+    },
+    {
+      "task": "PickPlaceCounterToCabinet",
+      "group": "atomic_seen",
+      "target50_index": 8,
+      "horizon": 750,
+      "historical10": false
+    },
+    {
+      "task": "PickPlaceCounterToStove",
+      "group": "atomic_seen",
+      "target50_index": 9,
+      "horizon": 600,
+      "historical10": false
+    },
+    {
+      "task": "PickPlaceDrawerToCounter",
+      "group": "atomic_seen",
+      "target50_index": 10,
+      "horizon": 750,
+      "historical10": false
+    },
+    {
+      "task": "PickPlaceSinkToCounter",
+      "group": "atomic_seen",
+      "target50_index": 11,
+      "horizon": 900,
+      "historical10": false
+    },
+    {
+      "task": "PickPlaceToasterToCounter",
+      "group": "atomic_seen",
+      "target50_index": 12,
+      "horizon": 600,
+      "historical10": false
+    },
+    {
+      "task": "SlideDishwasherRack",
+      "group": "atomic_seen",
+      "target50_index": 13,
+      "horizon": 450,
+      "historical10": false
+    },
+    {
+      "task": "TurnOffStove",
+      "group": "atomic_seen",
+      "target50_index": 14,
+      "horizon": 750,
+      "historical10": true
+    },
+    {
+      "task": "TurnOnElectricKettle",
+      "group": "atomic_seen",
+      "target50_index": 15,
+      "horizon": 450,
+      "historical10": false
+    },
+    {
+      "task": "TurnOnMicrowave",
+      "group": "atomic_seen",
+      "target50_index": 16,
+      "horizon": 450,
+      "historical10": false
+    },
+    {
+      "task": "TurnOnSinkFaucet",
+      "group": "atomic_seen",
+      "target50_index": 17,
+      "horizon": 600,
+      "historical10": true
+    },
+    {
+      "task": "DeliverStraw",
+      "group": "composite_seen",
+      "target50_index": 18,
+      "horizon": 2550,
+      "historical10": false
+    },
+    {
+      "task": "GetToastedBread",
+      "group": "composite_seen",
+      "target50_index": 19,
+      "horizon": 3000,
+      "historical10": false
+    },
+    {
+      "task": "KettleBoiling",
+      "group": "composite_seen",
+      "target50_index": 20,
+      "horizon": 1500,
+      "historical10": true
+    },
+    {
+      "task": "LoadDishwasher",
+      "group": "composite_seen",
+      "target50_index": 21,
+      "horizon": 1800,
+      "historical10": true
+    },
+    {
+      "task": "PackIdenticalLunches",
+      "group": "composite_seen",
+      "target50_index": 22,
+      "horizon": 3900,
+      "historical10": false
+    },
+    {
+      "task": "PreSoakPan",
+      "group": "composite_seen",
+      "target50_index": 23,
+      "horizon": 2400,
+      "historical10": false
+    },
+    {
+      "task": "PrepareCoffee",
+      "group": "composite_seen",
+      "target50_index": 24,
+      "horizon": 1800,
+      "historical10": false
+    },
+    {
+      "task": "RinseSinkBasin",
+      "group": "composite_seen",
+      "target50_index": 25,
+      "horizon": 1350,
+      "historical10": false
+    },
+    {
+      "task": "ScrubCuttingBoard",
+      "group": "composite_seen",
+      "target50_index": 26,
+      "horizon": 1200,
+      "historical10": false
+    },
+    {
+      "task": "SearingMeat",
+      "group": "composite_seen",
+      "target50_index": 27,
+      "horizon": 4350,
+      "historical10": false
+    },
+    {
+      "task": "SetUpCuttingStation",
+      "group": "composite_seen",
+      "target50_index": 28,
+      "horizon": 2400,
+      "historical10": false
+    },
+    {
+      "task": "StackBowlsCabinet",
+      "group": "composite_seen",
+      "target50_index": 29,
+      "horizon": 2100,
+      "historical10": false
+    },
+    {
+      "task": "SteamInMicrowave",
+      "group": "composite_seen",
+      "target50_index": 30,
+      "horizon": 2100,
+      "historical10": true
+    },
+    {
+      "task": "StirVegetables",
+      "group": "composite_seen",
+      "target50_index": 31,
+      "horizon": 2400,
+      "historical10": false
+    },
+    {
+      "task": "StoreLeftoversInBowl",
+      "group": "composite_seen",
+      "target50_index": 32,
+      "horizon": 2550,
+      "historical10": false
+    },
+    {
+      "task": "WashLettuce",
+      "group": "composite_seen",
+      "target50_index": 33,
+      "horizon": 1650,
+      "historical10": false
+    },
+    {
+      "task": "ArrangeBreadBasket",
+      "group": "composite_unseen",
+      "target50_index": 34,
+      "horizon": 4350,
+      "historical10": false
+    },
+    {
+      "task": "ArrangeTea",
+      "group": "composite_unseen",
+      "target50_index": 35,
+      "horizon": 2250,
+      "historical10": true
+    },
+    {
+      "task": "BreadSelection",
+      "group": "composite_unseen",
+      "target50_index": 36,
+      "horizon": 1950,
+      "historical10": false
+    },
+    {
+      "task": "CategorizeCondiments",
+      "group": "composite_unseen",
+      "target50_index": 37,
+      "horizon": 1650,
+      "historical10": false
+    },
+    {
+      "task": "CuttingToolSelection",
+      "group": "composite_unseen",
+      "target50_index": 38,
+      "horizon": 1200,
+      "historical10": false
+    },
+    {
+      "task": "GarnishPancake",
+      "group": "composite_unseen",
+      "target50_index": 39,
+      "horizon": 2700,
+      "historical10": false
+    },
+    {
+      "task": "GatherTableware",
+      "group": "composite_unseen",
+      "target50_index": 40,
+      "horizon": 2250,
+      "historical10": false
+    },
+    {
+      "task": "HeatKebabSandwich",
+      "group": "composite_unseen",
+      "target50_index": 41,
+      "horizon": 2700,
+      "historical10": false
+    },
+    {
+      "task": "MakeIceLemonade",
+      "group": "composite_unseen",
+      "target50_index": 42,
+      "horizon": 3000,
+      "historical10": true
+    },
+    {
+      "task": "PanTransfer",
+      "group": "composite_unseen",
+      "target50_index": 43,
+      "horizon": 1800,
+      "historical10": false
+    },
+    {
+      "task": "PortionHotDogs",
+      "group": "composite_unseen",
+      "target50_index": 44,
+      "horizon": 2250,
+      "historical10": false
+    },
+    {
+      "task": "RecycleBottlesByType",
+      "group": "composite_unseen",
+      "target50_index": 45,
+      "horizon": 2850,
+      "historical10": false
+    },
+    {
+      "task": "SeparateFreezerRack",
+      "group": "composite_unseen",
+      "target50_index": 46,
+      "horizon": 2400,
+      "historical10": false
+    },
+    {
+      "task": "WaffleReheat",
+      "group": "composite_unseen",
+      "target50_index": 47,
+      "horizon": 4050,
+      "historical10": false
+    },
+    {
+      "task": "WashFruitColander",
+      "group": "composite_unseen",
+      "target50_index": 48,
+      "horizon": 3150,
+      "historical10": true
+    },
+    {
+      "task": "WeighIngredients",
+      "group": "composite_unseen",
+      "target50_index": 49,
+      "horizon": 3000,
+      "historical10": false
+    }
+  ]
+}
