@@ -13,9 +13,13 @@
 
 完整源数据曾在B300按307文件pins核验；本机校验确认文档所给入口和索引可重现。接手者仍须在Ascend本机完成全部文件和实际reader验收。
 
-## 私有源码交付检查补充（2026-11-13 22:10 UTC）
+## 私有源码云交付验收（2026-11-13 22:15 UTC）
 
 - 新ZIP为329,314 bytes，SHA256 `be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7`；104个成员、103项内部SHA全部通过。
-- 用户确认Ascend接手者使用现有授权账号；上传目标仍为原私有ModelScope仓库的新独立路径。
-- 上传环境的标准SDK凭据加载没有取得有效OpenAPI token；上传未发起，当前远端读取权限、私有性和完整回下载均未验证。实际状态见[source-delivery.json](source-delivery.json)。
-- 本地完整性通过不能替代云端交付验收；固定云revision和下载URL保持null，待实际上传及回下载通过后填写。
+- 现有账号 `dvdnh2026` 及目标仓库私有性已实际核验；只向新独立路径上传单一ZIP，保留旧包。
+- 固定revision `26401275c1f3cfbaeb621e73f682c93c3a70e9d8`，从空缓存通过网络完整回下载，bytes/外层SHA/103内部SHA全部通过；owner独立复核下载副本及ZIP CRC。
+- Human50三个固定HF来源的12个metadata文件再次在新目录实下载，全部1,717,383 bytes及SHA通过；未在本次重新下载43.25GB全部数据。
+- 云交付真实字段见[source-delivery.json](source-delivery.json)，下载清单见[source-bundle-download.jsonl](source-bundle-download.jsonl)。此前缺上传凭据状态已解除。
+- 已验证现有账号读取，不宣称匿名可下载，也不代表Ascend目标机器已配置凭据或通过NPU验收。
+
+原始XR模型补充核验：22个固定文件的远端存在性、大小和SHA与公开清单一致；匿名完整下载5,580-byte `config.json`并验SHA。未重新下载10.12GB权重。详细范围见[input-access-verification.json](input-access-verification.json)。Monitor云端上传/下载使用`modelscope-hub==0.4.6`，公开下载器固定`0.6.1`；下载器清单及已有文件验收另行核验，不将不同SDK版本混写。

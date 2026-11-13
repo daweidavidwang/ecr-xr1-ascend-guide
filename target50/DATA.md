@@ -1,6 +1,6 @@
 # Target50 数据、模型下载与输入验收
 
-返回 [交接入口](../TARGET50_HANDOFF.md)。所有命令从本公开 GitHub checkout 执行。以下下载 Human50 使用公开 Hugging Face，不需要历史私有 ModelScope Human10 仓库权限。
+返回 [交接入口](../TARGET50_HANDOFF.md)。所有命令从本公开 GitHub checkout 执行。以下下载 Human50 使用公开 Hugging Face，不需要历史私有 ModelScope Human10 仓库权限。新的Target50私有源码包已云端交付，见[固定下载与解压命令](SOURCE_AND_STATUS.md)。2026-11-13入口复核见[访问验收摘要](input-access-verification.json)：12个Human metadata实下载、原始XR全部22个文件元数据及小config实下载通过；大文件仍按清单在Ascend全量下载验SHA。
 
 ## 1. 固定三个数据源
 

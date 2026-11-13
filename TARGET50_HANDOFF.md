@@ -4,7 +4,7 @@
 
 **接手目标：先在 Ascend 从原始 Xiaomi checkpoint 重新训练完整 Target50 Human SFT，训练 seeds 1、2，各 48,000 updates；在 19,200 / 33,600 / 48,000 做 dev1000，按 dev 选点后做 test2500；随后按三轮 recovery 计划推进。** 对比同配方 GPU 与 NPU 的效果和训练时间。Ascend 实机适配尚未完成，不能把本文件当作已经验证的 NPU 一键启动器。
 
-**源码交付更新（2026-11-13 22:10 UTC）：** 新Target50 ZIP已校验，用户已批准上传且接手者使用现有授权账号；上传进程当前缺少有效ModelScope API token，因此**尚未上传、尚无下载链接**。实际检查与下一步见[源码交付状态](target50/SOURCE_AND_STATUS.md)及[机器可读回执](target50/source-delivery.json)。此更新不改变下述科学实验快照。
+**源码交付更新（2026-11-13 22:15 UTC）：** 新Target50 ZIP已上传私有ModelScope并完成空缓存全量回下载，外层与103项内部SHA全部通过；现有授权账号读取成功。[固定下载入口与可执行命令](target50/SOURCE_AND_STATUS.md) · [验收摘要](target50/source-delivery.json)。Ascend环境仍需配置该账号的读取凭据；下述科学实验快照不变。
 
 ## 1. 当前已经做到哪里
 
@@ -25,7 +25,7 @@
 ## 2. 接手顺序
 
 1. **下载并核验 Human50 和原始 base。** 具体仓库、固定 revision、307 文件清单、22 模型文件 pins、下载命令及目录见 [DATA.md](target50/DATA.md)。数据入口已经确定；不依赖历史私有 Human10。
-2. **取得新的私有 Target50 源码补充包。** 身份与交付状态见 [SOURCE_AND_STATUS.md](target50/SOURCE_AND_STATUS.md)。旧 v3 云包包含旧10任务代码，**不包含当前 Target50 reader / sampler / restart 的完整实现**。公共 GitHub 只发布指南与下载元信息。
+2. **取得新的私有 Target50 源码补充包。** 按 [SOURCE_AND_STATUS.md](target50/SOURCE_AND_STATUS.md) 的固定ModelScope版本直接下载并校验。旧 v3 云包包含旧10任务代码，**不包含当前 Target50 reader / sampler / restart 的完整实现**。公共 GitHub 只发布指南与下载元信息。
 3. **在 Ascend 做适配和验收。** 按 [TRAINING_AND_ASCEND.md](target50/TRAINING_AND_ASCEND.md) 保持科学配方，记录设备、CANN / torch-npu 版本、attention 实现、并行布局和实际 diff。不要在 Ascend 原样运行 B300 hostname / CUDA 专用脚本。
 4. **先完成短跑、恢复、导出和基准计时，再重置到 base 开正式 H50。** 两个训练 seed 独立初始化；吞吐试验输出与正式运行分开。
 5. **19.2k / 33.6k / 48k 的 HF 导出提交同一冻结 dev1000。** 三点齐全后选点，执行 test2500；必须沿用 [EVALUATION_AND_ROLLOUT.md](target50/EVALUATION_AND_ROLLOUT.md) 的 seed、horizon、推理配置、完整录制及技术失败处理规则。
@@ -80,6 +80,6 @@ GPU / NPU 对比优先使用同一已验证 GPU RoboCasa evaluator，读取各�
 
 > 阅读本仓库 TARGET50_HANDOFF.md 及其配套文档。先核验公开 Human50 的307个文件和三个 episode map，以及原始 XR‑1 的22个模型文件。取得并核验新的私有 Target50 源码包；不要用旧10-task v3训练器替代。建立私有工作目录，固定平台配套CANN/PyTorch/torch-npu组合，实现并记录NPU适配diff，保留48k/2400warmup/global192/原loss及reader语义。做数据、固定batch数值、多卡save/resume、HF导出与评测端加载验收，再从原始base正式训练H50 seed1/2。按19.2k/33.6k/48k做dev1000选点及test2500，保存全部轨迹/三路视频/状态与版本，报告50任务分项、NAV及训练耗时。Target50 recovery尚未交付，后续按本轮teacher生成D1/D2/D3并验收后再训练；不可拿旧9任务数据假装覆盖50任务。记录所有阻塞、变更、实际文件SHA和未测项，不覆盖旧模型或旧结果，不把适配短跑当正式实验。
 
-公开指南不授予私有源代码/数据仓库权限。凭据通过集群 secret 或私有渠道提供；不会写进此仓库。新私有补充包的云端状态如未就绪，按交付文档取得本地包即可继续，无需等待旧10模型或B300中间权重。
+公开指南不授予私有源代码/数据仓库权限。凭据通过集群 secret 或私有渠道提供；不会写进此仓库。新的私有补充包已完成云端交付，按固定清单下载并验SHA后继续适配，无需等待旧10模型或B300中间权重。
 
 机器可读合同：[handoff-contract.json](target50/handoff-contract.json)；空白结果总表：[results50-template.csv](target50/results50-template.csv)；本次入口与索引验证：[VALIDATION.md](target50/VALIDATION.md)。

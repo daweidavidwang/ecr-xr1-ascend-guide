@@ -2,6 +2,8 @@
 
 > **新增：XR‑1 50-task 实验请从 [TARGET50_HANDOFF.md](TARGET50_HANDOFF.md) 开始。** 包含当前Human50全量SFT、固定公开数据下载、48k配方、Ascend适配、dev1000/test2500、三轮recovery及源码交付状态。下文保留旧10-task实验说明，不是Target50启动入口。
 
+> **Target50源码包已交付（2026-11-13）：** [ModelScope固定下载链接与命令](target50/SOURCE_AND_STATUS.md)，现有授权账号全量回下载及103项内部SHA校验通过；此包与下文旧10-task v3包分别保留。
+
 核对日期：**2026-11-12**。目标仍是固定 A3 s1 累计 20k 父模型，再训练第二轮 Continue 10k。
 
 **完整 v3 ZIP、R2 recovery 和固定 20k 父模型的云端交付已完成。** R2/父模型已从云端向空目录完整回下载，24,270 文件、15,683,968,143 bytes 全部匹配冻结身份。接手方仍需验证自己的权限、恢复所有输入，并完成目标平台验收。

@@ -41,14 +41,16 @@
     "bytes": 329314,
     "sha256": "be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7",
     "source_revision": "4bf26d9831a355651b820eb116d8b02ea44f300d",
-    "cloud_url": null,
-    "delivery_state": "blocked_missing_configured_openapi_token",
-    "delivery_checked_at_utc": "2026-11-13T22:10:21.464560+00:00",
+    "cloud_url": "https://modelscope.cn/api/v1/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023/repo?Revision=26401275c1f3cfbaeb621e73f682c93c3a70e9d8&FilePath=handoffs%2Fxr1-target50-ascend-20261113-v1-be53dddf20f6%2Fxr1-target50-ascend-20261113-v1.zip",
+    "delivery_state": "uploaded_and_download_verified",
+    "delivery_checked_at_utc": "2026-11-13T22:15:58.362099+00:00",
     "delivery_receipt": "source-delivery.json",
     "repo_id": "dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023",
     "repo_type": "dataset",
-    "planned_remote_path": "handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip",
-    "revision": null,
-    "fresh_network_readback_verified": false
+    "revision": "26401275c1f3cfbaeb621e73f682c93c3a70e9d8",
+    "fresh_network_readback_verified": true,
+    "remote_path": "handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip",
+    "visibility": "private",
+    "download_manifest": "source-bundle-download.jsonl"
   }
 }

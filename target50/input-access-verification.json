@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-13T22:16:44.643047+00:00",
+  "human50": {
+    "public": true,
+    "fixed_repositories": 3,
+    "metadata_network_downloads": 12,
+    "metadata_total_bytes": 1717383,
+    "all_metadata_sha256_verified": true,
+    "full_307_payload_redownloaded_this_check": false,
+    "source_manifest": "human50-download.jsonl"
+  },
+  "xr1_base": {
+    "public_anonymous_access_verified": true,
+    "fixed_file_metadata_verified": 22,
+    "manifest_bytes": 10122587755,
+    "metadata_sha256_and_bytes_match_manifest": true,
+    "small_config_network_download": {
+      "bytes": 5580,
+      "sha256": "ff3fdf7b128376b3c52626c4874c3748d3ce087afa81af5cb1b574683ad0bedf",
+      "verified": true
+    },
+    "weights_redownloaded_this_check": false,
+    "source_manifest": "../downloads/xiaomi-base-download.jsonl",
+    "sdk": {
+      "package": "modelscope-hub",
+      "version": "0.4.6"
+    }
+  },
+  "source_bundle": {
+    "private_existing_account_access_verified": true,
+    "complete_network_download_and_internal_hashes_verified": true,
+    "receipt": "source-delivery.json"
+  },
+  "scope": "Access and content verification on the owner/Monitor workstation; receiving Ascend environment must independently download and verify all required payloads."
+}

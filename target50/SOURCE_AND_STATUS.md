@@ -1,61 +1,76 @@
 # 当前源码、checkpoint 与交付边界
 
-返回 [Target50交接](../TARGET50_HANDOFF.md)。时间：2026-11-13；本页是交接时快照，不是实时调度页。
+返回 [Target50交接](../TARGET50_HANDOFF.md)。科学实验状态保留2026-11-13原交接快照；源码云端交付更新于 **2026-11-13 22:15 UTC / 17:15 Toronto**。
 
-## 1. 新的私有源码补充包
+## 1. 新的私有源码补充包：已上传并完整回下载核验
 
-**包已在owner工作站生成并通过全部103项内部SHA校验；ModelScope上传已获批准，但上传环境缺少有效API凭据，尚未上传。** 用户已确认接手者使用现有已授权账号。当前没有可用的云端下载链接；若先通过私有渠道取得该ZIP，可按下文固定哈希校验。 不要把旧ModelScope v3 ZIP的下载链接改名后当作Target50包。公开GitHub不包含私有训练实现或git历史。
+**新的Target50源码ZIP已交付ModelScope。** 现有授权账号 `dvdnh2026` 实测可读取；仓库仍为私有，公开GitHub只包含文档与下载元信息。下方链接不是匿名公开下载，Ascend环境需通过平台secret或隐藏输入提供现有账号的有效读取凭据。
+
+- [固定版本ZIP下载（需登录授权账号）](https://modelscope.cn/api/v1/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023/repo?Revision=26401275c1f3cfbaeb621e73f682c93c3a70e9d8&FilePath=handoffs%2Fxr1-target50-ascend-20261113-v1-be53dddf20f6%2Fxr1-target50-ascend-20261113-v1.zip)
+- [ModelScope私有仓库](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023)
+- [可执行下载清单](source-bundle-download.jsonl) · [验收摘要](source-delivery.json)
 
 | 字段 | 固定值 |
 |---|---|
 | 文件名 | `xr1-target50-ascend-20261113-v1.zip` |
 | 大小 | **329,314 bytes** |
 | SHA256 | `be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7` |
+| ModelScope repo / type | `dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023` / `dataset` |
+| 固定云revision | `26401275c1f3cfbaeb621e73f682c93c3a70e9d8` |
+| 仓库内路径 | `handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip` |
 | 私有源快照 | `4bf26d9831a355651b820eb116d8b02ea44f300d` |
-| source文件数 | 101 |
-| 内容 | Target50 Human reader/sampler/trainer/restart、B300运行参考、评测与采集准备代码、必要历史loss/数据混合实现；包内SOURCE_MANIFEST和SHA256SUMS |
+| 文件验收 | ZIP共104成员，103项内部SHA全部通过；其中101个source文件 |
+| 内容 | Target50 Human reader/sampler/trainer/restart、B300运行参考、评测与采集准备代码、必要历史loss/数据混合实现；SOURCE_MANIFEST和SHA256SUMS |
 | 不包含 | 数据载荷、权重、凭据、git历史、已验证NPU实现 |
-| 云下载 | **尚未上传；revision / download URL 为 null**，见[机器可读交付状态](source-delivery.json) |
 
-owner本地交付文件：
+### 在Ascend下载、校验、解压
 
-```text
-/home/eai/Documents/Codex/2026-10-26/files-pasted-by-the-user-embodiedclaw/outputs/handoffs/xr1-target50-ascend-20261113-v1.zip
-```
-
-这是owner工作站地址，不是Ascend下载URL。接手者收到包后放在私有目录；校验再解压，不上传到本公开仓库：
+先取得最新公开GitHub checkout：已有checkout执行 `git pull --ff-only`，首次使用按[DATA.md](DATA.md) clone。下面从该checkout根目录执行；`ECR_ROOT` 沿用数据下载所选目录。数据/模型下载环境与训练环境分开。
 
 ```bash
-# 在接收ZIP的私有目录执行。
+set -euo pipefail
+export ECR_GUIDE="${ECR_GUIDE:-$PWD}"
+export ECR_ROOT="${ECR_ROOT:-$HOME/ecr-target50-ascend}"
+cd "$ECR_GUIDE"
+test -f TARGET50_HANDOFF.md
+sha256sum -c PUBLIC_SHA256SUMS
+mkdir -p "$ECR_ROOT/envs" "$ECR_ROOT/private"
+if [ ! -x "$ECR_ROOT/envs/model-download/bin/python" ]; then
+  python3.12 -m venv "$ECR_ROOT/envs/model-download"
+fi
+"$ECR_ROOT/envs/model-download/bin/python" -m pip install 'modelscope-hub==0.6.1'
+
+# 优先由平台secret注入。需要交互输入时不回显；不要将token写进命令参数或文档。
+if [ -z "${MODELSCOPE_API_TOKEN:-}" ]; then
+  read -rsp 'ModelScope read token (hidden): ' MODELSCOPE_API_TOKEN
+  printf '\n'
+fi
+export MODELSCOPE_API_TOKEN
+"$ECR_ROOT/envs/model-download/bin/python" downloads/download_files.py \
+  target50/source-bundle-download.jsonl --root "$ECR_ROOT" --workers 1
+
 printf '%s  %s\n' \
   be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7 \
-  xr1-target50-ascend-20261113-v1.zip | sha256sum -c -
-test ! -e "$ECR_ROOT/private/xr1-target50-ascend-20261113-v1"
-mkdir -p "$ECR_ROOT/private"
-python3 -m zipfile -e xr1-target50-ascend-20261113-v1.zip "$ECR_ROOT/private"
+  "$ECR_ROOT/private/xr1-target50-ascend-20261113-v1.zip" | sha256sum -c -
 export ECR_TARGET50_BUNDLE="$ECR_ROOT/private/xr1-target50-ascend-20261113-v1"
+if [ ! -e "$ECR_TARGET50_BUNDLE" ]; then
+  python3 -m zipfile -e "$ECR_ROOT/private/xr1-target50-ascend-20261113-v1.zip" "$ECR_ROOT/private"
+fi
 cd "$ECR_TARGET50_BUNDLE"
 sha256sum -c SHA256SUMS
 export ECR_TARGET50_SOURCE="$ECR_TARGET50_BUNDLE/source"
-# 保留这个原始包，另建私有working copy做NPU适配。
+# 保留原ZIP与未改动源码，另建私有working copy做NPU适配。
 ```
 
-新私有源包还包含未完成的采集研究代码；存在文件不意味着它已经实机验收。读 [评测状态](EVALUATION_AND_ROLLOUT.md) 后再选择生产入口。
+SDK下载器逐项核验固定版本、329,314 bytes和外层SHA；已有不同文件不会被覆盖。下载回执在 `$ECR_ROOT/download-verified-*.json`。**该下载器的 `--check-only` 只检查清单格式，不下载或验收本地载荷**，不能代替上面的实际下载。平台没有Python3.12时可用独立Python3.10+环境；不要修改训练环境或系统驱动。
 
-### 本次上传检查：2026-11-13 22:10 UTC / 17:10 Toronto
+SDK命令是推荐入口；浏览器直链如提示登录，请使用现有授权账号，不要把token拼进URL。另一台机器的网页登录状态不会自动带到Ascend进程。本次未将凭据写进文档、源码ZIP或GitHub，也未更改仓库公开性。
 
-本包请求 `ecr-target50-ascend-source-cloud-20261113-r1` 的真实回执为 `blocked_missing_configured_openapi_token`。329,314 bytes、ZIP外层SHA、104个成员和103项内部SHA已通过；标准SDK凭据加载保留有效期检查，未取得可用token。**尚未发起上传，也未完成当前远端权限、仓库可见性或回下载验收。** [交付状态](source-delivery.json)中保留这些未完成字段；不要把仓库主页当作本ZIP的下载链接。
+### 已完成的云端验收与范围
 
-已批准目标为既有私有仓库 [dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023](https://modelscope.cn/datasets/dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023)，计划新增路径：
+Monitor在上述固定revision从空缓存通过网络下载完整ZIP，外层SHA和103项内部SHA全部一致；owner再独立读取该下载副本，复核104个成员、CRC和全部内部SHA。源ZIP及旧包均保留。此前缺凭据状态已解除，历史blocked记录不代表当前交付状态；机器可读状态以[source-delivery.json](source-delivery.json)为准。
 
-```text
-handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip
-```
-
-这是**计划路径，当前不是可下载文件**。既有账号不需要再次申请本次上传授权；需在上传工作站为Monitor配置有效的ModelScope API凭据。账号在其他机器登录，不代表上传进程或Ascend下载环境已有凭据。使用平台secret或官方凭据机制，不把token发到聊天、Git、URL或命令行参数。
-
-凭据就绪后继续同一请求：核验仓库私有性 → 上传上述单一文件 → 记录实际固定revision → 在空缓存完整回下载 → 验外层SHA和103项内部SHA → 发布固定下载链接与可执行清单。保留原ZIP和旧云包。原有v3云包已交付，但内容冻结于旧10-task；其历史成功不能证明本次Target50包已上传。
-
+这是**新的Target50包**，旧10-task v3 ZIP仍保留，不互相替换。新包里的采集研究代码存在未完成部分；文件存在不意味着已经实机验收。继续阅读[评测与录制状态](EVALUATION_AND_ROLLOUT.md)及[Ascend适配步骤](TRAINING_AND_ASCEND.md)。本次交付不宣称已完成NPU训练或仿真录制验收。
 
 ## 2. 源码和运行版本关系
 
