@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "sha256 correct",
+    "sha256 corruption rejected",
+    "git_blob_sha1 correct",
+    "git_blob_sha1 corruption rejected",
+    "unsafe path rejected",
+    "duplicate rejected",
+    "missing rejected",
+    "symlink rejected",
+    "all 340 input records identical to frozen manifests",
+    "25 private source evidence pins match frozen git objects",
+    "all frozen source commits locally present",
+    "50 task identities/groups checked",
+    "24 result rows and denominators checked",
+    "18 local documentation links checked"
+  ],
+  "limitations": [
+    "No Ascend runtime tested",
+    "No model/data payload downloaded in this documentation task",
+    "Validation helper exercised with synthetic files only; historical full input verification remains in cited private receipts"
+  ],
+  "date": "2026-11-13",
+  "source_refs_checked_on_github": true
+}

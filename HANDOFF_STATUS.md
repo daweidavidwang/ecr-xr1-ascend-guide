@@ -1,6 +1,6 @@
 # 接手状态与剩余条件
 
-> **新增：50-task 实验请从 [TARGET50_HANDOFF.md](TARGET50_HANDOFF.md) 开始。** 包含当前Human50全量SFT、固定公开数据下载、48k配方、Ascend适配、dev1000/test2500、三轮recovery及源码交付状态。下文保留旧10-task实验说明，不是Target50启动入口。
+> **新增：XR‑1 50-task 实验请从 [TARGET50_HANDOFF.md](TARGET50_HANDOFF.md) 开始。** 包含当前Human50全量SFT、固定公开数据下载、48k配方、Ascend适配、dev1000/test2500、三轮recovery及源码交付状态。下文保留旧10-task实验说明，不是Target50启动入口。
 
 核对日期：**2026-11-12**。目标仍是固定 A3 s1 累计 20k 父模型，再训练第二轮 Continue 10k。
 
