@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T08:44:19.519060+00:00",
+    "checked_at": "2026-11-14T09:30:48.945687+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 51,
+    "local_wam_links_checked": 52,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -253,5 +253,53 @@
     "root_cause_established": false,
     "formal_credit": 0
   },
-  "historical_checks_scope": "The top-level checked_at, checks and public_source_checks describe the original 2026-11-13 validation. The public_reference_audit below is the latest documentation-only check; it does not repeat model, training, simulation or payload validation."
+  "historical_checks_scope": "The top-level checked_at, checks and public_source_checks describe the original 2026-11-13 validation. The public_reference_audit below is the latest documentation-only check; it does not repeat model, training, simulation or payload validation.",
+  "official_evaluation_addendum": {
+    "checked_at": "2026-11-14T09:30:38.423446+00:00",
+    "location": "WAM_HANDOFF.md section 7.5",
+    "result": "four_complete_task_shards_owner_accepted",
+    "split": "pretrain",
+    "new_completed_episodes": 160,
+    "returned_files": 724,
+    "returned_bytes": 71688169,
+    "tasks": [
+      {
+        "component": "awomo",
+        "task": "TurnOnMicrowave",
+        "successes": 29,
+        "completed": 30,
+        "official_successes": 29
+      },
+      {
+        "component": "awomo",
+        "task": "TurnOnSinkFaucet",
+        "successes": 26,
+        "completed": 30,
+        "official_successes": 27
+      },
+      {
+        "component": "loopwam",
+        "task": "NavigateKitchen",
+        "successes": 20,
+        "completed": 50,
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "OpenDrawer",
+        "successes": 47,
+        "completed": 50,
+        "official_successes": null
+      }
+    ],
+    "cumulative_completed": {
+      "awomo_official": 570,
+      "loopwam_official": 450,
+      "ecr_target": 0
+    },
+    "formal_human_sft_updates": 0,
+    "formal_recovery_sft_updates": 0,
+    "ascend_runs": 0,
+    "scheduler_limit": "One scheduler COMPLETED0:0 retained; three terminal scheduler records expired. Full producer and native episode evidence verified; no invented scheduler exit status."
+  }
 }
