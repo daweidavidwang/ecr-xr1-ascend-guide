@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T10:22:31.574094+00:00",
+    "checked_at": "2026-11-14T10:48:20.810044+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -391,6 +391,51 @@
       "ecr_target": 0
     },
     "scheduler_limitation": "RinseSinkBasin terminal scheduler history expired; full producer/native episode evidence accepted without scheduler exit claim.",
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "dishwasher_three_loop_results_addendum": {
+    "checked_at": "2026-11-14T10:48:19.893308+00:00",
+    "location": "WAM_HANDOFF.md section7.9",
+    "official_pretrain": [
+      {
+        "component": "awomo",
+        "task": "LoadDishwasher",
+        "successes": 18,
+        "completed": 30,
+        "official_successes": 21
+      },
+      {
+        "component": "loopwam",
+        "task": "SlideDishwasherRack",
+        "successes": 46,
+        "completed": 50,
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "TurnOnElectricKettle",
+        "successes": 45,
+        "completed": 50,
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "TurnOnMicrowave",
+        "successes": 42,
+        "completed": 50,
+        "official_successes": null
+      }
+    ],
+    "returned_files": 818,
+    "returned_bytes": 86892767,
+    "cumulative_completed": {
+      "awomo_official": 690,
+      "loopwam_official": 700,
+      "ecr_target": 0
+    },
+    "scheduler_limitation": "Three Loop terminal scheduler records expired; full producer/native episode evidence accepted without scheduler exit claim. Awomo COMPLETED0:0 retained.",
     "formal_sft_updates": 0,
     "ascend_runs": 0,
     "private_github_dependencies": false
