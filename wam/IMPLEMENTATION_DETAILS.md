@@ -592,3 +592,37 @@ def serialized_metadata(value):
 **解释限制：** 暴露字段可能包含别名，数组字节总和不是 MJB 大小。原进程没有记录的 `mj_sizeModel` 数值仍未知；不能从压缩文件大小反推该值。公开 [MuJoCo 3.3.1 实现](https://github.com/google-deepmind/mujoco/blob/3.3.1/src/engine/engine_io.c) 使用 `int` 累计并返回此大小，这是额外的检查线索，不构成已发生溢出的证据。
 
 完整观察器另已修正日志顺序：原 getter 返回后，先读取实际 `mj_sizeModel`，在任何大型数值快照复制前写 `model-budget.json`，包含实际有符号数值、`limit_bytes=536870912`、可用的 `model_nbuffer`、`full_model_snapshot_started=false`，并将状态区分为 `invalid_nonpositive`、`over_budget`、`within_budget`。只有最后一种继续原快照路径，上限没有放宽。修订观察器的 11 项本地测试及旧快照工具的 7 项本地测试通过；后者尚无现场测量结果。旧完整任务不自动重试，原 GPU 条件任务仍等待新的完整 CPU 验收；这两个小型测量任务不满足该条件。
+
+## 10. Awomo 原生九槽历史的独立准备
+
+2026-11-14 新增的是代码与预注册合同，12 项本地小数组合同测试通过，两项现场 CPU 准备已提交、尚未验收；真实模型长回合入口仍待实现。本节不增加正式评测、训练或 Ascend 完成量。此前共同 ECR 的 Awomo 两个完整 dev 回合最多运行 201 步，尚不能证明该入口覆盖了九个历史槽。
+
+### 固定输入与终止规则
+
+从第 6 节冻结的 dev1000 清单选择 NavigateKitchen，`target50_index=4`、slot 为 1、2、3。对应 ID 是 `target50-v1/dev/04/001`、`002`、`003`，环境 seed 分别为 `510004001`、`510004002`、`510004003`；每局 horizon 450，最多 1,350 个环境步。选择在运行前固定，只使用原 v1 初始化，不应用第 9 节的稳定 Counter 候选，也不读取 test 成绩选场景。
+
+后续真实共同 ECR 回合沿用已声明的 success、terminated、truncated 或 horizon 终止；成功后不继续动作以凑历史长度。如果三局全部提前结束，就报告历史覆盖不足，不自动换 seed 或追加场景。
+
+九槽索引为 `current − 360, current − 320, …, current − 40`，非负槽才有效；当前帧另列。Awomo 每 16 控制步重规划，因此完整九槽首次可能出现于 **368 步**，对应历史帧 `[8,48,88,128,168,208,248,288,328]` 和当前帧 368；352 步仍只有八槽。不能仅凭回合超过 360 步宣布通过。
+
+### 两项相互独立的 CPU 准备
+
+**初态对照：** 每个固定输入各用两个全新进程，合计六次初始化。按第 9.2 节的 CPU 原生构造/reset/seed/reset 顺序，只关闭 offscreen renderer 与 camera observations；禁止渲染、策略、控制动作和 Counter 替换。每对比较完整 XML、完整 JSON metadata、layout/style、环境参数、integration mask，以及 integration/state16/state14 的 dtype、shape 和全部字节。保存每个进程的原始 XML、metadata、NPZ、日志与比较记录。预算为 0 GPU、2 CPU、32 GiB RAM、30 分钟，每个子进程最多 120 秒、证据最多 2 GiB。该检查只证明选定输入的 CPU 重复性，不能证明与渲染初态相同。
+
+**原生历史组装：** 使用[公开源码清单](pins/source-pins.json)中固定的原版 Awomo 策略版本，直接调用其 `parse_request`、`h264_roundtrip`、`RoboCasaPolicy._update`、`_sample` 和 `compose_canvas`，保持各函数原内容。读取固定 checkpoint 中 738 bytes 的 `awomo_config.json`（Git blob SHA1 `5f6d1ecf06367c54bcba406ef8bf1fece4d77864`），确认 9 槽、周期 40、动作长度 16，并使用其实际 video_size。这里只构造持有 video_size 的轻量对象；prompt 替身仅记录输入，不加载权重、processor、encoder，也不调用 predict、模型 encode 或采样动作。
+
+输入是可确定性重建的测试图像，不是仿真观测。每个相机为 256×256 RGB，像素值为 `(3*x + 5*y + 13*step + 67*camera + 41*channel) % 256`，camera/channel 从 0 编号，dtype 为 uint8。请求在 `0,16,…,448` 步产生，共 29 次；首请求只有 step0，此后每次含 current−12、−8、−4、0 四个新观测。每个请求单独经过原生 H264 压缩/解压，再送入原生缓存。不能将全部历史一次压缩。
+
+测试 state16 为 float32 全零向量，将从 0 编号的第 6、13 元素设为 1，以表示两个单位四元数；session 固定为 `cpu-history-fixture-v1`。instruction 使用两端各两个空格的 `synthetic history fixture`，以检查原生去空白行为。请求 seed 为 `2080000+replan_index`，本 CPU 检查没有动作采样，不能据此声明策略 RNG 已验证。
+
+另存一份独立的压缩后帧时间线，逐次核对：
+
+- 缓存恰好保留 `max(0,current−360)` 到 current 的所有 4 步间隔帧；每帧完整 dtype/shape/字节相同。
+- 在 `compose_canvas` 外只包一层观察，原函数仅调用一次并返回同一个结果对象。记录实际选入的缓存帧与输出画布，按上述独立索引核对来源和顺序。
+- `history_valid` 是精确的九元素 bool 掩码；无效槽全部为 float32 零，合法历史槽、当前 video 与实际画布逐数组相同。state 与原生 state_vector 一致。
+- prompt 边界实际收到去首尾空白的 instruction、当前画布及全部合法历史画布，顺序不变。此检查不等于真实 processor 或 VLM 验收。
+- 末尾用新 session 的 replan0 重置，确认旧帧清空、缓存持有输入副本；旧 session 的后续 replan 必须被原生检查拒绝。观察钩子在异常后也恢复。
+
+保留 29 份逐请求元数据与数组摘要，在 step 0、160、352、368、448 另存原始请求、压缩后请求、实际选中缓存、画布、video/history/mask/state 的 NPZ。预期全九槽请求恰好为 368、384、400、416、432、448。预算为 0 GPU、2 CPU、16 GiB RAM、20 分钟、最多 2 GiB 证据；意外 CUDA 初始化立即失败，保留错误与部分产物。
+
+两项准备分别验收，均不自动放行 GPU。后续真实长回合还必须保存服务器实际缓存和 `_sample` 输入，并与客户端 session/replan、原始观测来源和请求 seed 对齐。没有真实模型与原生终止下的这些证据，就继续标记九槽实机覆盖未完成。本节已完整写出重建方法，不需要取得原运行端的工程仓库或调度记录。
