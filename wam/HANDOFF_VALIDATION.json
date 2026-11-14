@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T16:16:02.776619+00:00",
+    "checked_at": "2026-11-14T16:56:36.944708+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 55,
+    "local_wam_links_checked": 61,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -137,7 +137,8 @@
       "Training objectives and checkpoint resume",
       "ECR requests and native evaluation semantics",
       "Strict metadata serialization",
-      "Separately versioned stable Counter candidate"
+      "Separately versioned stable Counter candidate",
+      "Independent evaluator launch, timeout budgets, process cleanup and result evidence"
     ],
     "public_upstream_commit_checks": [
       {
@@ -190,6 +191,19 @@
       "authenticated": false,
       "http_status": 200,
       "visibility": "public"
+    },
+    "self_contained_handoff_update": {
+      "locations": [
+        "WAM_HANDOFF.md section 4",
+        "wam/EVALUATION.md section 3.1",
+        "wam/ASCEND_RUNBOOK.md dependency table"
+      ],
+      "changes": [
+        "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
+        "Replaced old queue revision identifiers with standalone timeout and attempt-preservation rules.",
+        "Specified local provenance, frozen protocols, initial-state checks, process exits and artifact indexing without external engineering-repository dependencies."
+      ],
+      "unbundled_payloads": "GPU tensors, full historical asset indexes, checkpoints and raw rollouts remain subject to the explicitly documented delivery boundaries; no new payload delivery or runtime validation is claimed."
     }
   },
   "engineering_addendum": {
