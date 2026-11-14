@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T09:30:48.945687+00:00",
+    "checked_at": "2026-11-14T10:01:34.129990+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -301,5 +301,36 @@
     "formal_recovery_sft_updates": 0,
     "ascend_runs": 0,
     "scheduler_limit": "One scheduler COMPLETED0:0 retained; three terminal scheduler records expired. Full producer and native episode evidence verified; no invented scheduler exit status."
+  },
+  "subsequent_results_addendum": {
+    "checked_at": "2026-11-14T10:01:32.666747+00:00",
+    "location": "WAM_HANDOFF.md section7.6",
+    "official": {
+      "component": "loopwam",
+      "task": "OpenStandMixerHead",
+      "successes": 46,
+      "completed": 50,
+      "returned_files": 228,
+      "returned_bytes": 23275213,
+      "cumulative_official_complete": 1070
+    },
+    "original_v1_dev_full_entry": {
+      "models": 2,
+      "scenes_each": 2,
+      "episodes": 4,
+      "successful_episodes": 4,
+      "action_steps_verified": 945,
+      "policy_requests_verified": 35,
+      "cross_model_initial_arrays_exact": 8,
+      "fresh_reference_initial_arrays_exact": 16,
+      "prior_independent_node_initial_arrays_exact": 16,
+      "returned_files": 239,
+      "returned_bytes": 22597438,
+      "formal_credit": 0,
+      "test_release": false,
+      "awomo_nine_history_coverage": false
+    },
+    "ascend_runs": 0,
+    "private_github_dependencies": false
   }
 }
