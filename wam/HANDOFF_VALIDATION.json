@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T02:24:35.444914+00:00",
+    "checked_at": "2026-11-14T03:33:03.577032+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -116,6 +116,9 @@
         "visibility": "public"
       }
     ],
-    "research_snapshot_unchanged": "2026-11-13T21:22:11Z"
+    "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
+    "checksums_verified": 58,
+    "inline_python_blocks_syntax_checked": 9,
+    "verification_method": "Scanned every tracked text file for removed internal repository identifiers and GitHub URL forms; checked each referenced GitHub repository through the unauthenticated API; resolved local WAM document links; verified the public checksum list. Inline Python was syntax-checked only in this audit."
   }
 }
