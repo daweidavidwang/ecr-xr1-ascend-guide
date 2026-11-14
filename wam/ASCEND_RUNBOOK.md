@@ -89,7 +89,7 @@ CPU 输出必须满足：动作 roundtrip、state 编码、相机 offset、histo
 4. 记录 max/mean/p99 absolute error、relative error（注明零分母规则）、有限性、动作越界/离散 gripper/mode 翻转；报告 dtype/backend/shape。
 5. 先测 GPU 同后端重复误差，结合任务量纲预先写明阈值，再判断 NPU；不能看完 NPU 后放宽阈值。跨硬件不承诺 bitwise equality。
 
-当前交接中的 CPU/pixel NPZ 不包含完整已验 GPU/NPU 前反向参考。需由有容量的 GPU 执行端生成固定参考并回交 SHA/环境/源码，不能把“已有 GPU 曾推理成功”替代数值对照。
+本交接记录了历史 CPU/像素检查的结论与样本重建方法，未附带其 NPZ payload，也没有完整已验的 GPU/NPU 前反向参考。按实现细节重建 CPU 样本，再由有容量的 GPU 执行端生成固定参考并回交 SHA/环境/源码，不能把“已有 GPU 曾推理成功”替代数值对照。
 
 ## 5. 阶段 C：策略服务与 RoboCasa 闭环
 

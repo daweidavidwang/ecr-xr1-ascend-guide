@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T03:33:03.577032+00:00",
+    "checked_at": "2026-11-14T05:37:31.697140+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 43,
+    "local_wam_links_checked": 48,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -119,6 +119,7 @@
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 58,
     "inline_python_blocks_syntax_checked": 9,
-    "verification_method": "Scanned every tracked text file for removed internal repository identifiers and GitHub URL forms; checked each referenced GitHub repository through the unauthenticated API; resolved local WAM document links; verified the public checksum list. Inline Python was syntax-checked only in this audit."
+    "verification_method": "Scanned every tracked text file for internal repository identifiers, paths and GitHub URL forms; anonymously checked all 9 referenced GitHub repositories and all 6 fixed upstream commits. Two commit-detail requests timed out with HTTP 422; the lightweight Git commit API resolved both exact SHAs. Resolved all local WAM document links and syntax-checked inline Python. Regenerated and verified public checksums after the documentation changes; no model or payload validation was rerun.",
+    "public_upstream_commit_pins_checked": 6
   }
 }

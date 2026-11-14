@@ -80,6 +80,16 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 
 **工程改动的交付方式：** 本交接把 Human v3→v2.1 读取、Awomo RoboCasa 动作/历史/processor/窗口采样、诊断目标、恢复规则和 ECR 评测入口语义直接写在 [实现细节](wam/IMPLEMENTATION_DETAILS.md) 与各合同页。公开上游本身不包含这些新增工程模块；接手者按本文代码/规格实现并验收自己的 Ascend 分支，不能把原 GPU 验收结论自动赋给新实现。这里没有已完成的 NPU 训练启动器。
 
+**新增实现的直接入口（2026-11-14 核查）：** 接手 agent 按下面的文档内容重建新增模块，无需取得其他 GitHub 仓库权限。
+
+| 需要实现或复核的内容 | 本交接中的具体位置 | 交付形式 |
+|---|---|---|
+| Human 整 episode 划分、Loop 共享视频读取 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 1 节 | 划分函数、目录与 metadata 规格、逐相机时间戳函数及接入位置 |
+| Awomo 动作/状态、图像请求与历史、processor | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 2–3 节 | 核心辅助代码、固定样本身份、公开原生函数及逐张量比较要求 |
+| 全量窗口、rank 采样与数据游标恢复 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 4 节 | 索引和恢复代码、预期计数、数据与 batch 布局绑定规则 |
+| 两模型短训练与模型/优化器恢复 | [数据与训练合同](wam/DATA_AND_TRAINING.md)及实现细节第 5 节 | 配方、损失定义、更新顺序、保存内容与验收标准；NPU 启动器待实现 |
+| ECR 场景请求与共同评测入口 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 6–7 节 | 可重建 dev/test 的生成代码、固定 SHA256、初态及策略包装规格 |
+
 **文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 
 ## 5. 现有落点与迁移方式
