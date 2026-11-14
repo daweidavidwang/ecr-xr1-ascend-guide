@@ -121,5 +121,13 @@
     "inline_python_blocks_syntax_checked": 9,
     "verification_method": "Scanned every tracked text file for internal repository identifiers, paths and GitHub URL forms; anonymously checked all 9 referenced GitHub repositories and all 6 fixed upstream commits. Two commit-detail requests timed out with HTTP 422; the lightweight Git commit API resolved both exact SHAs. Resolved all local WAM document links and syntax-checked inline Python. Regenerated and verified public checksums after the documentation changes; no model or payload validation was rerun.",
     "public_upstream_commit_pins_checked": 6
+  },
+  "engineering_addendum": {
+    "checked_at": "2026-11-14T07:23:17.189660+00:00",
+    "result_cutoff": "2026-11-14T07:13:00Z",
+    "location": "WAM_HANDOFF.md section 7",
+    "scope": "Directly documented owner-accepted GPU2 three-update Awomo training/save-resume, two native official entry engineering checks, CPU50 stable-region candidate and GPU2 four-scene rendered pairs. No private GitHub reference or external internal-report dependency. No Ascend execution; original sections1-6 remain frozen.",
+    "formal_sft_credit": 0,
+    "formal_benchmark_credit": 0
   }
 }

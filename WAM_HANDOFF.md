@@ -2,6 +2,8 @@
 
 交接日期：2026-11-13。研究状态冻结于 **2026-11-13 21:22:11 UTC**。本次交接由 WAM owner 根据用户要求编写，交给另一个 agent 在 Ascend 上独立适配和复测。以下是已验收证据快照，不代表接手时的实时调度状态。
 
+**增补阅读提示：** 第 1–6 节保留上述冻结快照；第 7 节补充截至 **2026-11-14 07:13 UTC** 已完成并随后验收的 B300 工程结果。涉及“尚未完成”的旧状态以第 7 节明确列出的更新为准，其余不变。
+
 **结论：两模型已有 NVIDIA 环境、固定输入和部分评测/训练工程证据；没有 Ascend 实测结果，也没有完成正式 Human SFT 或 recovery SFT。不要将“文件齐备”“CPU 检查通过”“短训练通过”写成完整训练或性能复现成功。**
 
 本仓库原来的 XR1 指南继续有效。本页是独立 WAM 交接，不能套用 XR1 的 20k 父模型、50:25:25 配方、10k 步数或 455/500 成绩。WAM 主线的 Target50 是 **50 个任务类别**，不是 50 个 episode，也不是旧 XR1 的十任务 test500。
@@ -114,3 +116,48 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 5. 能运行后，分别报告工程正确性、NPU 性能、原版官方复现、共同 Target50 结果。Human/recovery 训练不得用诊断权重接续，也不得以 test 选择配置。
 
 回交到本仓库的独立 WAM 结果目录，至少包含：适配 commit、环境锁、输入 SHA、实际命令、测试日志索引、数值误差、训练/恢复结论、峰值内存/吞吐、逐局身份和成功数/计划分母。大文件保持私有并提供固定版本与 SHA。没有完成的项目保留明确待办和失败原因。
+
+## 7. 2026-11-14 工程结果增补与 Ascend 接手注意
+
+### 7.1 Awomo 已完成真实短训练与单卡保存恢复
+
+在 `gpu2` 的一张 B300 上，三个 Human train 窗口完成 **3 次逻辑更新**。连续运行更新 1→2→3，再从更新 1 的保存点重放 2→3，因此实际执行 **5 次 AdamW 更新**。三个窗口来自 OpenCabinet、StoreLeftoversInBowl、CategorizeCondiments；具体源 episode、窗口和图像语义见本目录的数据与实现附页。
+
+训练范围为全部 DiT，包括 proprio encoder；Qwen 基座、已发布 LoRA 与 VAE 冻结。171 个可训练张量、3,876,166,656 个元素，第一次更新后 171 个张量全部发生变化。FP32 主参数、BF16 前向 autocast；AdamW `lr=1e-5, betas=(0.9,0.999), eps=1e-8, weight_decay=0`，梯度裁剪 1.0，batch size 1。使用 PyTorch math SDPA 和确定性算法，seed 20261113。图像与全部 80 维动作各采独立标准高斯噪声，固定 `sigma=0.5`、timestep scale 1000；损失为图像 velocity MSE 加 **11 个有效动作坐标**的 velocity MSE 均值。有效坐标为 `[7,8,9,10,11,12,16,58,59,63,76]`。这是明确限定的训练诊断，不代表公开原版训练配方已复现。
+
+重放更新 2、3 的输入噪声、loss、梯度范数、171 个参数张量摘要、AdamW 状态与 CPU/CUDA RNG 摘要，与连续运行对应项完全一致。冻结编码器未变化。峰值 allocated memory 为 **102,755,370,496 bytes**，reserved 为 **108,240,306,176 bytes**；这是该单卡诊断的观测值，不能推断 Ascend 内存需求或训练吞吐。
+
+两份保存点仍在源节点私有保留：更新 1 为 46,514,214,051 bytes，SHA256 `8b5ebd73425cfedd52e8fb76fd8dcf188e6194108b42d0baa3b8b3d161742796`；更新 3 为 46,514,214,115 bytes，SHA256 `0bbcab4de25cd740dede383867c7455b5851105f97aa689bb0d4cf97404b34fd`。源节点已复核大小与摘要，**本仓库未包含 checkpoint payload**。它们仅用于诊断，禁止作为正式 SFT 或 benchmark 候选的初始化权重。尚未验收 Awomo 多卡模型/优化器恢复、完整 sampler 训练、早期历史训练或全数据训练。
+
+### 7.2 两模型在 GPU2 的原生官方入口检查已通过
+
+保持已发布策略、原生动作与历史语义，分别完成 NavigateKitchen 单局检查：Awomo 用官方 seed 207，在 227/450 步成功；LoopWAM 用官方 seed 42，执行 450/450 步未成功。两者均完成所属渲染上下文的关闭，实际渲染 GPU 身份匹配分配设备，没有修改 scene/material。已知原生 shininess 警告按既有协议记录，未知 GL 错误仍失败退出。
+
+这两局属于工程检查，不加入正式成绩，不足以比较模型强弱。正式完整任务进度仍为 Awomo 510/1500、LoopWAM 350/2500；共同 Target50 为 0/5000，正式 Human/recovery SFT 为 0。
+
+### 7.3 ECR 初态不稳定的原因与单独版本化候选
+
+在公开 RoboCasa commit `456174f62b89b8fca99eaaf33949c29fec9cfc2a` 的 `robocasa/models/fixtures/counter.py`，`Counter.get_reset_regions` 包含：
+
+```python
+valid_geoms = list(set(valid_geoms))
+```
+
+这里对 XML Element 去重后不保留原顺序，独立进程中可在相同 RNG 状态下得到不同候选区域次序。实测影响了 OpenStandMixerHead 的放置，也影响 PickPlaceSinkToCounter 的放置失败/重采样路径。因此固定环境 seed 本身不足以保证同一物理场景。
+
+目前测试的唯一改动是稳定去重：
+
+```python
+valid_geoms = list(dict.fromkeys(valid_geoms))
+```
+
+在独立进程内应用上述方法替换；原安装文件、其他方法、原生 reset、材质和动作语义不变，无 trace 钩子。该改动使用单独的 **`ecr-target50-stable-counter-v2-candidate`** 标识，场景身份为 `(protocol_id, 原 scene_id)`。保留原请求的 seed/task/split/horizon 作为来源，但候选改变种子到物理场景的映射，不能与原 v1 或官方 pretrain 混合计分。
+
+已验收的覆盖范围：
+
+- 两台 B300 节点各运行 50 个任务类别的 dev slot 0，每个输入两个独立 CPU 进程，共 200 次初始化。100/100 个站内重复对和 50/50 个跨节点场景的 XML、metadata、layout/style、integration state、state16/state14 一致。
+- GPU2 恢复原生三相机渲染后，验证任务索引 4/6/7/11（NavigateKitchen、OpenDrawer、OpenStandMixerHead、PickPlaceSinkToCounter），各两个独立进程，各执行 12 个固定控制步，共 8 次运行、96 步。每次初态与 CPU 对照匹配；每对的 13 个采样时刻 × 4 类数组（integration/state16/state14/三相机图像）共 52 对数组完全一致，四场景合计 **208/208 对**。
+
+上述通过尚不覆盖全部 50 类真实渲染、完整 dev1000、learned policy 或正式 test。GPU1 的候选渲染验证也仍单独待验。Ascend 接手者应在独立候选分支复现这一差异，保留原版本对照，并分别报告物理初态一致性与跨硬件模型数值误差。原始轨迹数组和完整 CPU 初态 payload 未附在本仓库；应重新生成或按精确文件清单取得并校验，不能用上述统计代替逐数组检查。
+
+所有新增结果仍来自 NVIDIA B300；没有 Ascend 运行结果。当前新增的 GPU2 两模型策略诊断只针对原 v1 的两个已验场景、每场景最多 64 步，尚未作为完成结果，也未自动应用上述候选改动。
