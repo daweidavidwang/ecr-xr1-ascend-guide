@@ -488,3 +488,34 @@ for phase, (count, base, size, digest) in expected.items():
 6. 只有50类实际环境覆盖、同场景包装、长历史和完整dev前置验收后才放行test2500/model。接手快照时这些尚未完成；本页生成请求通过不提供正式test启动结论。
 
 Loop CLI按原脚本 `__main__` 启动，避免Hydra入口被普通import改变。分离NPU policy与GPU evaluator时，参数化网络地址，保留HTTP/msgpack原协议和会话reset/RNG；记录网络与模型耗时。每份run结果必须绑定本机公开base、适配diff/commit、环境、模型、输入和实际完整命令。
+
+## 8. 原生 metadata 与 JSON 参考的严格比较
+
+2026-11-14 GPU2 两模型的原版共同场景策略诊断中，NavigateKitchen 均完成 64 步；OpenDrawer 均在首次推理前被 metadata 比较阻止。离线检查确认，两者的 XML、integration/state16/state14、三相机初始图像，以及**保存后的完整 metadata** 都与参考完全相同。这次失败不能归因于上一节之外的 Counter 区域顺序问题。
+
+公开 RoboCasa commit `456174f62b89b8fca99eaaf33949c29fec9cfc2a` 的 `OpenDrawer._get_obj_cfgs` 使用 tuple，例如 `obj_groups=("tool", "utensil")`、`max_size=(None,None,0.10)`；`Kitchen.get_ep_meta` 的复制函数保留这些 tuple。JSON 写出后再读取会得到 list。直接用内存原生 dict 与读取后的 dict 比较，会把相同持久化内容误判为不同。已用这两个固定上游方法的原始代码在 CPU 测试重现；原失败运行未采集内存 tuple 路径，新的现场验证应保存它们。
+
+比较两侧完整的 JSON 表示，保持所有字段、数组顺序、标量类型与数值精度。不得通过删除字段、排序数组、四舍五入或增加容差让比较通过：
+
+```python
+import json
+
+def serialized_metadata(value):
+    def check_keys(item):
+        if isinstance(item, dict):
+            if any(not isinstance(key, str) for key in item):
+                raise ValueError("Metadata JSON object keys must be strings")
+            for child in item.values():
+                check_keys(child)
+        elif isinstance(item, (tuple, list)):
+            for child in item:
+                check_keys(child)
+    check_keys(value)
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
+
+# actual_metadata: 原生 get_ep_meta() 返回值
+# reference_metadata: 从固定参考 JSON 读取的完整值
+# assert serialized_metadata(actual_metadata) == serialized_metadata(reference_metadata)
+```
+
+只有 metadata 的表示方式按已有存储协议统一；XML、物理状态、相机图像、scene request、instruction、layout/style 仍各自严格检查。保留原失败记录，使用新代码版本与新运行身份重新验收。修复已有 17 项本地 CPU 合同测试通过，包括固定原生方法重现、标量类型/数组顺序/微小数值变化仍拒绝、非有限值和非法键拒绝；新的现场 CPU/GPU 验证尚未在此增补中记为通过。此修复不应用稳定 Counter 候选，也不改变原 v1 场景身份或策略语义。

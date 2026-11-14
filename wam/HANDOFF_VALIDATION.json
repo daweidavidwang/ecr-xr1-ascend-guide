@@ -129,5 +129,14 @@
     "scope": "Directly documented owner-accepted GPU2 three-update Awomo training/save-resume, two native official entry engineering checks, CPU50 stable-region candidate and GPU2 four-scene rendered pairs. No private GitHub reference or external internal-report dependency. No Ascend execution; original sections1-6 remain frozen.",
     "formal_sft_credit": 0,
     "formal_benchmark_credit": 0
+  },
+  "metadata_followup": {
+    "checked_at": "2026-11-14T07:33:01.745756+00:00",
+    "scope": "Public pinned native tuple versus JSON list mismatch directly explained with exact serialization helper; both GPU2 policy runs retained as failed at scene06 before inference.17localtests passed; revised现场execution remains unaccepted.",
+    "locations": [
+      "WAM_HANDOFF.md section7",
+      "wam/IMPLEMENTATION_DETAILS.md section8"
+    ],
+    "no_private_github_dependencies": true
   }
 }

@@ -161,3 +161,5 @@ valid_geoms = list(dict.fromkeys(valid_geoms))
 上述通过尚不覆盖全部 50 类真实渲染、完整 dev1000、learned policy 或正式 test。GPU1 的候选渲染验证也仍单独待验。Ascend 接手者应在独立候选分支复现这一差异，保留原版本对照，并分别报告物理初态一致性与跨硬件模型数值误差。原始轨迹数组和完整 CPU 初态 payload 未附在本仓库；应重新生成或按精确文件清单取得并校验，不能用上述统计代替逐数组检查。
 
 所有新增结果仍来自 NVIDIA B300；没有 Ascend 运行结果。当前新增的 GPU2 两模型策略诊断只针对原 v1 的两个已验场景、每场景最多 64 步，尚未作为完成结果，也未自动应用上述候选改动。
+
+**后继失败更新（2026-11-14）：** 两模型在原 v1 的 NavigateKitchen 均完成 64 步，OpenDrawer 则在首次推理前因 metadata 比较失败停止。两者的 XML、状态、初始图像及保存后的 metadata 与参考完全一致；问题定位到原生 tuple 与 JSON 读取后的 list 直接比较。具体原因、可复制修复和严格验收范围已直接写入 [实现细节第 8 节](wam/IMPLEMENTATION_DETAILS.md#8-原生-metadata-与-json-参考的严格比较)。修复后本地 17 项测试通过，新现场验证仍待完成；这两次失败保留，不计正式成绩。
