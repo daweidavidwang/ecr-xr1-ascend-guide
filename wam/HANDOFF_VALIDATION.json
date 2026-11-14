@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T12:30:25.567791+00:00",
+    "checked_at": "2026-11-14T13:01:10.000644+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -668,6 +668,47 @@
     "cumulative_completed": {
       "awomo_official": 750,
       "loopwam_official": 1200,
+      "ecr_target": 0
+    },
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "straw_stove_awomo_kettle_results_addendum": {
+    "checked_at": "2026-11-14T13:01:06.014748+00:00",
+    "location": "WAM_HANDOFF.md section7.19",
+    "official_pretrain": [
+      {
+        "component": "loopwam",
+        "task": "DeliverStraw",
+        "successes": 17,
+        "completed": 50,
+        "environment_steps": 108695,
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "TurnOffStove",
+        "successes": 24,
+        "completed": 50,
+        "environment_steps": 28403,
+        "official_successes": null
+      },
+      {
+        "component": "awomo",
+        "task": "TurnOnElectricKettle",
+        "successes": 29,
+        "completed": 30,
+        "environment_steps": 4242,
+        "official_successes": 27
+      }
+    ],
+    "returned_files": 590,
+    "returned_bytes": 86389236,
+    "scheduler_limitation": "All three terminal scheduler histories expired; full producer/native episode evidence accepted without scheduler exit claim.",
+    "cumulative_completed": {
+      "awomo_official": 780,
+      "loopwam_official": 1300,
       "ecr_target": 0
     },
     "formal_sft_updates": 0,
