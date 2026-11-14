@@ -519,3 +519,57 @@ def serialized_metadata(value):
 ```
 
 只有 metadata 的表示方式按已有存储协议统一；XML、物理状态、相机图像、scene request、instruction、layout/style 仍各自严格检查。保留原失败记录，使用新代码版本与新运行身份重新验收。修复已有 17 项本地 CPU 合同测试通过，包括固定原生方法重现、标量类型/数组顺序/微小数值变化仍拒绝、非有限值和非法键拒绝；两模型修订版的现场 CPU 前置也已分别通过 17 项测试、固定源码/环境与原生客户端检查；修订版 GPU 两模型各两个场景、每场景 64 步已验收，所有初态数组与完整 metadata 精确匹配；OpenDrawer 实际记录 15 条 tuple 路径。完整 horizon 仍待验收。此修复不应用稳定 Counter 候选，也不改变原 v1 场景身份或策略语义。
+
+## 9. CPU 与渲染初态差异的独立诊断规格
+
+**状态（2026-11-14）：** 以下诊断实现已准备，10 项本地隔离测试通过；尚无现场 CPU/GPU 验收结果。测试使用替身检查观察器行为，不能证明真实 MuJoCo 调用、渲染或 Ascend 兼容。现有失败事实及数值见总入口第 7.4 节。
+
+本节给出接手者独立实现所需合同，不要求取得原运行端的工程代码或任务回执。仍固定本指南的公开 RoboCasa/robosuite commits、MuJoCo 3.3.1 和相同资产。候选协议为 `ecr-target50-stable-counter-v2-candidate`，只应用总入口第 7.3 节的稳定去重；不修改安装文件，不与原 v1 或官方 pretrain 合并计分。
+
+### 9.1 问题、固定输入与假设
+
+只使用开发集 slot 0 的两个输入：
+
+| task index | 任务 | 原 scene_id | environment seed |
+|---:|---|---|---:|
+| 1 | CloseFridge | `target50-v1/dev/01/000` | 510001000 |
+| 27 | SearingMeat | `target50-v1/dev/27/000` | 510027000 |
+
+实际身份为 `(候选 protocol_id, 原 scene_id)`；完整请求按第 6 节生成，不改 task、layout/style 选择、seed 或原生 reset 次序。
+
+一个待检验的线索是：固定公开 [robosuite binding_utils.py](https://github.com/ARISE-Initiative/robosuite/blob/5ce6643f3092639d08f7b0f90ed1c6a84f50552c/robosuite/utils/binding_utils.py) 中，`MjRenderContext.__init__` 在 `gl_ctx.make_current()` 后调用 `sim.forward()`；`MjSim.forward()` 调用 MuJoCo 的 `mj_forward`。关闭 offscreen renderer 的 CPU 路径可能没有这次调用。**这只是源码线索，不是已证明的根因。** 需要定位最早差异、比较模型与状态，再设计后续因果实验；本轮不主动增删 forward 调用。
+
+### 9.2 四进程对照与原生执行
+
+对每个输入、每条路径分别运行四个全新进程：`control/0`、`control/1`、`traced/0`、`traced/1`。CPU 路径仅关闭 `has_offscreen_renderer` 与 `use_camera_obs`，禁止创建渲染上下文或调用 render；渲染路径保留原生三相机及实际分配 GPU 的 EGL 映射。两条路径保留原生构造、reset、随机种子和 reset 内部 settling；不执行策略或额外控制动作。
+
+四个进程都在原 worker 唯一一次最终 `mj_getState(..., mjSTATE_INTEGRATION)` 读取处保存相同最终状态和编译模型。先调用原 getter 一次，保留原输出缓冲、参数和返回对象；额外只读快照须使用保存的原 getter，不能递归调用被包裹的入口。拒绝额外的最终读取或不同掩码。
+
+仅 `traced` 进程观察下列原方法的调用前/后边界：`MujocoEnv.__init__`、`MujocoEnv.reset`、`MujocoEnv._get_observations`、`MjSim.forward`、`MjSim.render`、`MjRenderContext.__init__`。方法本体每次恰好调用一次，参数、返回值和原异常保持不变。构造前 sim 尚不存在时，只记录 `available=false`；不为补观测创建 sim。异常路径尽量保留最后状态及观察器错误，随后原样抛出原异常；正常或异常退出均恢复钩子。
+
+观察器不得调用额外的 forward、reset、step、renderer query、随机抽样或状态恢复。它有文件和读取开销；是否影响被测结果由四进程最终状态对照验证，不能仅凭实现意图宣称无干扰。
+
+### 9.3 状态、模型与原始产物
+
+每个可用边界直接读取完整 `mjSTATE_INTEGRATION`。从 `mjtState` 中枚举落在此掩码内的正数单 bit 成员，拒绝重复 bit，按 bit 数值升序排列，要求 bit 之和等于完整掩码。每一项先用 `mj_stateSize` 分配 float64 缓冲，再用原 `mj_getState` 读取；各项拼接必须与完整向量逐元素精确相等且有限。这样可将差异归到具体状态分量，不能只比较 qpos/qvel 或末端状态。
+
+同时只读复制 `qacc`、`qacc_warmstart`、`qfrc_bias`、`qfrc_constraint`、`qfrc_passive`、`efc_force`、`xpos`、`xquat`、`xmat` 中实际存在的字段，并检查类型与有限性。这些派生量帮助定位 forward 边界，不替代完整 integration state。
+
+最终状态另外保存完整编译模型：通过 `mj_sizeModel(model)` 分配 uint8 缓冲，以 MuJoCo 3.3.1 的 `mj_saveModel(model, None, buffer)` 写出 MJB。再保存模型暴露的数值标量/数组，以及 `opt`、`stat`、`vis` 下可访问的数值字段，明确列出未覆盖属性。数值字段检查与 MJB 原件相互补充：字段遍历不等于全模型覆盖，MJB 字节差异也不能单独证明物理模型不同。
+
+每进程至少保留：
+
+- 按发生顺序追加的 `events.jsonl`，每条含序号、方法、before/after/exception、sim 是否可用和快照引用；每个可用事件一份原始 NPZ。
+- 最终状态 NPZ、模型数值 NPZ、完整模型 MJB、数值属性遗漏清单、观察器异常和最终捕获次数。
+- 原 worker 的 XML、完整序列化 metadata、request、instruction、layout/style、integration/state16/state14；渲染路径另外保留三相机初始图像。
+- 每文件 bytes/SHA256，每数组 dtype、shape 和按 C 顺序完整 bytes 的 SHA256，以及实际软件、公开源码/本机适配版本、GPU/EGL 身份、退出状态与 stderr。
+
+### 9.4 验收、预算与下一步
+
+先独立执行两个 CPU 准备项，每项 0 GPU、4 CPU、32 GiB RAM、30 分钟，保留产物最多 10 GiB。每个输入的四次最终 integration、state16/state14、派生状态及模型数值数组须完全一致；XML、metadata 和请求身份也须一致。最终物理状态还须与本节点之前独立生成并冻结的 CPU 参考精确匹配。接手端没有参考 payload 时须先独立生成、保存和冻结；不能从失败运行反填参考或只依赖本指南中的历史摘要。
+
+两个 CPU 项的完整产物经独立验收且实现版本一致，才执行渲染诊断：1 GPU、4 CPU、32 GiB RAM、60 分钟，两个输入共八个新进程，保留产物最多 18 GiB。单进程最长 300 秒、最多 8,192 个事件、观察器产物最多 2 GiB、单份编译模型最多 512 MiB；写入前检查预算，超过即失败，保留已有证据。
+
+渲染路径同样要求每个输入四次最终状态与数值模型精确一致。CPU 与渲染之间的差异作为诊断输出保存，不将差异本身当作通过或放宽验收。对齐原方法调用序列，逐状态分量寻找最早不同的边界，并检查模型数值是否已变化；有事件缺失、观察器异常或路径内不一致时，先判诊断无效或未完成。
+
+本地 10 项测试覆盖状态 bit 完整性/顺序/有限性、最终 getter 输入输出与恢复、重复最终读取拒绝、原方法单次调用与 RNG 不变、原异常保留、模型微小数值差异识别、写前预算和 CPU 依赖记录约束。现场还须重新验证真实 API、资产、初态和进程退出。该诊断贡献 **0 正式 episode、0 策略评测、0 SFT 更新**；不得增加容差、额外 reset 或覆盖旧参考来解除原来的物理初态阻塞。
