@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T14:57:44.426012+00:00",
+    "checked_at": "2026-11-14T15:17:42.361732+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -790,5 +790,73 @@
     "formal_sft_updates": 0,
     "ascend_runs": 0,
     "private_github_dependencies": false
+  },
+  "official_2510_five_task_addendum": {
+    "checked_at": "2026-11-14T15:16:43.196653+00:00",
+    "scope": "NVIDIA B300 native official pretrain only; no Ascend execution",
+    "accepted_tasks": [
+      {
+        "component": "awomo",
+        "task": "SeparateFreezerRack",
+        "completed": 30,
+        "successes": 11,
+        "environment_steps": 58021,
+        "wall_seconds_including_startup": 6410.926652,
+        "finished_at": "2026-11-14T14:43:20.335393+00:00",
+        "official_successes": 17
+      },
+      {
+        "component": "loopwam",
+        "task": "PanTransfer",
+        "completed": 50,
+        "successes": 0,
+        "environment_steps": 90000,
+        "wall_seconds_including_startup": 6027.185076,
+        "finished_at": "2026-11-14T14:39:47.562241+00:00",
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "StackBowlsCabinet",
+        "completed": 50,
+        "successes": 35,
+        "environment_steps": 69172,
+        "wall_seconds_including_startup": 4258.923135,
+        "finished_at": "2026-11-14T14:38:48.443637+00:00",
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "SteamInMicrowave",
+        "completed": 50,
+        "successes": 33,
+        "environment_steps": 75442,
+        "wall_seconds_including_startup": 4985.949319,
+        "finished_at": "2026-11-14T15:05:05.704836+00:00",
+        "official_successes": null
+      },
+      {
+        "component": "loopwam",
+        "task": "HeatKebabSandwich",
+        "completed": 50,
+        "successes": 2,
+        "environment_steps": 132740,
+        "wall_seconds_including_startup": 8948.525859,
+        "finished_at": "2026-11-14T14:55:46.360886+00:00",
+        "official_successes": null
+      }
+    ],
+    "returned_files_verified": 1046,
+    "returned_bytes_verified": 196076647,
+    "scheduler_terminal": "All five scheduler history entries expired; no scheduler exit code asserted.",
+    "official_completed": 2510,
+    "official_planned": 4000,
+    "awomo_completed": 810,
+    "loopwam_completed": 1700,
+    "ecr_completed": 0,
+    "ecr_planned": 5000,
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "implementation_or_input_pins_changed": false
   }
 }
