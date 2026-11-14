@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T08:02:04.466002+00:00",
+    "checked_at": "2026-11-14T08:44:19.519060+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 50,
+    "local_wam_links_checked": 51,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -119,7 +119,7 @@
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 58,
     "inline_python_blocks_syntax_checked": 12,
-    "verification_method": "All59tracked files scanned for private development-repository references;9referenced GitHub repositories anonymously public;50local WAM links resolved;12inlinePython blocks syntax checked;58checksum files verified. All6public upstream commits anonymously resolved in the preceding same-day audit. No payload execution in this documentation check.",
+    "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced GitHub repository and all six WAM source commits were checked through the unauthenticated API in this run. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
       "Human split and shared-video offsets",
@@ -129,7 +129,47 @@
       "ECR requests and native evaluation semantics",
       "Strict metadata serialization",
       "Separately versioned stable Counter candidate"
-    ]
+    ],
+    "public_upstream_commit_checks": [
+      {
+        "role": "loopwam_published",
+        "sha": "3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
+        "url": "https://github.com/loop-wam/LoopWAM/commit/3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
+        "public_unauthenticated": true
+      },
+      {
+        "role": "awomo_published",
+        "sha": "1145c18afd13a3876c6740f098bd734f5e35617a",
+        "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/1145c18afd13a3876c6740f098bd734f5e35617a",
+        "public_unauthenticated": true
+      },
+      {
+        "role": "awomo_public_sft_base",
+        "sha": "32353be48397614206d947b1994b39049e7f4fbe",
+        "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/32353be48397614206d947b1994b39049e7f4fbe",
+        "public_unauthenticated": true
+      },
+      {
+        "role": "awomo_robocasa",
+        "sha": "4f8a2980def75a55dff96b990745b83540425f09",
+        "url": "https://github.com/robocasa/robocasa/commit/4f8a2980def75a55dff96b990745b83540425f09",
+        "public_unauthenticated": true
+      },
+      {
+        "role": "ecr_common_robocasa",
+        "sha": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+        "url": "https://github.com/robocasa/robocasa/commit/456174f62b89b8fca99eaaf33949c29fec9cfc2a",
+        "public_unauthenticated": true
+      },
+      {
+        "role": "awomo_and_ecr_robosuite",
+        "sha": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+        "url": "https://github.com/ARISE-Initiative/robosuite/commit/5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+        "public_unauthenticated": true
+      }
+    ],
+    "json_files_parsed": 19,
+    "fixed_wam_pins_unchanged": true
   },
   "engineering_addendum": {
     "checked_at": "2026-11-14T07:23:17.189660+00:00",
@@ -212,5 +252,6 @@
     "all50_accepted": false,
     "root_cause_established": false,
     "formal_credit": 0
-  }
+  },
+  "historical_checks_scope": "The top-level checked_at, checks and public_source_checks describe the original 2026-11-13 validation. The public_reference_audit below is the latest documentation-only check; it does not repeat model, training, simulation or payload validation."
 }
