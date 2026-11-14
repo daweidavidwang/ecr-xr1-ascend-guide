@@ -137,6 +137,23 @@
       "WAM_HANDOFF.md section7",
       "wam/IMPLEMENTATION_DETAILS.md section8"
     ],
-    "no_private_github_dependencies": true
+    "no_private_github_dependencies": true,
+    "field_cpu_update": {
+      "checked_at": "2026-11-14T07:40:15.724118+00:00",
+      "component_cpu_preflights": 2,
+      "tests_each": 17,
+      "skipped_each": 0,
+      "gpu_revision_accepted": false
+    }
+  },
+  "all50_render_preparation": {
+    "local_tests": 38,
+    "skipped": 0,
+    "nodes": 2,
+    "blocks_per_node": 5,
+    "classes_per_block": 10,
+    "fresh_replicas_per_class": 2,
+    "steps_per_replica": 12,
+    "gpu_results_accepted": false
   }
 }

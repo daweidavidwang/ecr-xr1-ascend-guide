@@ -518,4 +518,4 @@ def serialized_metadata(value):
 # assert serialized_metadata(actual_metadata) == serialized_metadata(reference_metadata)
 ```
 
-只有 metadata 的表示方式按已有存储协议统一；XML、物理状态、相机图像、scene request、instruction、layout/style 仍各自严格检查。保留原失败记录，使用新代码版本与新运行身份重新验收。修复已有 17 项本地 CPU 合同测试通过，包括固定原生方法重现、标量类型/数组顺序/微小数值变化仍拒绝、非有限值和非法键拒绝；新的现场 CPU/GPU 验证尚未在此增补中记为通过。此修复不应用稳定 Counter 候选，也不改变原 v1 场景身份或策略语义。
+只有 metadata 的表示方式按已有存储协议统一；XML、物理状态、相机图像、scene request、instruction、layout/style 仍各自严格检查。保留原失败记录，使用新代码版本与新运行身份重新验收。修复已有 17 项本地 CPU 合同测试通过，包括固定原生方法重现、标量类型/数组顺序/微小数值变化仍拒绝、非有限值和非法键拒绝；两模型修订版的现场 CPU 前置也已分别通过 17 项测试、固定源码/环境与原生客户端检查；修订版 GPU 结果仍待验收。此修复不应用稳定 Counter 候选，也不改变原 v1 场景身份或策略语义。
