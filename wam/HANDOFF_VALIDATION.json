@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T16:56:36.944708+00:00",
+    "checked_at": "2026-11-14T16:59:21.152317+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -931,6 +931,43 @@
     "official_planned": 4000,
     "awomo_completed": 810,
     "loopwam_completed": 1850,
+    "ecr_completed": 0,
+    "ecr_planned": 5000,
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "implementation_or_input_pins_changed": false
+  },
+  "official_2760_tableware_stir_addendum": {
+    "checked_at": "2026-11-14T16:58:47.936841+00:00",
+    "scope": "NVIDIA B300 official pretrain; no Ascend or ECR target credit",
+    "accepted_tasks": [
+      {
+        "component": "loopwam",
+        "task": "GatherTableware",
+        "completed": 50,
+        "successes": 0,
+        "environment_steps": 112500,
+        "wall_seconds_including_startup": 6946.283957,
+        "finished_at": "2026-11-14T16:46:50.756740+00:00",
+        "scheduler_terminal": "unavailable_TTL_expired; full producer and episode completion audited; no scheduler exit-code claim"
+      },
+      {
+        "component": "loopwam",
+        "task": "StirVegetables",
+        "completed": 50,
+        "successes": 18,
+        "environment_steps": 102368,
+        "wall_seconds_including_startup": 7118.746925,
+        "finished_at": "2026-11-14T16:51:32.204463+00:00",
+        "scheduler_terminal": "COMPLETED0:0"
+      }
+    ],
+    "returned_files_verified": 456,
+    "returned_bytes_verified": 96140119,
+    "official_completed": 2760,
+    "official_planned": 4000,
+    "awomo_completed": 810,
+    "loopwam_completed": 1950,
     "ecr_completed": 0,
     "ecr_planned": 5000,
     "formal_sft_updates": 0,
