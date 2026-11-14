@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T15:49:14.336426+00:00",
+    "checked_at": "2026-11-14T16:16:02.776619+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -881,6 +881,42 @@
     "official_planned": 4000,
     "awomo_completed": 810,
     "loopwam_completed": 1750,
+    "ecr_completed": 0,
+    "ecr_planned": 5000,
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "implementation_or_input_pins_changed": false
+  },
+  "official_2660_waffle_cutting_addendum": {
+    "checked_at": "2026-11-14T16:15:36.862781+00:00",
+    "scope": "NVIDIA B300 official pretrain; no Ascend or ECR target credit",
+    "accepted_tasks": [
+      {
+        "component": "loopwam",
+        "task": "WaffleReheat",
+        "completed": 50,
+        "successes": 8,
+        "environment_steps": 181093,
+        "wall_seconds_including_startup": 12751.425934,
+        "finished_at": "2026-11-14T16:00:08.101506+00:00"
+      },
+      {
+        "component": "loopwam",
+        "task": "SetUpCuttingStation",
+        "completed": 50,
+        "successes": 33,
+        "environment_steps": 85168,
+        "wall_seconds_including_startup": 5431.684595,
+        "finished_at": "2026-11-14T15:56:33.899729+00:00"
+      }
+    ],
+    "returned_files_verified": 456,
+    "returned_bytes_verified": 102770356,
+    "scheduler_terminal": "Both scheduler history entries expired; no scheduler exit code asserted.",
+    "official_completed": 2660,
+    "official_planned": 4000,
+    "awomo_completed": 810,
+    "loopwam_completed": 1850,
     "ecr_completed": 0,
     "ecr_planned": 5000,
     "formal_sft_updates": 0,
