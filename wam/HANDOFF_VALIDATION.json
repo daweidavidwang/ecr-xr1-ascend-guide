@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T11:20:16.671951+00:00",
+    "checked_at": "2026-11-14T11:42:10.925785+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -572,6 +572,27 @@
     "scheduler_terminal": "COMPLETED0:0",
     "cumulative_completed": {
       "awomo_official": 720,
+      "loopwam_official": 1000,
+      "ecr_target": 0
+    },
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "awomo_get_toasted_bread_results_addendum": {
+    "checked_at": "2026-11-14T11:42:08.928855+00:00",
+    "location": "WAM_HANDOFF.md section7.15",
+    "task": "GetToastedBread",
+    "component": "awomo",
+    "successes": 8,
+    "completed": 30,
+    "official_successes": 8,
+    "environment_steps": 80374,
+    "returned_files": 134,
+    "returned_bytes": 28356951,
+    "scheduler_limitation": "Scheduler terminal history expired; complete producer/native episode evidence accepted without scheduler exit claim.",
+    "cumulative_completed": {
+      "awomo_official": 750,
       "loopwam_official": 1000,
       "ecr_target": 0
     },
