@@ -4,7 +4,7 @@
 
 > **Target50源码包已交付（2026-11-13）：** [ModelScope固定下载链接与命令](target50/SOURCE_AND_STATUS.md)，现有授权账号全量回下载及103项内部SHA校验通过；此包与下文旧10-task v3包分别保留。
 
-> **新增 WAM / Ascend 复测交接（2026-11-13）：[LoopWAM 与 Awomo-0.5I 接手入口](WAM_HANDOFF.md)。** 包含固定源码/公共输入清单、当前验证范围、Target50 协议、SFT 待办和 NPU 适配步骤；与下文 XR1 十任务配方独立。
+> **WAM / Ascend 复测请从 [LoopWAM 与 Awomo-0.5I 交接](WAM_HANDOFF.md) 开始。** WAM 使用该页及 `wam/` 内的公开源码 pins、公共输入清单、实现代码与规格、评测合同和 NPU 适配步骤；无需下载下文 XR1 的私有交接 ZIP，也无需取得其他 GitHub 仓库权限。尚未交付的 GPU 数值参考及其生成方法在 [WAM 执行手册](wam/ASCEND_RUNBOOK.md) 单独列明。以下 XR1 配方和下载前置不适用于 WAM。
 
 > **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
