@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T10:48:20.810044+00:00",
+    "checked_at": "2026-11-14T10:50:54.776894+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -436,6 +436,27 @@
       "ecr_target": 0
     },
     "scheduler_limitation": "Three Loop terminal scheduler records expired; full producer/native episode evidence accepted without scheduler exit claim. Awomo COMPLETED0:0 retained.",
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "loop_sinkfaucet_results_addendum": {
+    "checked_at": "2026-11-14T10:50:53.956301+00:00",
+    "location": "WAM_HANDOFF.md section7.10",
+    "task": "TurnOnSinkFaucet",
+    "component": "loopwam",
+    "successes": 37,
+    "completed": 50,
+    "official_successes": null,
+    "environment_steps": 17101,
+    "returned_files": 228,
+    "returned_bytes": 24494285,
+    "scheduler_terminal": "COMPLETED0:0",
+    "cumulative_completed": {
+      "awomo_official": 690,
+      "loopwam_official": 750,
+      "ecr_target": 0
+    },
     "formal_sft_updates": 0,
     "ascend_runs": 0,
     "private_github_dependencies": false
