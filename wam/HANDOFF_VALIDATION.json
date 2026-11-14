@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T11:17:04.556903+00:00",
+    "checked_at": "2026-11-14T11:20:16.671951+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -73,53 +73,62 @@
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/Ascend/pytorch",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/Awomo-WestlakeDI/Awomo-0.5",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/XiaomiRobotics/Xiaomi-Robotics-1",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/daweidavidwang/ecr-xr1-ascend-guide",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/loop-wam/LoopWAM",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/modelscope/modelscope_hub",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/robocasa-benchmark/leaderboard",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       },
       {
         "repository": "https://github.com/robocasa/robocasa",
         "anonymous_http_status": 200,
-        "visibility": "public"
+        "visibility": "public",
+        "verification_method": "Anonymous GitHub HTML repository_public metadata"
       }
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 58,
     "inline_python_blocks_syntax_checked": 12,
-    "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced GitHub repository and all six WAM source commits were checked through the unauthenticated API in this run. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
+    "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. The unauthenticated GitHub API was rate limited; every referenced repository was instead checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
       "Human split and shared-video offsets",
@@ -135,41 +144,51 @@
         "role": "loopwam_published",
         "sha": "3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
         "url": "https://github.com/loop-wam/LoopWAM/commit/3400f1c1c1f7243cb9fbc3456ae05092964bc6cd",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       },
       {
         "role": "awomo_published",
         "sha": "1145c18afd13a3876c6740f098bd734f5e35617a",
         "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/1145c18afd13a3876c6740f098bd734f5e35617a",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       },
       {
         "role": "awomo_public_sft_base",
         "sha": "32353be48397614206d947b1994b39049e7f4fbe",
         "url": "https://github.com/Awomo-WestlakeDI/Awomo-0.5/commit/32353be48397614206d947b1994b39049e7f4fbe",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       },
       {
         "role": "awomo_robocasa",
         "sha": "4f8a2980def75a55dff96b990745b83540425f09",
         "url": "https://github.com/robocasa/robocasa/commit/4f8a2980def75a55dff96b990745b83540425f09",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       },
       {
         "role": "ecr_common_robocasa",
         "sha": "456174f62b89b8fca99eaaf33949c29fec9cfc2a",
         "url": "https://github.com/robocasa/robocasa/commit/456174f62b89b8fca99eaaf33949c29fec9cfc2a",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       },
       {
         "role": "awomo_and_ecr_robosuite",
         "sha": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
         "url": "https://github.com/ARISE-Initiative/robosuite/commit/5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
-        "public_unauthenticated": true
+        "public_unauthenticated": true,
+        "verification_method": "Anonymous GitHub HTML commitRoute exact OID and canonical URL"
       }
     ],
     "json_files_parsed": 19,
-    "fixed_wam_pins_unchanged": true
+    "fixed_wam_pins_unchanged": true,
+    "anonymous_api_fallback": {
+      "reason": "HTTP403 rate limit exceeded",
+      "method": "Anonymous public GitHub HTML repository visibility and exact commit identity; no authentication used."
+    }
   },
   "engineering_addendum": {
     "checked_at": "2026-11-14T07:23:17.189660+00:00",
