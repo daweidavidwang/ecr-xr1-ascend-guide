@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T05:37:31.697140+00:00",
+    "checked_at": "2026-11-14T07:46:37.873123+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 48,
+    "local_wam_links_checked": 50,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -118,9 +118,18 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 58,
-    "inline_python_blocks_syntax_checked": 9,
-    "verification_method": "Scanned every tracked text file for internal repository identifiers, paths and GitHub URL forms; anonymously checked all 9 referenced GitHub repositories and all 6 fixed upstream commits. Two commit-detail requests timed out with HTTP 422; the lightweight Git commit API resolved both exact SHAs. Resolved all local WAM document links and syntax-checked inline Python. Regenerated and verified public checksums after the documentation changes; no model or payload validation was rerun.",
-    "public_upstream_commit_pins_checked": 6
+    "inline_python_blocks_syntax_checked": 12,
+    "verification_method": "Scanned all 59 tracked text files for internal repository identifiers, paths and GitHub URL forms; anonymously verified all 9 referenced GitHub repositories as public and resolved all 6 exact upstream commits. Resolved all 50 local WAM document links. Syntax-checked all 12 inline Python blocks across the WAM entry and implementation pages. Updated the direct implementation index and regenerated the complete public checksum list. This documentation audit did not rerun model, training, simulation or input-payload checks.",
+    "public_upstream_commit_pins_checked": 6,
+    "implementation_index_coverage": [
+      "Human split and shared-video offsets",
+      "Awomo action, state, history and processor",
+      "Window sampling and cursor resume",
+      "Training objectives and checkpoint resume",
+      "ECR requests and native evaluation semantics",
+      "Strict metadata serialization",
+      "Separately versioned stable Counter candidate"
+    ]
   },
   "engineering_addendum": {
     "checked_at": "2026-11-14T07:23:17.189660+00:00",

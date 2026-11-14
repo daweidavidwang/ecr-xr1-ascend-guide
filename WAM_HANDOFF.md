@@ -91,6 +91,8 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 | 全量窗口、rank 采样与数据游标恢复 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 4 节 | 索引和恢复代码、预期计数、数据与 batch 布局绑定规则 |
 | 两模型短训练与模型/优化器恢复 | [数据与训练合同](wam/DATA_AND_TRAINING.md)及实现细节第 5 节 | 配方、损失定义、更新顺序、保存内容与验收标准；NPU 启动器待实现 |
 | ECR 场景请求与共同评测入口 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 6–7 节 | 可重建 dev/test 的生成代码、固定 SHA256、初态及策略包装规格 |
+| 原生 metadata 与持久化参考的比较 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 8 节 | tuple/list 差异的原因、完整严格 JSON 比较代码，以及仍须独立比较的物理状态与图像 |
+| Counter 场景初始化稳定性候选 | 本页第 7.3 节 | 固定公开源码位置、一行替换、独立协议身份、已验证范围与后续验收要求 |
 
 **文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 
