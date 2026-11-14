@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T13:43:40.846824+00:00",
+    "checked_at": "2026-11-14T14:31:46.388838+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -751,6 +751,38 @@
     "cumulative_completed": {
       "awomo_official": 780,
       "loopwam_official": 1400,
+      "ecr_target": 0
+    },
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "loop_freezer_lettuce_results_addendum": {
+    "checked_at": "2026-11-14T14:31:42.004726+00:00",
+    "location": "WAM_HANDOFF.md section7.22",
+    "component": "loopwam",
+    "official_pretrain": [
+      {
+        "task": "SeparateFreezerRack",
+        "successes": 3,
+        "completed": 50,
+        "environment_steps": 117288,
+        "official_successes": null
+      },
+      {
+        "task": "WashLettuce",
+        "successes": 34,
+        "completed": 50,
+        "environment_steps": 60290,
+        "official_successes": null
+      }
+    ],
+    "returned_files": 456,
+    "returned_bytes": 82969724,
+    "scheduler_limitation": "Both terminal scheduler histories expired; full producer/native episode evidence accepted without scheduler exit claim.",
+    "cumulative_completed": {
+      "awomo_official": 780,
+      "loopwam_official": 1500,
       "ecr_target": 0
     },
     "formal_sft_updates": 0,
