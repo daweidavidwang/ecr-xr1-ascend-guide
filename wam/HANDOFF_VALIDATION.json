@@ -61,5 +61,61 @@
     "No model/data payload downloaded here. Historical research results remain the frozen 2026-11-13 21:22 UTC snapshot.",
     "Inline helper behavior was checked with synthetic arrays and existing public task-count metadata; full Human parquet/video payloads were not re-read.",
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
-  ]
+  ],
+  "public_reference_audit": {
+    "checked_at": "2026-11-14T02:24:35.444914+00:00",
+    "result": "passed",
+    "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
+    "tracked_files_scanned": 59,
+    "private_github_reference_scan": "passed",
+    "local_wam_links_checked": 43,
+    "public_github_repositories": [
+      {
+        "repository": "https://github.com/ARISE-Initiative/robosuite",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/Ascend/pytorch",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/Awomo-WestlakeDI/Awomo-0.5",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/XiaomiRobotics/Xiaomi-Robotics-1",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/daweidavidwang/ecr-xr1-ascend-guide",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/loop-wam/LoopWAM",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/modelscope/modelscope_hub",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/robocasa-benchmark/leaderboard",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      },
+      {
+        "repository": "https://github.com/robocasa/robocasa",
+        "anonymous_http_status": 200,
+        "visibility": "public"
+      }
+    ],
+    "research_snapshot_unchanged": "2026-11-13T21:22:11Z"
+  }
 }
