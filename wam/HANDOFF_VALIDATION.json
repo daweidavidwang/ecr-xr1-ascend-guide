@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T12:02:05.834169+00:00",
+    "checked_at": "2026-11-14T12:07:38.763205+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -615,6 +615,27 @@
     "cumulative_completed": {
       "awomo_official": 750,
       "loopwam_official": 1050,
+      "ecr_target": 0
+    },
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "loop_rinse_sink_basin_results_addendum": {
+    "checked_at": "2026-11-14T12:07:36.750919+00:00",
+    "location": "WAM_HANDOFF.md section7.17",
+    "task": "RinseSinkBasin",
+    "component": "loopwam",
+    "successes": 33,
+    "completed": 50,
+    "official_successes": null,
+    "environment_steps": 48399,
+    "returned_files": 228,
+    "returned_bytes": 32461137,
+    "scheduler_terminal": "COMPLETED0:0",
+    "cumulative_completed": {
+      "awomo_official": 750,
+      "loopwam_official": 1100,
       "ecr_target": 0
     },
     "formal_sft_updates": 0,
