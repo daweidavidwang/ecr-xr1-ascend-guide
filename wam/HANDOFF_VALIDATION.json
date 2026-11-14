@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T22:23:37.944954+00:00",
+    "checked_at": "2026-11-14T23:21:26.164575+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 67,
+    "local_wam_links_checked": 68,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -1046,5 +1046,28 @@
     "formal_sft_updates": 0,
     "ascend_runs": 0,
     "implementation_or_input_pins_changed": false
+  },
+  "context_cleanup_failed_shards_addendum": {
+    "checked_at": "2026-11-14T23:21:23.931547+00:00",
+    "scope": "Self-contained implementation and fixed corrected-attempt contract; no new runtime or formal acceptance",
+    "implementation": "EGL context/display/draw/read/API capture, owner-current original destructor call, conditional prior-context restoration, fatal error slot and hook restoration documented directly",
+    "old_partial_counts": {
+      "BreadSelection": 13,
+      "CategorizeCondiments": 11,
+      "CuttingToolSelection": 29
+    },
+    "new_planned_episodes": 90,
+    "new_gpu_hours_maximum": 12,
+    "new_cpu_preparations": 3,
+    "official_completed_unchanged": 2910,
+    "new_formal_credit": 0,
+    "ascend_runs": 0,
+    "private_source_dependencies_added": false,
+    "checks": [
+      "Old parent and worker receipts matched their frozen byte sizes and SHA256",
+      "Fixed original seeds, trial count, horizons, model identity and native protocol preserved",
+      "Six new CPU/formal contracts passed schema validation",
+      "Implementation description compared with the accepted renderer cleanup behavior; no NPU validation implied"
+    ]
   }
 }

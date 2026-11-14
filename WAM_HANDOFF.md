@@ -102,6 +102,7 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 | Counter 场景初始化稳定性候选 | 本页第 7.3 节 | 固定公开源码位置、一行替换、独立协议身份、已验证范围与后续验收要求 |
 | CPU 与渲染初态差异诊断 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 9 节 | 两个固定 dev 输入、四进程对照、只读状态观察、编译模型保存及严格验收规格；现场结论待验 |
 | Awomo 原生九槽历史的独立准备 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 10 节 | 三个预注册 dev 输入、两项 CPU 检查、原生缓存与样本逐数组合同；首个全九槽重规划点为第 368 步，真实长回合仍待验 |
+| 渲染器析构与旧失败分片的修复复测 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 11 节 | EGL 上下文保存、切换与恢复的完整顺序、异常保留、对照验收，以及三个固定任务的重测合同 |
 
 **文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 

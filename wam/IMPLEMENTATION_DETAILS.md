@@ -649,3 +649,40 @@ def serialized_metadata(value):
 新 CPU 检查专门检验这些观察钩子：第一个固定身份执行 29 次合成图像请求，后两个身份各执行一次 replan 0，共 31 次。实际调用公开原生解析、H264、缓存、取样、canvas、state/action 转换；prompt、model encode 和 action sampling 使用明确的替身，不加载真实模型或 processor，不允许 CUDA 初始化。这样得到的结果只能用于观察器工程验收。19 项本地回归覆盖单次委托和对象身份、随机状态/输入不变、缓存错误、来源错配、错误 seed/session/timeline、异常恢复、预算停止、自然提前成功以及缺失现场验收时拒绝 GPU；19 项已通过，31 次现场 CPU 结果尚未验收。
 
 资源上限：该新 CPU 检查为 0 GPU、2 CPU、16 GiB RAM、30 分钟、3 GiB 证据；后续三局 GPU 验证为 1 GPU、8 CPU、128 GiB RAM、2 小时、最多 1,350 环境步和 8 GiB 证据。真实 GPU 执行前须将三个准备结果——三输入初态重复性、修订后的原生历史组装、新观察入口 CPU 检查——完整原件分别验收，再生成绑定实现版本、三个固定身份、各证据大小/SHA256 和自然终止规则的放行文件。调度完成或文件清单不能替代此验收。此更新没有增加正式评测、正式 SFT 或 Ascend 完成量。
+
+## 11. 渲染器析构修复与三个旧失败分片的固定复测
+
+### 11.1 观察、原因边界与修复算法
+
+公开固定 robosuite 的 `MjRenderContext` 由自己的 `gl_ctx` 持有 EGL context。较旧的 renderer 被延迟析构时，另一个 renderer 的 context 可能正在当前线程上激活。历史 Loop 实机轨迹记录到：旧 renderer 的原生析构在不同的当前 context 下执行，随后当前 renderer 的三个 framebuffer 消失并出现 GL 1286。这支持该次失败由错误 context 下的资源清理引起。三个旧 Awomo 失败都记录了严格 GL 检查失败，但没有逐一保存同等因果轨迹，不能声称三次错误原因都已直接证明。
+
+修复只在评测进程内显式安装，保存原 `MjRenderContext.__del__` 和原渲染外 GL 检查函数。接手端按以下顺序实现，保留公开原生析构本身：
+
+1. 从待析构对象的 `gl_ctx._context` 读取 owner 指针。没有 owner 或没有 `con` 的半初始化对象仍直接调用原析构；保留其原生错误行为。
+2. 在切换前用 `eglGetCurrentContext`、`eglGetCurrentDisplay`、`eglGetCurrentSurface(EGL_DRAW=0x3059)`、`eglGetCurrentSurface(EGL_READ=0x305A)`、`eglQueryAPI` 记录当前 context、display、draw/read surface 和 API。日志保存这些值及待析构 owner，日志写入后刷新。
+3. 调用该对象的 `gl_ctx.make_current()`，重新读取当前 context 并断言等于 owner，再调用原 `__del__` 恰好一次。只选择 owner 仍不足以保护被中断的 renderer：原析构还可能释放当前线程的 EGL 绑定，因此必须执行下一步。
+4. 无论原析构成功或抛异常，在 `finally` 中处理之前保存的状态。只有保存的 context 非零且与被析构 owner 不同时，先要求保存的 display 非零，再调用 `eglBindAPI(saved_api)` 和 `eglMakeCurrent(saved_display, saved_draw, saved_read, saved_context)`；每个调用必须成功，再读回五个字段逐项精确比较。不得重新绑定刚被销毁的 owner，也不得人为创建一个“替代”context。
+5. 保存 after 事件、当前五字段、实际清理次数和恢复次数。切换、原析构或恢复异常都保留第一条错误并继续抛出。由于 Python 可能忽略析构异常，后续每次原渲染外检查前必须先断言该错误槽为空；worker 结束时也检查一次，有错误则整次运行记为 incomplete，不能留下成功回执。
+6. 结束或异常退出时还原两个原函数。不得增加额外 `glGetError` 读取、吞掉未知 GL 错误、修改 shininess、材质、XML、物理状态或策略输入。`ctypes` 调用须显式声明 EGL 指针和整型的参数/返回类型，避免 64 位指针被截断。
+
+这个实现适用于使用 EGL 的渲染进程，不是 `torch_npu` 的设备适配。Ascend 策略若通过另一台 GPU 机器运行模拟器，应在该模拟器机器独立验证；不要在没有 EGL renderer 的 NPU 进程中强行安装。
+
+### 11.2 必须保留的验证与已有证据
+
+先分别在独立进程比较三个小型渲染对照：原析构、仅切换到 owner 再原析构、切换到 owner 且恢复此前 context。记录清理前后当前 context、framebuffer 存在性、后续渲染和像素。仅切换 owner 的对照可在后续显式重新绑定后恢复渲染，不能据此证明被中断的调用可直接继续；完整修复还必须证明此前五字段在析构返回时已恢复。保留负对照的实际结果，不把预期失败改写为通过。
+
+已有 Awomo NVIDIA 诊断完成 14/14 个固定 BreadSelection 回合、18,876 环境步与 56,922 次渲染，28 次清理中捕获 1 次真实的其他 context 恢复；错误槽为空，没有场景或材质修改，14 个初始状态和相机输入与旧固定参考相同。这 14 局是工程诊断，不计正式成绩。GPU2 的固定原生入口也已单独验收。新硬件或重新实现仍需自己的 CPU、合成渲染和真实完整回合验证，不能继承这些结果。
+
+### 11.3 2026-11-14 准备的三项正式后继
+
+三项旧原生策略评测因 GL 检查失败而不完整。修复后分别使用新的运行身份，从原固定 trial 0 开始执行完整 30 局。旧部分回合继续保留，不拼接、不按成功选择样本，也不把上述 14 局诊断加入分母。
+
+| 任务 | 旧有效部分回合 | 新 trial | constructor seed | 新 reset seeds | 原 horizon |
+|---|---:|---|---:|---|---:|
+| BreadSelection | 13 | 0–29 | 7 | 107–136 | 1950 |
+| CategorizeCondiments | 11 | 0–29 | 7 | 157–186 | 1650 |
+| CuttingToolSelection | 29 | 0–29 | 7 | 207–236 | 1200 |
+
+继续使用公开固定 Awomo 官方策略、同一发布 checkpoint、`split=pretrain`、16 步动作执行、原 H264/历史组装与成功终止。每任务先做精确任务和节点的 CPU 前置：0 GPU、4 CPU、16 GiB RAM、20 分钟；检查模型、50 任务 horizon、公开源码、策略/模拟器包版本、清理证据和前后环境，实际不创建 EGL context、不执行 episode。每项正式后继最多 1 GPU、4 小时，worker 上限 10,800 秒；三项共 90 局、最多 12 GPU·小时。GPU 分配前须验收完整 CPU 原件，并核对旧身份没有活动、模糊或已经完成的重复运行；保留已知失败，不能误写成从未执行。
+
+本节是已准备并提交的执行合同，不是新通过结果。CPU 完整回传、独立验收和 GPU 准入仍待完成；正式累计仍按主文第 7.28 节，Human/recovery SFT 与 Ascend 实测没有新增计数。
