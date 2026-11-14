@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T10:57:38.521087+00:00",
+    "checked_at": "2026-11-14T11:14:54.525400+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -476,6 +476,42 @@
     "cumulative_completed": {
       "awomo_official": 720,
       "loopwam_official": 750,
+      "ecr_target": 0
+    },
+    "formal_sft_updates": 0,
+    "ascend_runs": 0,
+    "private_github_dependencies": false
+  },
+  "loop_three_pickplace_results_addendum": {
+    "checked_at": "2026-11-14T11:14:53.715586+00:00",
+    "location": "WAM_HANDOFF.md section7.12",
+    "component": "loopwam",
+    "official_pretrain": [
+      {
+        "task": "PickPlaceCounterToCabinet",
+        "successes": 44,
+        "completed": 50,
+        "official_successes": null
+      },
+      {
+        "task": "PickPlaceCounterToStove",
+        "successes": 39,
+        "completed": 50,
+        "official_successes": null
+      },
+      {
+        "task": "PickPlaceSinkToCounter",
+        "successes": 46,
+        "completed": 50,
+        "official_successes": null
+      }
+    ],
+    "returned_files": 684,
+    "returned_bytes": 73149806,
+    "scheduler_terminal": "All three COMPLETED0:0 retained.",
+    "cumulative_completed": {
+      "awomo_official": 720,
+      "loopwam_official": 900,
       "ecr_target": 0
     },
     "formal_sft_updates": 0,
