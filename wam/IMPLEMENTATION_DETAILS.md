@@ -977,7 +977,7 @@ assert not torch.cuda.is_initialized() and not torch.distributed.is_initialized(
 
 ## 16. 真正导入 Trainer 后的训练批次与 checkpoint 集成
 
-本节为 2026-11-15 新增的独立 CPU 验证方案，现场结果待回。第 15 节只验证导入与组件内存状态；本节实际调用 `Trainer._run_train_batch_group`、`_clip_gradients`、`save_checkpoint`、`load_checkpoint`，以及真实 StepScheduler、StatefulDataLoader、StatefulRNG 和 DCP。子类**仅实现 `train_step`**，其他上述方法必须与导入的 Trainer 方法是同一个对象。不从 AST 提取方法，不替换存储或优化器。
+本节为 2026-11-15 新增的独立 CPU 验证方案。执行端已报告单rank连续训练完成、恢复后第3次更新不一致；完整状态见第16.3节。第 15 节只验证导入与组件内存状态；本节实际调用 `Trainer._run_train_batch_group`、`_clip_gradients`、`save_checkpoint`、`load_checkpoint`，以及真实 StepScheduler、StatefulDataLoader、StatefulRNG 和 DCP。子类**仅实现 `train_step`**，其他上述方法必须与导入的 Trainer 方法是同一个对象。不从 AST 提取方法，不替换存储或优化器。
 
 ### 16.1 固定初始化与批次语义
 
@@ -1033,3 +1033,23 @@ for name in ('save_checkpoint', 'load_checkpoint', '_load_checkpoint_tracked_sta
 **结论边界：** 这是实际Trainer方法的CPU集成，初始化由诊断显式构造，未调用CUDA-only `setup()` 或完整 `run_train_validation_loop()`。没有真实WAM/Human数据、FSDP/DTensor、异步DCP、CUDA/NPU和正式SFT信用。此前完成的诊断不重复执行，其原件验收和旧GPU准入要求不因本节而改变。
 
 **完整 setup 的源码审计边界：** 它先构建模型/优化器/loader，再在恢复路径加载 RNG、步数与数据状态、优化器；完整训练循环之后才创建迭代器。通用 `load_checkpoint` 则先恢复登记的 loader/RNG/step 状态，再加载模型/优化器。因此，仅小模型DCP的“最后手动恢复RNG”顺序通过，不能替代这两种真实入口的验证。本节不修改这些顺序，先观察实际行为；CPU通过也不能绕过完整setup内的CUDA要求。
+
+### 16.3 首轮现场失败与独立定位要求
+
+执行时间为 **2026-11-15 08:43:24–08:43:42 UTC**，节点为 B300 GPU2，但本项申请并使用 **0 GPU、4 CPU、16 GiB**；调度终态 `FAILED / 1:0`，运行18秒，程序报告15.79秒。配置完全沿用第16.1–16.2节，没有修改默认loader generator、恢复顺序或比较容差。
+
+| 检查 | 执行端报告的结果 |
+|---|---|
+| world size 1 连续分支 | 完成更新1–5；实际Trainer批次、梯度裁剪和保存方法已调用 |
+| 不完整checkpoint | 连续与恢复进程均拒绝，异常类型为RuntimeError |
+| 重复保存已完成checkpoint | 跳过，连续分支检查原文件字节不变 |
+| 新进程恢复后、创建loader迭代器之前 | 模型、优化器、LR与RNG核心状态同更新2的oracle精确一致 |
+| 恢复后的首次更新 | 第3次完成更新比较失败，首个报告位置为 `replay-update-3.core.model.layers.0.weight` |
+| world size 2 | 因首个失败停止，未启动；不得写作通过或失败 |
+| 源码和环境 | 95份固定源文件与预登记清单一致，基础环境和依赖prefix前后不变；自有进程已退出 |
+
+节点保留21份原件，共316,762 bytes，包括连续分支五个oracle、真实DCP checkpoint、两阶段日志/JSON及逐文件索引。当前只收到执行端控制元数据、首错栈和文件摘要；完整原件受接收端磁盘容量门槛阻塞，**尚未独立读取全部张量并验收**。这里的失败结论有执行回执支持，但不把摘要当作完整payload交付。
+
+首个报告的模型权重差异是比较器遇到的第一个不相等字段，**不是因果链中的最早差异**。它不能证明DataLoader迭代器消耗RNG就是根因。后续独立定位应保持上述固定模型、数据、seed和更新顺序，在新运行身份中依次记录：恢复刚完成、创建迭代器前后、取得每个microbatch后、生成noise/scale后、前向后、反向后及optimizer step后的实际状态。比较数据ID、输入、三类RNG、noise/scale、loss、裁剪前梯度及完整优化器状态，找到最早分歧。不得先补偿RNG、改generator或放宽容差再把结果当作原路径通过；任何修复另存差异，并重新验证连续与新进程重放。
+
+本项不增加正式SFT、官方评测或Ascend通过计数。第16节的CPU方法集成仍未通过，完整setup、真实WAM/Human及NPU训练恢复保持待验。

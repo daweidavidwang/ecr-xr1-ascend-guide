@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T08:39:34.757342+00:00",
+    "checked_at": "2026-11-15T08:48:58.043663+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -150,7 +150,9 @@
       "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns",
       "Joint consumed-loader, model, optimizer and RNG checkpoint with fresh-process replay",
       "Checkpoint completion marker and selector, early setup resume gate, future draining, local rank failure boundaries and validation scope",
-      "Real synchronous DCP with a 61-parameter CPU fixture, world1/world2 fresh-process replay and full-state exact comparisons"
+      "Real synchronous DCP with a 61-parameter CPU fixture, world1/world2 fresh-process replay and full-state exact comparisons",
+      "Isolated real Trainer dependencies, exact public wheel identities and native import checks",
+      "Genuine Trainer batch/checkpoint replay contract and first CPU failure, with independent earliest-divergence diagnosis requirements"
     ],
     "public_upstream_commit_checks": [
       {
@@ -211,7 +213,8 @@
         "wam/ASCEND_RUNBOOK.md dependency table",
         "wam/IMPLEMENTATION_DETAILS.md sections 9-11",
         "wam/IMPLEMENTATION_DETAILS.md section 12",
-        "wam/IMPLEMENTATION_DETAILS.md section 14"
+        "wam/IMPLEMENTATION_DETAILS.md section 14",
+        "wam/IMPLEMENTATION_DETAILS.md sections 15-16.3"
       ],
       "changes": [
         "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
@@ -296,7 +299,7 @@
       }
     },
     "current_content_recheck": {
-      "checked_at": "2026-11-15T07:08:16.742203+00:00",
+      "checked_at": "2026-11-15T08:48:55.983779+00:00",
       "result": "passed",
       "scope": "All 60 current tracked files; no Git history or separately distributed payload rewrite.",
       "known_private_github_identifiers_found": 0,
@@ -309,10 +312,11 @@
         "schemeless, percent-encoded, HTML-escaped and JSON-escaped references",
         "bare names, branches, internal development paths and full-length source identifiers"
       ],
-      "self_contained_implementation": "WAM_HANDOFF section 4 indexes the directly included algorithms, configuration and acceptance instructions. IMPLEMENTATION_DETAILS sections 1-14 contain data adaptation, evaluation, renderer recovery and checkpoint protocols.",
+      "self_contained_implementation": "WAM_HANDOFF section 4 indexes the directly included algorithms, configuration and acceptance instructions. IMPLEMENTATION_DETAILS sections 1-16 cover data adaptation, evaluation, renderer recovery, dependency preparation and checkpoint protocols.",
       "remaining_delivery_boundary": "Published weights and Human inputs use pinned public sources. Historical raw tensors and rollouts are not included; independent regeneration and validation are required as documented.",
       "input_pins_and_experimental_results_changed": false,
-      "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name."
+      "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name.",
+      "latest_documentation_addendum": "Section 16.3 directly records the newly received CPU Trainer replay failure, its configuration, first reported mismatch, unreturned-payload boundary and independent diagnosis requirements. No benchmark or formal SFT credit was added."
     }
   },
   "engineering_addendum": {
@@ -1354,8 +1358,8 @@
     "checkpoint_integration_tested": false
   },
   "trainer_checkpoint_integration_preparation": {
-    "state": "prepared_request_published",
-    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 16",
+    "state": "producer_reports_failed_first_resumed_update_full_originals_pending",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md sections 16.1-16.3",
     "source_files_pinned": 95,
     "local_syntax_checks": 93,
     "only_subclass_override": "train_step",
@@ -1375,6 +1379,29 @@
     "native_locally_executed": false,
     "full_setup_or_train_loop_tested": false,
     "formal_sft_credit": 0,
-    "ascend_credit": 0
+    "ascend_credit": 0,
+    "terminal_at": "2026-11-15T08:43:42Z",
+    "scheduler_terminal": "FAILED 1:0",
+    "scheduler_elapsed_seconds": 18,
+    "producer_elapsed_seconds": 15.788111576985102,
+    "world1_continuous_updates_reported": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "restored_core_before_iteration_exact_reported": true,
+    "first_reported_mismatch": "replay-update-3.core.model.layers.0.weight",
+    "world2_started": false,
+    "root_cause": "Unresolved; iterator RNG consumption remains a hypothesis, not an established cause.",
+    "node_original_files": 21,
+    "node_original_bytes": 316762,
+    "full_originals_returned": false,
+    "source_after_files_matched": 95,
+    "base_environment_unchanged": true,
+    "overlay_unchanged": true,
+    "process_exit_verified": true,
+    "metadata_review_scope": "Source and base-environment records matched the preparation contract; terminal states, rank summaries and file index reviewed. Full tensor payloads were not independently read."
   }
 }
