@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T14:33:41.115041+00:00",
+    "checked_at": "2026-11-15T15:20:36.458109+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 26,
+    "inline_python_blocks_syntax_checked": 27,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -351,7 +351,7 @@
       "modified file rejected",
       "missing staged file rejected"
     ],
-    "source_history_commits_crosschecked": 395,
+    "source_history_commits_crosschecked": 399,
     "non_public_source_tokens_matched": 0
   },
   "engineering_addendum": {
@@ -1798,5 +1798,77 @@
     "multi_gpu_validated": false,
     "ascend_validated": false,
     "private_development_references_added": false
+  },
+  "two_rank_cpu_repaired_preparation": {
+    "observed_at": "2026-11-15T15:17:23.401543+00:00",
+    "state": "cpu788_real_rank_data_and_resume_report_passed_metadata_independently_audited",
+    "scheduler_state": "COMPLETED",
+    "exit_code": "0:0",
+    "producer_elapsed_seconds": 57.38823714700993,
+    "phase_count": 4,
+    "distinct_pids": 4,
+    "actual_batches": 8,
+    "array_fingerprints_matched": 136,
+    "rank_orders": {
+      "0": [
+        418544,
+        267255,
+        830901
+      ],
+      "1": [
+        357660,
+        893913,
+        418544
+      ]
+    },
+    "five_unique_windows_six_global_draws": true,
+    "rank_resumed_json_records_exact": true,
+    "phase_json_content_reconstitutes_indexed_original_sha": true,
+    "rank_rng_full_leaf_comparison": "Producer executed on node; raw PT not reloaded by owner.",
+    "wrong_input_and_rank_rejected": true,
+    "source_files_git_plan_node_matched": 119,
+    "source_and_environment_unchanged_monitor_verified": true,
+    "process_exit_verified": true,
+    "original_files": 25,
+    "original_bytes": 54220020,
+    "complete_raw_returned": false,
+    "node_receipt_sha256": "1e2c967a6a68cd2279849220ad84659e01e1f19adfd7fdd17a2d3e3d12889f5d",
+    "gpu_or_npu_runs": 0,
+    "optimizer_updates": 0,
+    "formal_sft_credit": 0,
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section19.3",
+    "deployment_closure_tests": 3,
+    "prior_revision_tests_failed": 2,
+    "total_cpu_contract_tests_passed": 17,
+    "syntax_files_checked": 112,
+    "private_development_references_added": false
+  },
+  "full_two_rank_gpu_candidate": {
+    "observed_at": "2026-11-15T15:19:52.177346+00:00",
+    "state": "running_no_completed_updates_in_snapshot",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section19.3",
+    "gpus": 2,
+    "cpus": 16,
+    "ram_gib": 512,
+    "max_walltime_minutes": 120,
+    "max_gpu_hours": 4,
+    "disk_required_bytes": 500000000000,
+    "output_cap_bytes": 480000000000,
+    "gpu_fixed_source_files": 123,
+    "cpu_prepared_source_blobs_unchanged": 119,
+    "gpu_driver_admission_tests_passed": 6,
+    "gpu_package_python_syntax_checks": 116,
+    "full_model_two_rank_passed": false,
+    "formal_sft_credit": 0,
+    "ascend_credit": 0,
+    "private_development_references_added": false,
+    "started_at": "2026-11-15T15:19:37Z",
+    "stop_deadline": "2026-11-15T17:19:37Z",
+    "site": "B300 gpu2",
+    "allocated_gpus": 2,
+    "startup_source_and_runtime_verified": true,
+    "complete_cpu_preparation_files_verified": 25,
+    "continuous_updates_observed": [],
+    "resumed_updates_observed": []
   }
 }

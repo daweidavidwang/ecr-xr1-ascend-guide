@@ -1,6 +1,6 @@
 # WAM 数据、checkpoint 与训练交接
 
-返回 [WAM 总入口](../WAM_HANDOFF.md)。本页描述截至 2026-11-13 21:22 UTC 的已验收输入与候选训练合同；不把候选配方当成官方配方或已完成实验。 后续完整 Trainer 的单卡恢复结果和双 rank 准备失败见[实现细节第 18–19 节](IMPLEMENTATION_DETAILS.md)；本页保留原冻结快照。
+返回 [WAM 总入口](../WAM_HANDOFF.md)。本页描述截至 2026-11-13 21:22 UTC 的已验收输入与候选训练合同；不把候选配方当成官方配方或已完成实验。 后续完整 Trainer 的单卡恢复结果和双 rank 准备进展见[实现细节第 18–19 节](IMPLEMENTATION_DETAILS.md)；本页保留原冻结快照。
 
 ## 1. 公共模型和仿真输入
 
