@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-14T23:21:26.164575+00:00",
+    "checked_at": "2026-11-15T00:38:47.395627+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -144,7 +144,10 @@
       "ECR requests and native evaluation semantics",
       "Strict metadata serialization",
       "Separately versioned stable Counter candidate",
-      "Independent evaluator launch, timeout budgets, process cleanup and result evidence"
+      "Independent evaluator launch, timeout budgets, process cleanup and result evidence",
+      "CPU versus rendered initial-state diagnostics and bounded snapshot inspection",
+      "Native nine-slot history observation, source-frame provenance and fixed development inputs",
+      "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns"
     ],
     "public_upstream_commit_checks": [
       {
@@ -202,12 +205,14 @@
       "locations": [
         "WAM_HANDOFF.md section 4",
         "wam/EVALUATION.md section 3.1",
-        "wam/ASCEND_RUNBOOK.md dependency table"
+        "wam/ASCEND_RUNBOOK.md dependency table",
+        "wam/IMPLEMENTATION_DETAILS.md sections 9-11"
       ],
       "changes": [
         "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
         "Replaced old queue revision identifiers with standalone timeout and attempt-preservation rules.",
-        "Specified local provenance, frozen protocols, initial-state checks, process exits and artifact indexing without external engineering-repository dependencies."
+        "Specified local provenance, frozen protocols, initial-state checks, process exits and artifact indexing without external engineering-repository dependencies.",
+        "Documented initial-state diagnosis, native history observation and renderer cleanup directly, including fixed inputs, implementation behavior, validation boundaries and rerun budgets."
       ],
       "unbundled_payloads": "GPU tensors, full historical asset indexes, checkpoints and raw rollouts remain subject to the explicitly documented delivery boundaries; no new payload delivery or runtime validation is claimed."
     }
