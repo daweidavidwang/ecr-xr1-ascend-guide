@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T01:27:32.042713+00:00",
+    "checked_at": "2026-11-15T02:24:08.829430+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
-    "tracked_files_scanned": 59,
+    "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 69,
+    "local_wam_links_checked": 70,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -132,7 +132,7 @@
       }
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
-    "checksums_verified": 58,
+    "checksums_verified": 59,
     "inline_python_blocks_syntax_checked": 12,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
@@ -217,6 +217,26 @@
         "Documented initial-state diagnosis, native history observation and renderer cleanup directly, including fixed inputs, implementation behavior, validation boundaries and rerun budgets."
       ],
       "unbundled_payloads": "GPU tensors, full historical asset indexes, checkpoints and raw rollouts remain subject to the explicitly documented delivery boundaries; no new payload delivery or runtime validation is claimed."
+    },
+    "reproducible_checker": {
+      "path": "wam/check_handoff.py",
+      "command": "python3 wam/check_handoff.py --online",
+      "checked_at": "2026-11-15T02:24:47.674428+00:00",
+      "result": "passed",
+      "minimum_python": "3.9",
+      "dependencies": "Python standard library; anonymous public HTTP for online mode",
+      "files_scanned": 60,
+      "checksums_verified": 59,
+      "public_repositories_checked": 10,
+      "public_source_commits_checked": 6,
+      "negative_checks_passed": [
+        "Six GitHub URL forms recognized, including percent-encoded and SSH URLs",
+        "Unreviewed repository URL rejected",
+        "Missing local file link rejected",
+        "Modified file without updated checksum rejected"
+      ],
+      "manual_review_boundary": "Manually review bare repository names, branches, internal paths and missing implementation details; URL matching cannot prove their absence",
+      "experimental_results_changed": false
     }
   },
   "engineering_addendum": {
