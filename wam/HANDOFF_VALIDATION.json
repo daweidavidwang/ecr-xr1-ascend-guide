@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T15:20:36.458109+00:00",
+    "checked_at": "2026-11-15T15:39:00.689249+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 91,
+    "local_wam_links_checked": 92,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -352,7 +352,15 @@
       "missing staged file rejected"
     ],
     "source_history_commits_crosschecked": 399,
-    "non_public_source_tokens_matched": 0
+    "non_public_source_tokens_matched": 0,
+    "decoded_private_identifier_review": {
+      "checked_at": "2026-11-15T15:41:19.900918+00:00",
+      "all_tracked_files": 60,
+      "decoded_private_reference_scan": "passed",
+      "private_commit_history_candidates": 366,
+      "private_revision_references": 0,
+      "scope": "Current tracked text, Markdown code blocks, JSON, encoded text, bare repository names, branches, internal paths and private development commit prefixes; no historical Git rewrite."
+    }
   },
   "engineering_addendum": {
     "checked_at": "2026-11-14T07:23:17.189660+00:00",
@@ -1844,9 +1852,9 @@
     "private_development_references_added": false
   },
   "full_two_rank_gpu_candidate": {
-    "observed_at": "2026-11-15T15:19:52.177346+00:00",
-    "state": "running_no_completed_updates_in_snapshot",
-    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section19.3",
+    "observed_at": "2026-11-15T15:36:22.619123+00:00",
+    "state": "failed_during_setup_model_double_registration",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md sections 19.1 and 19.4",
     "gpus": 2,
     "cpus": 16,
     "ram_gib": 512,
@@ -1869,6 +1877,70 @@
     "startup_source_and_runtime_verified": true,
     "complete_cpu_preparation_files_verified": 25,
     "continuous_updates_observed": [],
-    "resumed_updates_observed": []
+    "resumed_updates_observed": [],
+    "startup_observation": {
+      "observed_at": "2026-11-15T15:19:52.177346+00:00",
+      "state": "running_no_completed_updates_in_snapshot",
+      "started_at": "2026-11-15T15:19:37Z",
+      "stop_deadline": "2026-11-15T17:19:37Z",
+      "continuous_updates_observed": [],
+      "resumed_updates_observed": []
+    },
+    "ended_at": "2026-11-15T15:21:52Z",
+    "scheduler_state": "FAILED",
+    "exit_code": "1:0",
+    "scheduler_elapsed_seconds": 135,
+    "allocated_gpu_hours": 0.075,
+    "optimizer_updates": 0,
+    "resumed_processes_started": false,
+    "full_setup_passed": false,
+    "returned_original_files": 14,
+    "returned_original_bytes": 166425,
+    "node_indexed_original_files": 21,
+    "node_indexed_original_bytes": 281494539,
+    "original_sets_note": "Output file index and returned small runtime-control records have different coverage; do not add the counts.",
+    "complete_payload_returned": false,
+    "receipt_sha256": "46a1a763f7b0fc0908a075bd8055b494707d92c04f0edd490230f26fe5c357c5",
+    "source_environment_unchanged": true,
+    "process_exit_verified": true,
+    "failure": "Both ranks used ordinary attribute assignment to wrap an already registered model, causing Trainer.__setattr__ to reject duplicate registration."
+  },
+  "model_tracking_repair": {
+    "checked_at": "2026-11-15T15:38:57.279502+00:00",
+    "state": "local_checks_passed_native_retest_pending",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md sections 19.1 and 19.4",
+    "algorithm": "Require existing model registration; replace only its dictionary value with the distributed wrapper. Keep the generic tracking guard and original key.",
+    "tracking_checks": 5,
+    "deployment_closure_checks": 3,
+    "gpu_admission_checks": 6,
+    "check_scope": "Actual tracking and wrapping method bodies with explicit standard-library stand-ins; no native Torch/DDP execution.",
+    "prior_method_reproduces_same_assertion": true,
+    "cpu_deployment_files": 120,
+    "cpu_python_syntax_checks": 113,
+    "gpu_deployment_files": 124,
+    "gpu_python_syntax_checks": 117,
+    "new_cpu_preparation_required": true,
+    "new_cpu_preparation_reason": "Changed training source participates in recovery identity; a previous preparation result is insufficient for a new source set.",
+    "full_two_gpu_passed": false,
+    "ascend_passed": false,
+    "formal_sft_credit": 0,
+    "private_development_references_added": false
+  },
+  "latest_research_status": {
+    "checked_at": "2026-11-15T15:38:57.279502+00:00",
+    "official_awomo_complete_episodes": 810,
+    "official_awomo_planned_episodes": 1500,
+    "official_loopwam_complete_episodes": 2100,
+    "official_loopwam_planned_episodes": 2500,
+    "ecr_target_complete_episodes": 0,
+    "ecr_target_planned_episodes": 5000,
+    "total_complete_episodes": 2910,
+    "total_planned_episodes": 9000,
+    "counts_are_completion_not_success_rates": true,
+    "awomo_full_single_gpu_recovery_engineering_passed": true,
+    "awomo_full_two_gpu_recovery_engineering_passed": false,
+    "formal_human_sft_updates": 0,
+    "formal_recovery_sft_updates": 0,
+    "ascend_runs": 0
   }
 }

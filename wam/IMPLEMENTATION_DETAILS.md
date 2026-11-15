@@ -1515,7 +1515,7 @@ def stream_index(root):
 
 ## 19. 双 rank 候选与部署清单闭包
 
-本节直接说明接手端可重建的两 rank 候选。**截至 2026-11-15 15:19:52 UTC，部署闭包修复后的四阶段 CPU 准备报告通过，真实双卡模型/NCCL 实验已启动、尚未观察到完成更新；实际双卡和 HCCL 均无通过结论。** 第 19.2 节保留首轮失败及修复方法，第 19.3 节给出后继结果和双卡观察合同。它是第 18 节之后的独立工程合同，不改变此前单卡配方或历史结论。
+本节直接说明接手端可重建的两 rank 候选。**2026-11-15 15:21:52 UTC，真实双卡实验在模型包装阶段失败，两个 rank 均为 0 次优化器更新，未启动恢复分支。** 四阶段 CPU 数据准备通过的历史结果保留；实际双卡完整训练和 HCCL 均无通过结论。第 19.2 节保留部署缺件失败，第 19.3 节给出数据准备结果和双卡观察合同，第 19.4 节直接给出本次模型登记错误、修复与复测要求。它是第 18 节之后的独立工程合同，不改变此前单卡配方或历史结论。
 
 ### 19.1 数据顺序、模型与 checkpoint 身份
 
@@ -1534,13 +1534,17 @@ def stream_index(root):
 模型继续使用第 18 节 FP32 全 DiT、冻结 encoder/VAE、BF16 数学 SDPA、sigma=0.5 与相同 AdamW/裁剪。NVIDIA 候选使用复制式 DDP，`find_unused_parameters=False`、`broadcast_buffers=True`、FSDP 关闭；保留真实模型构造、`train_step`、通用 `setup`、批次/完整循环和保存恢复。模型加载与通用恢复完成后才包装 DDP。以下是需嵌入自己的 Trainer 的核心方法；调用前须已验证两个本地 rank、正确设备分配和 NCCL 进程组：
 
 ```python
-def wrap_two_rank_model(self):
+def wrap_two_rank_model(self, fsdp_cfg):
     import torch
     from torch.nn.parallel import DistributedDataParallel
-    if self.world_size != 2 or torch.distributed.get_backend() != 'nccl':
-        raise ValueError('Expected exactly two NCCL ranks')
+    if (self.world_size != 2 or fsdp_cfg.enabled
+            or torch.distributed.get_backend() != 'nccl'):
+        raise ValueError('Expected exactly two NCCL ranks with FSDP disabled')
     self.device_mesh = None
-    self.model = DistributedDataParallel(
+    if 'model' not in self.__dict__.get('__state_tracked', set()):
+        raise ValueError('DDP must wrap the already registered training model')
+    # Keep the existing tracked key; replace its value without registering twice.
+    self.__dict__['model'] = DistributedDataParallel(
         self.model, device_ids=[self.local_rank], output_device=self.local_rank,
         find_unused_parameters=False, broadcast_buffers=True)
 
@@ -1549,7 +1553,7 @@ def checkpoint_model_keys(self):
     return list(self.model.module.state_dict())
 ```
 
-将这两个方法分别接到通用训练器的分布式包装位置和 checkpoint 模型键过滤位置。第 16.6 节的优化器参数名修复仍需保留。共享 checkpoint 身份文件由 rank 0 写一次，记录 world size=2、rank=0、local batch=1；每个 rank 的 RNG/loader 状态分别保存并核对。保存点仍为完成更新 2/3，新建两个恢复进程重放更新 3。每个 rank 先与自身连续分支精确比较，另核对两个 rank 的 all-reduce 后梯度与更新后模型/Adam 状态相同；不要要求不同 rank 的输入或随机状态相同。Ascend 需另行实现 NPU/HCCL 包装并验证，不把上面 CUDA/NCCL 代码称为可直接运行的 NPU 入口。
+将这两个方法分别接到通用训练器的分布式包装位置和 checkpoint 模型键过滤位置，包装方法接收原来的 `fsdp_cfg`。这里的直接字典替换修复了第 19.4 节实际观察到的重复登记错误；不能改回普通属性赋值，也不能删除模型的已有登记。第 16.6 节的优化器参数名修复仍需保留。共享 checkpoint 身份文件由 rank 0 写一次，记录 world size=2、rank=0、local batch=1；每个 rank 的 RNG/loader 状态分别保存并核对。保存点仍为完成更新 2/3，新建两个恢复进程重放更新 3。每个 rank 先与自身连续分支精确比较，另核对两个 rank 的 all-reduce 后梯度与更新后模型/Adam 状态相同；不要要求不同 rank 的输入或随机状态相同。Ascend 需另行实现 NPU/HCCL 包装并验证，不把上面 CUDA/NCCL 代码称为可直接运行的 NPU 入口。
 
 ### 19.2 CPU 准备失败及接手端的闭包检查
 
@@ -1626,4 +1630,16 @@ def require_same_rank_fingerprints(value, label):
 
 本次 NVIDIA 工程预算为同节点两张实际分配的 B300、16 CPU、512 GiB 主存，最多 120 分钟/4 GPU 小时；分配前至少 500,000,000,000 bytes 可用磁盘，产物上限 480,000,000,000 bytes。每阶段 2,700 秒、中断宽限 300 秒、驱动 6,900 秒、总上限 7,200 秒。NCCL 使用本机设备、Ring/Simple 和 loopback 接口，本机 rendezvous 动态分配端口；输入仍离线，不下载依赖。首个异常、非有限值、原件或状态不一致立即停止，保留部分产物，不原样自动重试。此预算含完整原件观察开销，不是正式训练吞吐或 Ascend 容量保证。
 
-该独立双卡实验已于 15:19:37 UTC 在 B300 gpu2 启动，两张实际分配设备、源码及运行环境的启动检查通过。15:19:52 UTC 快照尚无已完成更新或恢复结果；调度停止上限为 17:19:37 UTC，不是通过时间承诺。它不会解除较早失败实验的暂停条件，不增加正式训练、评测或 Ascend 计数，也不使用诊断权重初始化正式训练。接手者按上述代码与规格实现自己的 NPU/HCCL 对照并生成证据，无需原开发仓库、调度请求或节点内部路径。
+该独立双卡实验于 15:19:37 UTC 在 B300 gpu2 启动，两张实际分配设备、源码及运行环境的启动检查通过；15:19:52 UTC 的启动快照当时尚无完成更新。随后于 15:21:52 UTC 失败，完整结果见第 19.4 节；原 17:19:37 UTC 停止上限已不再是运行状态。它不会解除较早失败实验的暂停条件，不增加正式训练、评测或 Ascend 计数，也不使用诊断权重初始化正式训练。接手者按上述代码与规格实现自己的 NPU/HCCL 对照并生成证据，无需原开发仓库、调度请求或节点内部路径。
+
+### 19.4 双卡模型重复登记失败、直接修复与复测
+
+现场双卡运行于 **2026-11-15 15:19:37–15:21:52 UTC**，调度终态 `FAILED / 1:0`，分配时长 135 秒，两卡合计 **0.075 GPU 小时**。两个 rank 都在完整 `setup()` 的分布式模型包装处抛出 `AssertionError`，没有完成 setup、前后向、优化器更新或 checkpoint，恢复分支未启动。初始化和加载过程已到达包装位置，但这不构成完整 DDP/NCCL 训练通过，也没有提供 Ascend 兼容性结论。
+
+**原因和修复均可直接从本节重建：** 通用 `Trainer.__setattr__` 会把可保存对象的属性名放入 `self.__dict__['__state_tracked']`，并拒绝重复登记。模型构造时已登记 `model`，随后用 `self.model = DistributedDataParallel(...)` 再赋值会触发同名断言。第 19.1 节现在先确认已有登记，再使用 `self.__dict__['model'] = DistributedDataParallel(...)` 只替换值；通用重复登记检查保持原样。checkpoint 继续按原登记名读取当前包装对象，再按第 19.1 节解包模型键。不要通过移除登记、忽略断言或重建优化器绕开问题。Python 先计算赋值右侧，因此包装构造抛错时，原模型与登记仍保留。
+
+维护者已逐文件核对回传的 **14 份完整小型原件，共 166,425 bytes**，包含主 receipt、两个 rank 的阶段结果/配置及原始日志；两个 traceback 指向同一赋值与登记断言。执行端还核验了 21 份索引原件，共 281,494,539 bytes；这组输出索引与包含运行控制记录的 14 份回传集合不是同一集合，不能相加。123 项部署源码逐项与固定内容一致，源码、基础环境及依赖前后未变，所属进程已退出。完整失败 receipt 的 SHA256 为 `46a1a763f7b0fc0908a075bd8055b494707d92c04f0edd490230f26fe5c357c5`；摘要用于标识历史记录，接手执行不需要取得该历史文件。
+
+修复检查提取实际 `Trainer.__setattr__` 与分布式包装方法的函数体，在标准库环境中使用明确的模型/DDP 替身，覆盖以下五项：保留登记及其他已登记对象、包装内层仍为原模型；普通重复登记仍拒绝；未登记模型在包装前拒绝；包装构造失败保留原模型与登记；错误 world size、后端或启用 FSDP 均拒绝。五项通过，同一检查装载旧方法会复现现场断言。另有三个干净部署闭包检查和六个准入检查通过；修复后 CPU 部署为 120 文件/113 份 Python，GPU 部署为 124 文件/117 份 Python，语法检查通过。**这些检查没有导入 Torch 或执行原生 DDP，不是双卡复测通过。**
+
+接手方的复测顺序为：保存修复后的完整源码与配置摘要；重新做干净目录身份闭包检查；按第 19.2 节在四个新 CPU 进程中复验真实 Human 数据和 rank 恢复；再按第 19.3 节执行实际两设备完整训练与新进程恢复。训练源码是恢复身份的一部分，源码变化后不能直接沿用旧 CPU 准备的“通过”标志。保留旧失败和新运行各自的结果，不原样重试或混用 checkpoint。Ascend 使用目标环境支持的 NPU/HCCL 实现，并保留相同的登记、数据、梯度、优化器与恢复检查；尚无对应现场通过证据。正式 Human SFT、recovery SFT 与 Ascend 计数仍为 0。
