@@ -1052,7 +1052,7 @@ for name in ('save_checkpoint', 'load_checkpoint', '_load_checkpoint_tracked_sta
 
 首个报告的模型权重差异是比较器遇到的第一个不相等字段，**不是因果链中的最早差异**。它不能证明DataLoader迭代器消耗RNG就是根因。后续独立定位应保持上述固定模型、数据、seed和更新顺序，在新运行身份中依次记录：恢复刚完成、创建迭代器前后、取得每个microbatch后、生成noise/scale后、前向后、反向后及optimizer step后的实际状态。比较数据ID、输入、三类RNG、noise/scale、loss、裁剪前梯度及完整优化器状态，找到最早分歧。不得先补偿RNG、改generator或放宽容差再把结果当作原路径通过；任何修复另存差异，并重新验证连续与新进程重放。
 
-本项不增加正式SFT、官方评测或Ascend通过计数。第16节的CPU方法集成仍未通过，完整setup、真实WAM/Human及NPU训练恢复保持待验。
+本项不增加正式SFT、官方评测或Ascend通过计数。截至本次首轮实验，CPU方法集成未通过；后继诊断、修复及执行端报告的通过结果见第16.4–16.6节。完整setup、真实WAM/Human及NPU训练恢复保持待验。
 
 ### 16.4 首个恢复更新的分阶段观察方案
 
