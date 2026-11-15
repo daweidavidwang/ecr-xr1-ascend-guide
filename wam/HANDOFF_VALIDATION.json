@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T02:24:08.829430+00:00",
+    "checked_at": "2026-11-15T03:53:46.058757+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 70,
+    "local_wam_links_checked": 71,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -237,6 +237,27 @@
       ],
       "manual_review_boundary": "Manually review bare repository names, branches, internal paths and missing implementation details; URL matching cannot prove their absence",
       "experimental_results_changed": false
+    },
+    "self_containment_review": {
+      "checked_at": "2026-11-15T03:54:10.183922+00:00",
+      "result": "passed",
+      "scope": "Current tracked text and WAM handover instructions; no Git history rewrite or workload execution.",
+      "known_private_repository_identifiers_found": 0,
+      "reviewed_content": [
+        "WAM overview and source pins",
+        "Implementation algorithms and embedded code",
+        "Data, evaluation and Ascend procedures",
+        "GPU package snapshots",
+        "Tracked JSON manifests and root WAM entry links"
+      ],
+      "changes": [
+        "Explicitly exclude private development commit IDs and vague references to original projects.",
+        "Document independent local acceptance-record fields, file verification, successor binding and failure handling in ASCEND_RUNBOOK section 0.1.",
+        "Clarify that a new implementation must cover test semantics; matching historical test counts alone is insufficient."
+      ],
+      "implementation_location": "wam/ASCEND_RUNBOOK.md section 0.1",
+      "historical_results_and_input_pins_changed": false,
+      "unbundled_payload_boundary": "Historical GPU tensors, asset indexes and checkpoints still require actual payloads or independent regeneration as documented; their hashes are not a delivery."
     }
   },
   "engineering_addendum": {
