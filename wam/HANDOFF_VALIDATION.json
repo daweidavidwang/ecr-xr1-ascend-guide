@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T06:26:29.696262+00:00",
+    "checked_at": "2026-11-15T07:07:31.303496+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -294,6 +294,25 @@
         "unreviewed_repository_destinations": 0,
         "unclassified_full_length_source_ids_in_prose_or_code": 0
       }
+    },
+    "current_content_recheck": {
+      "checked_at": "2026-11-15T07:08:16.742203+00:00",
+      "result": "passed",
+      "scope": "All 60 current tracked files; no Git history or separately distributed payload rewrite.",
+      "known_private_github_identifiers_found": 0,
+      "development_history_commit_matches_excluding_verified_public_pins": 0,
+      "github_destinations_checked_anonymously": 10,
+      "wam_source_commits_checked_anonymously": 6,
+      "reference_forms_reviewed": [
+        "HTTPS and SSH Git URLs",
+        "raw, codeload and API URLs",
+        "schemeless, percent-encoded, HTML-escaped and JSON-escaped references",
+        "bare names, branches, internal development paths and full-length source identifiers"
+      ],
+      "self_contained_implementation": "WAM_HANDOFF section 4 indexes the directly included algorithms, configuration and acceptance instructions. IMPLEMENTATION_DETAILS sections 1-14 contain data adaptation, evaluation, renderer recovery and checkpoint protocols.",
+      "remaining_delivery_boundary": "Published weights and Human inputs use pinned public sources. Historical raw tensors and rollouts are not included; independent regeneration and validation are required as documented.",
+      "input_pins_and_experimental_results_changed": false,
+      "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name."
     }
   },
   "engineering_addendum": {
