@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T04:53:53.395890+00:00",
+    "checked_at": "2026-11-15T05:01:55.130947+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -1162,7 +1162,7 @@
     "evidence_scope": "Delivered terminal metadata only; complete producer receipts, previews, unit records and raw logs are retained on nodes and pending independent acceptance."
   },
   "checkpoint_publication_candidate": {
-    "state": "local_control_flow_validated_cpu_gloo_request_prepared",
+    "state": "cpu_gloo_producer_reports_passed_complete_raw_acceptance_pending",
     "local_tests": {
       "tests": 20,
       "passed": 20,
@@ -1184,6 +1184,16 @@
     "new_formal_sft_credit": 0,
     "new_benchmark_credit": 0,
     "ascend_credit": 0,
-    "private_development_references_added": false
+    "private_development_references_added": false,
+    "producer_reported_cpu_tests_passed": 20,
+    "producer_reported_cpu_skips": 0,
+    "producer_reported_gloo_cases_passed": 9,
+    "reported_rank_records": 18,
+    "node_files": 48,
+    "node_bytes": 31763,
+    "scheduler_terminal": "COMPLETED 0:0",
+    "source_after_files_matched": 9,
+    "environment_after_unchanged": true,
+    "full_original_rank_payloads_accepted": false
   }
 }
