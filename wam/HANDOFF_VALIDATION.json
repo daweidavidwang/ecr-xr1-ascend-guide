@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T11:11:48.451565+00:00",
+    "checked_at": "2026-11-15T11:51:31.482871+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 81,
+    "local_wam_links_checked": 83,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -251,7 +251,8 @@
         "Modified file without updated checksum rejected"
       ],
       "manual_review_boundary": "Manually review bare repository names, branches, internal paths and missing implementation details; URL matching cannot prove their absence",
-      "experimental_results_changed": false
+      "experimental_results_changed": false,
+      "reference_parsing_cases_passed": 81
     },
     "self_containment_review": {
       "checked_at": "2026-11-15T05:42:02.096139+00:00",
@@ -307,7 +308,7 @@
       }
     },
     "current_content_recheck": {
-      "checked_at": "2026-11-15T10:26:17.693316+00:00",
+      "checked_at": "2026-11-15T11:51:54.318348+00:00",
       "result": "passed",
       "scope": "All 60 current tracked files; no Git history or separately distributed payload rewrite.",
       "known_private_github_identifiers_found": 0,
@@ -320,18 +321,19 @@
         "schemeless, percent-encoded, HTML-escaped and JSON-escaped references",
         "bare names, branches, internal development paths and full-length source identifiers"
       ],
-      "self_contained_implementation": "WAM_HANDOFF section 4 indexes the directly included algorithms, configuration and acceptance instructions. IMPLEMENTATION_DETAILS sections 1-16 cover data adaptation, evaluation, renderer recovery, dependency preparation and checkpoint protocols.",
+      "self_contained_implementation": "WAM_HANDOFF section 4 indexes directly included algorithms, configuration and acceptance instructions. IMPLEMENTATION_DETAILS sections 1-17 cover data adaptation, evaluation, renderer recovery, dependency preparation, checkpoint protocols and the real Human Trainer data interface.",
       "remaining_delivery_boundary": "Published weights and Human inputs use pinned public sources. Historical raw tensors and rollouts are not included; independent regeneration and validation are required as documented.",
       "input_pins_and_experimental_results_changed": false,
       "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name.",
       "latest_documentation_addendum": "Section 17 directly provides fixed real Human inputs, source checks, full core loader/sampler code, ConfigNode interface, exact CPU data replay contract and reported result; no full setup/model/optimizer/GPU/NPU/SFT acceptance.",
       "changes_in_this_recheck": [
-        "Verified all 60 current tracked files, including code, environment snapshots and JSON, against known private identifiers and development history; no additional reference removals were necessary.",
-        "Updated the standalone overview and implementation cross-references through section 16.6 instead of requiring another repository or old scheduling records.",
-        "Clarified that the failure statement in section 16.3 describes that historical run, retaining both the failure and later reported repair outcome."
+        "Rechecked all 60 tracked files, including code, environment snapshots and JSON: no known private repository identifiers or non-public development commit references found; no further reference removal was necessary.",
+        "Added the real Human data interface outcome, precise evidence boundary and remaining full-Trainer work directly to the overview and receiver runbook.",
+        "Extended the bundled reference checker to recognize schemeless, SSH, raw, codeload and API references after repeated JSON, HTML and percent decoding; 81 focused parsing cases passed."
       ],
       "private_references_removed_in_this_recheck": 0,
-      "expanded_reference_scan": "HTTPS, SSH, raw, codeload, API, schemeless, percent-encoded, HTML-escaped and JSON-escaped forms reviewed; no unreviewed destination found."
+      "expanded_reference_scan": "HTTPS, SSH, raw, codeload, API, schemeless, percent-encoded, HTML-escaped and JSON-escaped forms reviewed; no unreviewed destination found.",
+      "full_length_identifiers_compared": 67
     }
   },
   "engineering_addendum": {

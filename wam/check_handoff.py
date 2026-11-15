@@ -27,9 +27,9 @@ PUBLIC_REPOSITORIES = {
     "robocasa-benchmark/leaderboard", "robocasa/robocasa",
 }
 REPOSITORY_PATTERNS = (
-    r"(?:https?://|ssh://git@|git@)github\.com[:/]([\w.-]+/[\w.-]+)",
-    r"https?://(?:raw\.githubusercontent|codeload\.github)\.com/([\w.-]+/[\w.-]+)",
-    r"https?://api\.github\.com/repos/([\w.-]+/[\w.-]+)",
+    r"(?<![\w.-])(?:www\.)?github\.com[:/]([\w.-]+/[\w.-]+)",
+    r"(?<![\w.-])(?:raw\.githubusercontent|codeload\.github)\.com/([\w.-]+/[\w.-]+)",
+    r"(?<![\w.-])api\.github\.com/repos/([\w.-]+/[\w.-]+)",
 )
 
 
@@ -39,7 +39,15 @@ def require(condition, message):
 
 
 def repository_references(text):
-    text = unescape(unquote(text))
+    # Inspect copied URLs inside JSON, HTML and encoded command arguments too.
+    # Decode as text only; never evaluate code or require repository credentials.
+    for _ in range(8):
+        normalized = re.sub(r"\\u([0-9a-fA-F]{4})",
+                            lambda match: chr(int(match.group(1), 16)), text)
+        normalized = unescape(unquote(normalized)).replace(r"\/", "/")
+        if normalized == text:
+            break
+        text = normalized
     return {name.removesuffix(".git").casefold()
             for pattern in REPOSITORY_PATTERNS
             for name in re.findall(pattern, text, re.I)}
