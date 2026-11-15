@@ -887,3 +887,89 @@ def make_checkpoint_probe(checkpoint_root, rank, world_size, resuming=False):
 资源上限为 0 GPU、4 CPU、16 GiB RAM、15 分钟；每个 Gloo group 超时 30 秒，每个阶段等待全部子进程最多 120 秒，总 driver 预算 600 秒，完整小型输出不超过 10 MB。导入失败即停，不用临时模块替身或额外安装把失败改成通过。父进程保留各子进程退出码、日志、JSON 和完整失败栈；超时时只结束自己的子进程，不原样重试。源码和环境在运行前后均核验。
 
 回交材料包括四阶段结果、六个 rank 的原始日志/JSON、全部 oracle、实际 DCP 目录及逐文件索引。只有完整原件经独立读取、校验和内容比较后，才能记作本项通过。该实验的计数器不是真实 DataLoader/prefetch 游标；也没有实例化完整 `Trainer`、执行异步 DCP、测试 HCCL/NCCL 或恢复真实 WAM 权重。现有联合数据/训练恢复及完整训练器验收仍须单独完成。
+
+
+## 15. 真实 Trainer 导入前置与独立依赖环境
+
+截至 2026-11-15，首次现场准备在安装清单的路径校验失败；改用完整 prefix 后，执行端报告真实 Trainer 导入及下列组件检查通过，完整原件验收仍待完成。第 14 节只调用实际 Checkpointer，不会导入完整 Trainer；不能据此认定训练器可启动。固定推理环境缺少 `torchdata` 和 `wandb`，Trainer 在模块导入时即引用两者。其 `setup()` 还明确要求 CUDA，所以本节 CPU 检查仅覆盖真实模块导入、构造、状态登记与组件内存恢复，不调用 `setup()`，也不执行训练更新或 Trainer checkpoint 保存。
+
+### 15.1 固定依赖和隔离方法
+
+NVIDIA 对照使用 [GPU 环境](GPU_ENVIRONMENTS.md) 中的 Python 3.11 / Torch 2.8.0+cu129 基础环境，先比较完整包名/版本清单。仅增加下表八个包；基础环境不安装、升级或覆盖。前两项版本来自公开训练依赖，另外六项满足其有效依赖闭包。全部 17 条有效依赖边已与基础环境的 68 个固定包核对；这不等于实际导入兼容性已经通过。
+
+| 包 | 版本 | 精确 wheel 文件 | 字节数 | SHA256 |
+|---|---|---|---:|---|
+| torchdata | 0.11.0 | `torchdata-0.11.0-py3-none-any.whl` | 61,968 | `52b940fbbe0e00fb21cabddf528449d1bec5bfb0d0823b7487b15f951658ee33` |
+| wandb | 0.27.0 | `wandb-0.27.0-py3-none-manylinux_2_28_x86_64.whl` | 27,256,204 | `f772da7005cc26a2a32b729a16982a583dc68b3d493df6a09d0aa5c5ca5a2060` |
+| gitpython | 3.2.1 | `gitpython-3.2.1-py3-none-any.whl` | 231,548 | `d66b0832aa8755c1a84892937282df0befb16c97e5a64aeebd68be9c5e323f53` |
+| gitdb | 4.0.12 | `gitdb-4.0.12-py3-none-any.whl` | 62,794 | `67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf` |
+| smmap | 5.0.3 | `smmap-5.0.3-py3-none-any.whl` | 24,390 | `c106e05d5a61449cf6ba9a1e650227ecfb141590d2a98412103ff35d89fc7b2f` |
+| platformdirs | 4.14.5 | `platformdirs-4.14.5-py3-none-any.whl` | 35,402 | `8e778c6fa421516f4d3369449f8df3b0e1b72c0e0005fe88e3ec772d0a14e750` |
+| protobuf | 7.36.2 | `protobuf-7.36.2-py3-none-any.whl` | 179,806 | `bdb3a345d48db958e6ce1f18e508beb0cc981d64f24088427549c866cd039f1e` |
+| sentry-sdk | 2.75.0 | `sentry_sdk-2.75.0-py3-none-any.whl` | 555,165 | `9a10e97de2cbd42ad7e4a6e02a0d5af19de9811eb02445077d41ba14c08e170c` |
+
+来源为各版本的官方 PyPI 元数据，地址规则为 `https://pypi.org/pypi/<包名>/<版本>/json`。直接从该 JSON 的 `urls` 中选择上表**完全相同的 filename**，并要求 `size`、`digests.sha256` 与表中相等、`yanked=false`，只接受 `https://files.pythonhosted.org/` 的文件 URL。特别是 protobuf 固定为上表 pure-Python wheel，不能默换为相同版本的 ABI wheel。总下载量 **28,407,277 bytes**；每个文件下载后再次核大小和 SHA256，任一不符即停。
+
+1. 在新且不存在的输出目录创建 `wheelhouse/`、`home/`、`tmp/`；安装前缀为该目录下的 `overlay/`，Python 包位于 `overlay/lib/python3.11/site-packages/`，命令入口位于 `overlay/bin/`。不复用旧失败目录，不改基础环境或旧实验目录。
+2. 用基础 Python 执行 `python -B -m pip --isolated install --no-input --disable-pip-version-check --no-cache-dir --no-index --no-deps --no-compile --ignore-installed --prefix <新目录>/overlay <八个已核验wheel的绝对路径>`。这里不给 pip 自行解析或下载其他版本的机会。
+3. 核对 overlay 中分发包集合恰好为这八项，版本相等；遍历安装后每项 RECORD，将每个 RECORD 路径相对于 `overlay/lib/python3.11/site-packages/` 解析，要求最终路径位于整个 `overlay/` 前缀内，逐个校验带 SHA256 的成员。合法命令入口可以位于该前缀内的 `bin/`；不能把允许范围扩大到整个工作目录。另保存全部安装文件的大小和摘要，安装体积上限 300 MB。
+4. 以新子进程导入真实 Trainer。仅把 `overlay/lib/python3.11/site-packages/` 与公开固定源码放进 `PYTHONPATH`；设置 `PYTHONNOUSERSITE=1`、`PYTHONDONTWRITEBYTECODE=1`、`CUDA_VISIBLE_DEVICES=`、`HF_HUB_OFFLINE=1`、`TRANSFORMERS_OFFLINE=1`、`WANDB_MODE=disabled`，CPU 数学库线程设为 1。HOME/TMPDIR 指向上述新目录，不继承服务令牌。子进程拒绝 socket 连接和 DNS 解析，不调用 W&B 登录、初始化或上传。
+5. 保存完整导入日志、真实类所属模块，以及所有加载的 `awomo` 模块相对路径和源文件摘要。导入必须来自本次固定源码；不能注入同名假模块或抽取 AST 方法来替代。
+
+**首次失败与修正依据：** 执行端报告首次准备耗时 6.12 秒，八个 wheel 大小与 SHA256 全匹配，源码和基础环境前后不变；在 RECORD 路径包含性检查停止，未开始真实导入，完整原件验收仍待完成。候选原因是 `pip --target` 搬移命令入口后，RECORD 仍使用临时安装布局的相对路径。仅凭这一断言不能认定发生了外部写入。后继诊断只读取旧目录内的 metadata 和已限定的 `bin/wandb`、`bin/wb`，比较它们与 RECORD 的摘要；只记录解析出的外部路径字符串，绝不打开这些路径。若异常不是这两个已限定入口则立即停止。旧目录保留原状，新尝试使用上面的完整 `--prefix` 布局。
+
+五项标准库回归检查已通过：合法 prefix 内入口通过；旧 target 布局的路径问题可重现且找到摘要匹配的内部入口；真正越界拒绝；入口内容变化拒绝；未识别的旧越界项拒绝。这些本地文件测试不等于现场 Trainer 导入通过。原生 Python 3.11 的 metadata 行为与本地 Python 3.14 对不存在 RECORD 目标的过滤行为不同，测试显式覆盖了这一差异。
+
+本表只定义现有 NVIDIA 对照的 CPU 准备环境。Ascend 接手端必须另行选择与本机 CANN/torch_npu 相符的 Torch 栈；不能把 CUDA wheel 当作 NPU 环境。相同的导入和状态登记检查仍应在该目标栈真实执行，并明确记录依赖差异。
+
+### 15.2 真实对象检查的直接实现
+
+在完成上述隔离和输入校验的子进程内执行以下核心检查。这里只构造一个 10 参数线性层；没有真实 WAM 权重、Human 样本、前反向或优化器更新。
+
+```python
+import random
+import numpy as np
+import torch
+from torchdata.stateful_dataloader import StatefulDataLoader
+from awomo.training.trainer import Trainer, is_dataloader, is_lr_scheduler, is_model, is_optimizer
+from awomo.training.config.loader import ConfigNode
+from awomo.training.optim.scheduler import OptimizerParamScheduler
+from awomo.training.rng import StatefulRNG
+
+assert not torch.cuda.is_initialized()
+torch.set_num_threads(1)
+trainer = Trainer(ConfigNode({}))
+trainer.model = torch.nn.Linear(4, 2)
+trainer.optimizer = torch.optim.AdamW(trainer.model.parameters(), lr=.001, foreach=False)
+trainer.lr_scheduler = OptimizerParamScheduler(
+    trainer.optimizer, init_lr=.001, max_lr=.001, min_lr=.001,
+    lr_warmup_steps=0, lr_decay_steps=5, lr_decay_style='constant',
+    start_wd=.01, end_wd=.01, wd_incr_steps=5, wd_incr_style='constant')
+dataset = torch.utils.data.TensorDataset(torch.arange(12).reshape(6, 2))
+trainer.train_dataloader = StatefulDataLoader(dataset, batch_size=2, num_workers=0, shuffle=False)
+trainer.rng = StatefulRNG(42, ranked=False)
+assert sorted(trainer.__dict__['__state_tracked']) == [
+    'cfg', 'lr_scheduler', 'model', 'optimizer', 'rng', 'train_dataloader']
+assert is_model(trainer.model) and is_optimizer(trainer.optimizer)
+assert is_lr_scheduler(trainer.lr_scheduler) and is_dataloader(trainer.train_dataloader)
+iterator = iter(trainer.train_dataloader)
+first = next(iterator)[0]
+loader_state = trainer.train_dataloader.state_dict()
+expected = next(iterator)[0]
+restored_loader = StatefulDataLoader(dataset, batch_size=2, num_workers=0, shuffle=False)
+restored_loader.load_state_dict(loader_state)
+assert torch.equal(expected, next(iter(restored_loader))[0])
+rng_state = trainer.rng.state_dict()
+expected_rng = (random.random(), np.random.random(), torch.rand(4))
+trainer.rng.load_state_dict(rng_state)
+restored_rng = (random.random(), np.random.random(), torch.rand(4))
+assert expected_rng[:2] == restored_rng[:2]
+assert torch.equal(expected_rng[2], restored_rng[2])
+assert not torch.cuda.is_initialized() and not torch.distributed.is_initialized()
+```
+
+保留 first/continuous-next/restored-next 三个 batch 的实际值，预期分别为 `[[0,1],[2,3]]`、`[[4,5],[6,7]]`、`[[4,5],[6,7]]`；记录 RNG 三项逐值比较结果、实际包版本和来源。保存源码与基础环境前后清单；任何变化、缺包、导入错误、意外 CUDA 初始化或游标/RNG 不一致均失败，不忽略异常后继续。
+
+预算：0 GPU、4 CPU、16 GiB RAM、总计 15 分钟；安装与原生子进程各最多 120 秒，完整小证据最多 10 MB。保留 wheel、overlay、完整日志、文件索引、前后清单与首个错误；完整证据按正常容量条件回传验收。本节通过后才准备真正导入 Trainer 的保存/恢复集成；多进程预取、完整 setup、FSDP、WAM/真实数据及 GPU/NPU 仍须分别验证。既有正式评测、SFT 和 Ascend 计数不因此增加。
+
+**修正后现场状态（2026-11-15 07:51 UTC）：** 执行端报告 9.04 秒完成，调度终态 `COMPLETED / 0:0`；旧目录的限定入口诊断与八包共 1,407 个带 SHA256 的 RECORD 成员校验通过，六类状态登记、下一批 `[[4,5],[6,7]]` 恢复及三类 CPU RNG 精确比较通过。报告加载了 49 个真实 Awomo 模块；93 份固定源码和基础环境前后不变。节点 10 份原始证据共 302,262 bytes 已列索引，但完整原件尚未回传，维护者没有独立读取完整模块记录和旧目录诊断 JSON。该结果只支持执行端报告的导入与组件进展，不计完整 Trainer、checkpoint 集成、正式 SFT 或 Ascend 通过；首次失败保持原结论，不重跑。

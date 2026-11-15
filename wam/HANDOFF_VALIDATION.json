@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T07:07:31.303496+00:00",
+    "checked_at": "2026-11-15T07:52:40.092161+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 74,
+    "local_wam_links_checked": 77,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 14,
+    "inline_python_blocks_syntax_checked": 15,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -1308,5 +1308,49 @@
     "complete_producer_receipt_returned": false,
     "per_rank_raw_json_independently_read": false,
     "oracle_and_dcp_payloads_returned": false
+  },
+  "trainer_import_preparation": {
+    "state": "corrected_prefix_producer_reports_passed_complete_originals_pending",
+    "scope": "Real Trainer import/construction and typed state registration only; no full setup, training, checkpoint integration or device validation.",
+    "fixed_wheels": 8,
+    "download_bytes": 28407277,
+    "active_dependency_edges_checked": 17,
+    "base_packages": 68,
+    "source_files_pinned": 93,
+    "local_python_syntax_checks": 91,
+    "native_execution_on_control_node": false,
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 15",
+    "formal_sft_credit": 0,
+    "ascend_credit": 0,
+    "private_development_references_added": false,
+    "local_record_layout_regression_tests_passed": 5,
+    "first_attempt_reported_seconds": 6.1238139609922655,
+    "first_attempt_scheduler": "FAILED1:0",
+    "first_attempt_wheels_verified": 8,
+    "first_attempt_source_and_base_unchanged": true,
+    "first_attempt_full_originals_accepted": false,
+    "correction": "Fresh complete --prefix layout with strict prefix containment; bounded read-only old launcher RECORD diagnosis; old failure retained.",
+    "corrected_attempt_reported_seconds": 9.039276120020077,
+    "corrected_scheduler": "COMPLETED0:0",
+    "loaded_real_awomo_modules_reported": 49,
+    "record_members_verified_reported": 1407,
+    "tracked_components": 6,
+    "next_batch": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ]
+    ],
+    "cpu_rng_roundtrip_reported_exact": true,
+    "node_original_files": 10,
+    "node_original_bytes": 302262,
+    "complete_originals_owner_accepted": false,
+    "full_trainer_setup_tested": false,
+    "optimizer_updates": 0,
+    "checkpoint_integration_tested": false
   }
 }
