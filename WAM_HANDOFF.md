@@ -109,6 +109,7 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 | 通用 checkpoint 完成边界与失败传播 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 13 节 | 可复制的标记/选择器代码、全部恢复入口的检查位置、future 排空与各 rank 错误传播顺序、故障用例及真实运行待验边界 |
 | 实际 DCP 与优化器状态的 CPU 恢复 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 14 节 | 61 参数模型代码、单/双 rank 新进程保存和重放、逐叶精确比较、原件与预算合同；执行端已报告通过，完整原件验收待完成，不计 WAM 或完整 Trainer 通过 |
 | 真实 Trainer 导入与依赖隔离 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 15 节 | 八个固定公开 wheel、独立安装和来源核验、真实状态登记及游标/RNG 检查代码；执行端报告导入与组件检查通过，完整原件待验，完整 setup/训练仍未验证 |
+| 真正导入 Trainer 的批次与保存恢复 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 16 节 | 实际方法、61参数fixture、原生step计数、默认loader RNG与新进程重放合同；现场结果待回，不等于完整setup/WAM训练 |
 
 **文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 

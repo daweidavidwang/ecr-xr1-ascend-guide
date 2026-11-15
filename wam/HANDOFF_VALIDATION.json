@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T07:52:40.092161+00:00",
+    "checked_at": "2026-11-15T08:39:34.757342+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 77,
+    "local_wam_links_checked": 79,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 15,
+    "inline_python_blocks_syntax_checked": 16,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -1352,5 +1352,29 @@
     "full_trainer_setup_tested": false,
     "optimizer_updates": 0,
     "checkpoint_integration_tested": false
+  },
+  "trainer_checkpoint_integration_preparation": {
+    "state": "prepared_request_published",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 16",
+    "source_files_pinned": 95,
+    "local_syntax_checks": 93,
+    "only_subclass_override": "train_step",
+    "world_sizes": [
+      1,
+      2
+    ],
+    "saved_completed_updates": 2,
+    "saved_native_step_index": 1,
+    "replay_completed_updates": [
+      3,
+      4,
+      5
+    ],
+    "loader_generator": null,
+    "loader_workers": 0,
+    "native_locally_executed": false,
+    "full_setup_or_train_loop_tested": false,
+    "formal_sft_credit": 0,
+    "ascend_credit": 0
   }
 }

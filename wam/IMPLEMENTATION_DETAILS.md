@@ -973,3 +973,63 @@ assert not torch.cuda.is_initialized() and not torch.distributed.is_initialized(
 预算：0 GPU、4 CPU、16 GiB RAM、总计 15 分钟；安装与原生子进程各最多 120 秒，完整小证据最多 10 MB。保留 wheel、overlay、完整日志、文件索引、前后清单与首个错误；完整证据按正常容量条件回传验收。本节通过后才准备真正导入 Trainer 的保存/恢复集成；多进程预取、完整 setup、FSDP、WAM/真实数据及 GPU/NPU 仍须分别验证。既有正式评测、SFT 和 Ascend 计数不因此增加。
 
 **修正后现场状态（2026-11-15 07:51 UTC）：** 执行端报告 9.04 秒完成，调度终态 `COMPLETED / 0:0`；旧目录的限定入口诊断与八包共 1,407 个带 SHA256 的 RECORD 成员校验通过，六类状态登记、下一批 `[[4,5],[6,7]]` 恢复及三类 CPU RNG 精确比较通过。报告加载了 49 个真实 Awomo 模块；93 份固定源码和基础环境前后不变。节点 10 份原始证据共 302,262 bytes 已列索引，但完整原件尚未回传，维护者没有独立读取完整模块记录和旧目录诊断 JSON。该结果只支持执行端报告的导入与组件进展，不计完整 Trainer、checkpoint 集成、正式 SFT 或 Ascend 通过；首次失败保持原结论，不重跑。
+
+
+## 16. 真正导入 Trainer 后的训练批次与 checkpoint 集成
+
+本节为 2026-11-15 新增的独立 CPU 验证方案，现场结果待回。第 15 节只验证导入与组件内存状态；本节实际调用 `Trainer._run_train_batch_group`、`_clip_gradients`、`save_checkpoint`、`load_checkpoint`，以及真实 StepScheduler、StatefulDataLoader、StatefulRNG 和 DCP。子类**仅实现 `train_step`**，其他上述方法必须与导入的 Trainer 方法是同一个对象。不从 AST 提取方法，不替换存储或优化器。
+
+### 16.1 固定初始化与批次语义
+
+使用第 15 节已经核验的独立 prefix，不再安装或下载。先将整个 prefix 的逐文件清单与此前冻结的清单字节/SHA256比较，再核全部安装成员和基础环境；执行后再次比较，禁止写坏共享推理环境或已有 overlay。子进程显式把 overlay 的 `lib/python3.11/site-packages` 加入 Python 搜索路径，因为 multiprocessing spawn 会恢复父进程的 `sys.path`，仅设置 `PYTHONPATH` 不足以保证它生效。
+
+- 按第 14 节初始化 CPU/Gloo，分别验证 world size 1、2，每组先连续运行、再启动全新进程恢复，共四阶段、六个 rank 进程。单进程组仍使用真实 Gloo；两 rank 模型使用真实 DDP 梯度同步。
+- 模型沿用第 14 节的 61 参数网络：4→7→3、Tanh、Dropout(.25)、两元素 unused 参数和整型 batches buffer。连续模型初始化 seed1541，恢复模型 seed9876，确保恢复真实改变参数。随后用实际 `StatefulRNG(2000+rank, ranked=False)` 初始化三类训练 RNG。
+- 每 rank 有 24 行确定性数据。`ids=arange(24)+100*rank`；`inputs=(ids[:,None]+arange(4))/31`，`targets=(ids[:,None]-arange(3))/47`，浮点列 FP32。StatefulDataLoader 的 batch size2、shuffleFalse、workers0，**保留 generator=None**。每个优化器更新累积两个 microbatch。
+- 使用实际 AdamW：lr.003、betas(.9,.95)、foreachFalse；实际 OptimizerParamScheduler 放在单元素列表中：max/init lr.003、min lr.0003、warmup0、linear decay5、weight decay恒定.01。最大梯度范数2.0，device为cpu，device_mesh=None，EMA禁用。
+- StepScheduler：global batch=4×world size、local batch2、dp size=world size、max steps5、checkpoint周期2。通过其真实迭代器取得 batch group，再调用 Trainer 的真实批次方法，不自行重写 backward、clipping、optimizer或scheduler更新。
+
+下面是本节唯一的模型任务子类；`micro_records` 在每个 batch group 开始前设为空列表，只记录比较材料，不修改训练计算。
+
+```python
+import random
+import numpy as np
+import torch
+from awomo.training.trainer import Trainer
+
+class TinyTrainer(Trainer):
+    def train_step(self, batch, step, micro_idx):
+        ids, inputs, targets = batch
+        noise = torch.randn_like(inputs) * .02
+        scale = float(np.random.uniform(.8, 1.2) + random.random() / 10)
+        prediction = self.model(inputs + noise) * scale
+        loss = ((prediction - targets) ** 2).mean()
+        assert torch.isfinite(loss)
+        self.micro_records.append({
+            'ids': ids.clone(), 'inputs': inputs.clone(), 'targets': targets.clone(),
+            'noise': noise.clone(), 'scale': scale, 'loss': loss.detach().clone(),
+            'step_index': step, 'micro_index': micro_idx})
+        return {'total_loss': loss, 'dynamics_loss': loss * .4, 'action_loss': loss * .6}
+
+for name in ('save_checkpoint', 'load_checkpoint', '_load_checkpoint_tracked_state',
+             '_run_train_batch_group', '_clip_gradients'):
+    assert getattr(TinyTrainer, name) is getattr(Trainer, name)
+```
+
+手动构造 `Trainer(ConfigNode({'model': {'model_type': 'tiny-cpu-trainer-fixture'}}))` 并登记真实 model、optimizer、lr_scheduler、StepScheduler及两种rank状态。为避免生产辅助写入器使用固定 `/tmp` 名称造成作业间冲突，把 loader 和 RNG 属性分别命名为 `loader_<运行根摘要前20位>`、`rng_<同摘要>`；两者仍由真实类型检查自动登记，不能通过替身状态对象改变保存语义。
+
+### 16.2 保存与新进程恢复的精确规则
+
+1. 每组创建一个高编号的不完整目录 `epoch_0_step_9999`，保留诊断文件但没有 `.complete`。调用真实 `Trainer.load_checkpoint` 显式恢复该目录，必须在加载模型前拒绝，且模型和 RNG 不变；自动选择也不能选中它。
+2. 连续完成五个更新，每个更新保存原始 PT oracle。保存全部参数/buffer、完整 optimizer state及param_groups、真实LR scheduler、三类RNG、实际loader状态、microbatch输入/噪声/target/scale/loss、全部非空裁剪前梯度、真实梯度范数和跨rank平均指标。逐tensor检查有限性，验证参数确实变化、unused参数没有获得Adam状态。
+3. **原生计数约定：** StepScheduler先yield再递增；第二个已完成更新发生在内部step=1。此时调用 `save_checkpoint(epoch=0, step=1, ...)`，目录为 `epoch_0_step_1`，但真实 `step_scheduler.pt` 必须保存 `{'step':2,'epoch':0}`，表示下一更新从索引2开始。不能把目录名误当已完成更新数，也不能在循环外调用会加1的 `state_dict()` 来解释恢复后的计数。
+4. 保存时传 `val_loss={'probe_metric':.25}`，要求调用后字典不变、losses.json完整，config、model、optim、loader/rng各rank状态、step_scheduler及合法完成标记齐全；LATEST与LOWEST_VAL都指向该目录。再次调用同一个已完整checkpoint的保存必须跳过，全部原始文件字节不变。
+5. 全部连续进程退出后，用新模型与新对象调用真实 `load_checkpoint('LATEST')`。在创建新的loader迭代器**之前**，先比较所有模型/优化器/LR/RNG状态与第二步oracle，并要求实际step=2、epoch0。不能在此手动重置或补偿RNG。
+6. 继续通过真实StepScheduler取得数据，重放完成更新3、4、5；逐叶精确比较上述完整记录。尤其核对第一次恢复后的实际数据ID与随机噪声：重新创建DataLoader迭代器可能消耗全局随机状态，本实验保留原生默认值来检验此风险。若不同即记录首次失败，不换generator、不放宽容差、不选择性忽略状态。
+7. 验证恢复前后checkpoint原文件集合、大小和SHA256未改变。不同world size分别与自己的连续对照比较，不要求跨world size权重相同。
+
+每个rank的逻辑更新5次，包含重放共8次；最多四阶段。首次失败立即停止后续阶段。预算为0GPU/4CPU/16GiB/15分钟，进程组30秒、阶段120秒、driver600秒；最多保留10MB完整小模型证据。只结束本诊断派生的超时子进程，保留原始失败、partial、oracle、DCP、逐rank日志和完整配置/源码/环境索引；完整回传仍受正常容量门槛约束。
+
+**结论边界：** 这是实际Trainer方法的CPU集成，初始化由诊断显式构造，未调用CUDA-only `setup()` 或完整 `run_train_validation_loop()`。没有真实WAM/Human数据、FSDP/DTensor、异步DCP、CUDA/NPU和正式SFT信用。此前完成的诊断不重复执行，其原件验收和旧GPU准入要求不因本节而改变。
+
+**完整 setup 的源码审计边界：** 它先构建模型/优化器/loader，再在恢复路径加载 RNG、步数与数据状态、优化器；完整训练循环之后才创建迭代器。通用 `load_checkpoint` 则先恢复登记的 loader/RNG/step 状态，再加载模型/优化器。因此，仅小模型DCP的“最后手动恢复RNG”顺序通过，不能替代这两种真实入口的验证。本节不修改这些顺序，先观察实际行为；CPU通过也不能绕过完整setup内的CUDA要求。

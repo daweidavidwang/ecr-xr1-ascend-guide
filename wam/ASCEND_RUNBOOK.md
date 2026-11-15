@@ -14,6 +14,7 @@
 | CPU 与渲染初态不一致的定位方法 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 9 节建立独立观察器；保留原初态参考与失败，不以容差或额外 reset 消除差异 |
 | 通用保存边界与真实 DCP 的分层检查 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 13–14 节分别检查控制流程和真实小模型存储恢复；这两项都不能代替完整 WAM/Trainer/目标设备验收 |
 | 真实 Trainer 模块的依赖准备 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 15 节隔离安装、真实导入并检查状态登记；NPU 依赖栈另行匹配，本节 CPU 对照不验证完整 setup |
+| 真实 Trainer 的保存与恢复方法集成 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 16 节保留实际方法、原生步数和默认loader RNG，使用新进程逐状态比较；完整setup和目标设备训练仍须另验 |
 
 在本仓库根目录执行 `sha256sum -c PUBLIC_SHA256SUMS` 核对交付内容。文档中的历史成功记录仅用于确定对照合同；新实现仍须逐阶段验收。缺少尚未交付的参考张量或目标平台实现时，明确记录缺项与生成步骤，不以申请其他 GitHub 仓库权限作为默认解决办法。
 
