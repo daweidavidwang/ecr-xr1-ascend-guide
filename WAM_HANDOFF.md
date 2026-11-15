@@ -106,6 +106,7 @@ git -C "$WAM_ROOT/code/awomo" worktree add --detach "$WAM_ROOT/code/awomo-sft" 3
 | Awomo 原生九槽历史的独立准备 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 10 节 | 三个预注册 dev 输入、两项 CPU 检查、原生缓存与样本逐数组合同；首个全九槽重规划点为第 368 步，真实长回合仍待验 |
 | 渲染器析构与旧失败分片的修复复测 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 11 节 | EGL 上下文保存、切换与恢复的完整顺序、异常保留、对照验收，以及三个固定任务的重测合同 |
 | 真实数据读取与训练状态的联合恢复 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 12 节 | 五个固定训练窗口、消费游标与完整模型/优化器/RNG 的原子保存、新进程重放合同；新增代码已准备，现场验收待完成 |
+| 通用 checkpoint 完成边界与失败传播 | [实现细节](wam/IMPLEMENTATION_DETAILS.md) 第 13 节 | 可复制的标记/选择器代码、全部恢复入口的检查位置、future 排空与各 rank 错误传播顺序、故障用例及真实运行待验边界 |
 
 **文件边界：** 本目录包含文档、可复制的核心辅助代码、公共输入清单、任务协议和结果摘要；大权重、原始 rollout 和 GPU 数值 fixture 未附带。模型/数据可按固定公开源下载，CPU 样本可按本文从原始演示重建。GPU/NPU 逐层数值对照仍需生成并校验真实参考张量；不能把历史样本摘要当作已经交付的 payload。
 

@@ -725,3 +725,98 @@ def serialized_metadata(value):
 该节点完整 CPU receipt、所有原始日志、源码和环境前后检查经独立验收后，才生成本节点放行文件。放行文件绑定同一源码/输入、CPU 运行身份、CPU receipt SHA256、全部 CPU 产物大小/摘要及指定 GPU 运行身份；GPU 入口须验证所有字段与文件。调度完成、producer 摘要或缺少原件的清单不能代替放行。
 
 每节点 GPU 诊断最多 1 GPU、8 CPU、192 GiB RAM、120 分钟；连续和恢复子进程各最多 3,000 秒。checkpoint 峰值预算 200 GB，开始前至少有 200 GB 可用空间，并仍满足集群磁盘门槛；完整小型 JSON/日志回交上限 100 MB，大 checkpoint/partial 保留源节点并记录完整大小和 SHA256。两站合计最多 4 GPU·小时，是预算而非已消耗量。尚未验收真实联合恢复、多卡、梯度累积、随机增强、全量训练或 Ascend；现有单独模块的成功不能代替这些结果。
+
+
+## 13. Checkpoint 完成边界与失败传播
+
+**状态（2026-11-15）：** 这是通用训练器的保存/恢复候选修复。20 项本地控制流程测试通过，模型与存储使用明确的替身；测试执行从实际训练器提取的方法体，没有实例化完整训练器、运行真实 DCP 或加载模型。相同测试在修复前的候选实现中复现 6 项失败。已准备在一台 B300 节点上执行九种两进程 CPU Gloo 对照，结果尚未验收。此修复没有替换已有联合恢复诊断的固定版本，不增加正式训练或 Ascend 结果。
+
+### 13.1 可复制的文件系统边界
+
+在 Linux 目标文件系统上，完成标记必须恰好为 `complete\n`，且标记不能是 symlink。已有原生完整 checkpoint 使用这一格式，仍可读取。扫描自动恢复位置时，只接受带有效标记的目录；更大 step 的不完整目录或指向它的 `LATEST` 不能遮住较早的完整保存点。下面的代码只判定发布边界，不能代替模型、优化器、游标、RNG 或逐文件摘要验证：
+
+```python
+"""Filesystem completion boundary; this does not validate model payload contents."""
+from pathlib import Path
+import os
+import re
+
+
+def is_complete_checkpoint(path):
+    path = Path(path)
+    marker = path / '.complete'
+    try:
+        return path.is_dir() and not marker.is_symlink() and marker.read_bytes() == b'complete\n'
+    except OSError:
+        return False
+
+
+def require_complete_checkpoint(path):
+    if not is_complete_checkpoint(path):
+        raise FileNotFoundError(f'Checkpoint is missing its valid completion marker: {path}')
+
+
+def find_latest_completed_checkpoint(checkpoint_dir):
+    root = Path(checkpoint_dir)
+    if not root.is_dir():
+        return None
+    latest = root / 'LATEST'
+    target = None
+    try:
+        if latest.is_symlink():
+            target = os.readlink(latest)
+        elif latest.with_name('LATEST.txt').is_file():
+            target = latest.with_name('LATEST.txt').read_text().strip()
+    except OSError:
+        pass
+    if target:
+        candidate = Path(target) if Path(target).is_absolute() else root / target
+        if is_complete_checkpoint(candidate):
+            return candidate
+    candidates = []
+    for path in root.glob('*step_*'):
+        match = re.search(r'step_(\d+)$', path.name)
+        if match and is_complete_checkpoint(path):
+            candidates.append((int(match.group(1)), path.name, path))
+    return max(candidates)[-1] if candidates else None
+
+
+def publish_complete_marker(path):
+    """Called by rank0 only, after all ranks have completed every save future."""
+    path = Path(path)
+    temporary, marker = path / '.complete.partial', path / '.complete'
+    if marker.exists():
+        raise FileExistsError(marker)
+    with temporary.open('xb') as stream:
+        stream.write(b'complete\n'); stream.flush(); os.fsync(stream.fileno())
+    os.link(temporary, marker)
+    temporary.unlink()
+    fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+```
+
+文件系统须实际支持同目录 exclusive create、原子硬链接和 fsync；不要把本机临时目录检查当作目标共享存储已经验证。已有最终标记或 `.complete.partial` 均不得覆盖。路径中的模型文件、优化器与其他状态仍需单独完整读取和校验。
+
+### 13.2 保存顺序与所有恢复入口
+
+按下列顺序接入公开 SFT 基底的训练器，所有仍参与的 rank 使用相同顺序和相同检查组：
+
+1. 等待前一次模型及优化器 upload future。即使模型 future 抛错，也必须继续等待优化器 future；两者结束后清除 future 引用，再抛出第一条错误。将每个 rank 的成功或异常类型/信息通过 `all_gather_object` 汇总；任意 rank 有错，全部在同一边界退出。
+2. rank 0 检查目标是否已有有效完成标记，并广播是否跳过。未完成时，rank 0 用 `exist_ok=False` 建立本次目录；已有 partial 目录保留并失败，不能续写覆盖。目录创建结果在开始保存前同步给各 rank。
+3. rank 0 写 loss metadata 与普通本地 tracked state，并在进入后续分布式保存前同步写入错误。验证指标字典只能读取，不能 `pop` 修改调用方传入的对象；多个指标直接各自保存，不写入 `dict.update()` 的返回值。
+4. 运行模型、分布式状态、每个 DP rank 的数据/RNG 状态及优化器保存。随后等待**本次**模型和优化器 upload future 完成，并汇总各 rank 错误。单纯 barrier 不能代表后台写盘完成。
+5. rank 0 保存完整配置和训练配方附件；同步结果。全部成功后，才调用上面的 `publish_complete_marker`，再次同步发布结果，最后更新 `LATEST` 和最佳验证保存点指针。指针写入失败仍报错；已完成的数据目录保留，之后可按有效标记扫描找到。
+6. 恢复检查必须覆盖显式 `load_checkpoint`、自动选择以及训练 `setup` 中提前加载模型权重的路径，放在第一次状态读取之前。完整训练恢复缺少有效标记就拒绝。显式仅加载模型权重的 warm start 与完整训练恢复分别配置；前者保留对发布权重目录的兼容性，不能冒充优化器或数据游标恢复。
+
+该顺序会等待当前保存完成再返回，牺牲异步保存与后续更新的重叠。不能宣称已经恢复多卡吞吐。这里同步的是仍存活并到达边界的 rank；DCP 内部 collective 卡住、进程崩溃、共享文件系统损坏及通信组不匹配仍需真实运行、明确超时和独立故障处理验证。
+
+### 13.3 接手端的最小检查集合
+
+20 项本地检查覆盖：较大 step/错误 LATEST 的排除、旧标记及文本指针、损坏或 symlink 标记、已有 marker/partial 的保留、既有不完整目录、当前 future 未结束时禁止发布、模型失败后仍等待优化器、前一次 future 失败、优化器失败、附件失败、配置失败、rank 0 普通状态失败、loss 写入失败、验证指标保持不变、指针失败后完整目录可发现、显式恢复拒绝 partial、完整保存点自动恢复、setup 提前读权重前的门槛、仅权重 warm start、完整 setup 恢复。
+
+两进程对照依次测试：正常完成、前一次 future 失败、当前模型 future 失败、当前优化器 future 失败、rank 0 附件失败、配置失败、普通状态失败、loss metadata 失败、已有 partial 目录。前三类 future 故障在 rank 1 注入，后四种写入故障在 rank 0 注入；每种失败都要求两个 rank 报告同一汇总错误，且没有完成标记或 LATEST。正常情形在 rank 1 的当前 future 内短暂等待，并确认这时尚未发布。
+
+固定预算：0 GPU、4 CPU、16 GiB RAM、15 分钟；每个 Gloo group 超时 20 秒，每组两个子进程总等待上限 55 秒，总 driver 预算 600 秒，文件输出不超过 10 MB。保存每个 rank 的错误、实际后端、future 等待事件、源码/环境前后摘要及退出码；父进程只终止自己超时的子进程。该对照即使通过，也只证明上述控制流程和 CPU Gloo 传播；真实 DCP、实际模型保存恢复、NCCL/HCCL、跨节点及 Ascend 都仍需另验。

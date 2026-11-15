@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T03:53:46.058757+00:00",
+    "checked_at": "2026-11-15T04:53:53.395890+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 71,
+    "local_wam_links_checked": 72,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 12,
+    "inline_python_blocks_syntax_checked": 13,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -148,7 +148,8 @@
       "CPU versus rendered initial-state diagnostics and bounded snapshot inspection",
       "Native nine-slot history observation, source-frame provenance and fixed development inputs",
       "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns",
-      "Joint consumed-loader, model, optimizer and RNG checkpoint with fresh-process replay"
+      "Joint consumed-loader, model, optimizer and RNG checkpoint with fresh-process replay",
+      "Checkpoint completion marker and selector, early setup resume gate, future draining, local rank failure boundaries and validation scope"
     ],
     "public_upstream_commit_checks": [
       {
@@ -1159,5 +1160,30 @@
       }
     },
     "evidence_scope": "Delivered terminal metadata only; complete producer receipts, previews, unit records and raw logs are retained on nodes and pending independent acceptance."
+  },
+  "checkpoint_publication_candidate": {
+    "state": "local_control_flow_validated_cpu_gloo_request_prepared",
+    "local_tests": {
+      "tests": 20,
+      "passed": 20,
+      "skipped": 0,
+      "prior_candidate_unsuccessful_tests": 6
+    },
+    "implementation": "Directly documented in IMPLEMENTATION_DETAILS section 13, including complete marker helpers, early restore gate, future draining and ordered rank-error boundaries.",
+    "planned_cpu_gloo": {
+      "cases": 9,
+      "world_size": 2,
+      "gpus": 0,
+      "cpus": 4,
+      "ram_gib": 16,
+      "minutes": 15
+    },
+    "native_gloo_accepted": false,
+    "real_dcp_tested": false,
+    "full_trainer_tested": false,
+    "new_formal_sft_credit": 0,
+    "new_benchmark_credit": 0,
+    "ascend_credit": 0,
+    "private_development_references_added": false
   }
 }
