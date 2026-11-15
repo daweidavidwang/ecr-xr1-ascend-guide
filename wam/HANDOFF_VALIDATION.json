@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T00:38:47.395627+00:00",
+    "checked_at": "2026-11-15T01:20:09.143524+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 68,
+    "local_wam_links_checked": 69,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -147,7 +147,8 @@
       "Independent evaluator launch, timeout budgets, process cleanup and result evidence",
       "CPU versus rendered initial-state diagnostics and bounded snapshot inspection",
       "Native nine-slot history observation, source-frame provenance and fixed development inputs",
-      "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns"
+      "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns",
+      "Joint consumed-loader, model, optimizer and RNG checkpoint with fresh-process replay"
     ],
     "public_upstream_commit_checks": [
       {
@@ -206,7 +207,8 @@
         "WAM_HANDOFF.md section 4",
         "wam/EVALUATION.md section 3.1",
         "wam/ASCEND_RUNBOOK.md dependency table",
-        "wam/IMPLEMENTATION_DETAILS.md sections 9-11"
+        "wam/IMPLEMENTATION_DETAILS.md sections 9-11",
+        "wam/IMPLEMENTATION_DETAILS.md section 12"
       ],
       "changes": [
         "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
@@ -1074,5 +1076,31 @@
       "Six new CPU/formal contracts passed schema validation",
       "Implementation description compared with the accepted renderer cleanup behavior; no NPU validation implied"
     ]
+  },
+  "joint_training_resume_preparation": {
+    "state": "implemented_and_requested_not_runtime_accepted",
+    "local_tests": {
+      "total": 69,
+      "passed": 67,
+      "skipped_torch_unavailable": 2
+    },
+    "remote_cpu_requirement": "69 passed, zero skipped, five real training windows and complete source/input/environment checks",
+    "gpu_per_site_limit": {
+      "gpus": 1,
+      "minutes": 120,
+      "cpu_cores": 8,
+      "ram_gib": 192,
+      "checkpoint_bytes": 200000000000
+    },
+    "logical_updates": 5,
+    "executed_updates_with_replay": 8,
+    "fresh_process_replayed_updates": [
+      3,
+      4,
+      5
+    ],
+    "source_repository_dependencies": "Only fixed public upstreams and the implementation algorithm written directly in section 12.",
+    "formal_sft_credit": 0,
+    "ascend_execution_credit": 0
   }
 }

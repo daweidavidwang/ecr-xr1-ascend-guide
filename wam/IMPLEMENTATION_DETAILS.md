@@ -686,3 +686,42 @@ def serialized_metadata(value):
 继续使用公开固定 Awomo 官方策略、同一发布 checkpoint、`split=pretrain`、16 步动作执行、原 H264/历史组装与成功终止。每任务先做精确任务和节点的 CPU 前置：0 GPU、4 CPU、16 GiB RAM、20 分钟；检查模型、50 任务 horizon、公开源码、策略/模拟器包版本、清理证据和前后环境，实际不创建 EGL context、不执行 episode。每项正式后继最多 1 GPU、4 小时，worker 上限 10,800 秒；三项共 90 局、最多 12 GPU·小时。GPU 分配前须验收完整 CPU 原件，并核对旧身份没有活动、模糊或已经完成的重复运行；保留已知失败，不能误写成从未执行。
 
 本节是已准备并提交的执行合同，不是新通过结果。CPU 完整回传、独立验收和 GPU 准入仍待完成；正式累计仍按主文第 7.28 节，Human/recovery SFT 与 Ascend 实测没有新增计数。
+
+## 12. 真实 Human 读取器与模型训练状态的联合恢复
+
+**状态（2026-11-15）：** 数据读取游标恢复与三窗口模型/AdamW/RNG 恢复已有各自独立的 NVIDIA 证据；两者在同一训练入口内的联合恢复尚未验收。新增联合入口及保存合同已实现，本地共 69 项检查，67 项通过、2 项因本机缺少 Torch 跳过。两个 B300 节点各已提交 CPU 前置和有依赖的单卡诊断；没有现场通过结果，没有新增正式 SFT、benchmark 或 Ascend 计数。下列内容直接给出接手端重建所需的输入、执行顺序和验收要求。
+
+### 12.1 固定输入与训练目标
+
+使用第 4 节的原始 910,723 个 train 窗口，数据摘要 `a514224e5a149effa98279627b91fa25d3b19f33bff1b3fc9832dd76b2294b49`。按 `PCG64(SeedSequence([42, 0]))` 生成 epoch 0 的排列，world size 1、rank 0、batch size 1，仅取前五批，不能自行补选窗口：
+
+| 更新 | 窗口索引 | 源任务组 / 任务 | episode ordinal / episode index | start |
+|---|---:|---|---|---:|
+| 1 | 830901 | composite_unseen / SeparateFreezerRack | 23728 / 433 | 992 |
+| 2 | 357660 | composite_seen / SearingMeat | 13847 / 180 | 624 |
+| 3 | 267255 | composite_seen / PackIdenticalLunches | 11487 / 349 | 624 |
+| 4 | 893913 | composite_unseen / WeighIngredients | 24845 / 42 | 64 |
+| 5 | 418544 | composite_seen / SteamInMicrowave | 15405 / 218 | 64 |
+
+五批必须均来自 train；后两批包括早期历史。每次真实读取原视频、按逐相机 offset 解码，保留原生 H264、canvas 与 prompt processor。采用两个 `spawn` worker、每 worker `prefetch_factor=1`、batch size 1、不启用随机数据增强和梯度累积。DataLoader 使用独立 CPU `torch.Generator`，seed 42；创建 iterator 前后比较全局 CPU RNG，不能让 worker 初始化改变训练 RNG。
+
+模型从原始发布权重初始化；训练范围和数值目标沿用总入口第 7.1 节：全部 DiT/proprio 的 171 个 FP32 参数张量、3,876,166,656 个元素可训练，原生 Qwen、发布 LoRA 与 VAE 冻结；BF16 autocast、math SDPA、确定性算法、关闭 TF32。AdamW `lr=1e-5, betas=(0.9,0.999), eps=1e-8, weight_decay=0`，clip 1.0，训练 seed 20261113，sigma 0.5、timestep 500，图像 velocity MSE 加 11 个有效动作坐标的 velocity MSE。每批重新执行冻结编码器；不能直接复用历史编码缓存。这仍是工程诊断配方。
+
+### 12.2 保存边界与新进程重放
+
+1. 单独维护“已发给 worker 的批次数”和“已成功完成优化器更新的批次数”。每批严格核对预注册窗口索引、episode 身份、split 和原生 processor 输出；训练执行 forward、有限 loss 检查、backward、全部参数梯度检查、裁剪、`optimizer.step()`、设备同步，全部成功后才提交该批消费游标。失败不提前推进游标。
+2. 更新 2 完成时，要求已发出的批次数大于 2，已消费数恰好为 2。完整 checkpoint 同时包含：格式版本、代码与全部输入/配方绑定、`completed_updates=2`、已消费 sampler 状态、全部模型参数、完整 AdamW 状态、CPU RNG 和全部 CUDA RNG。sampler 状态必须绑定数据摘要、窗口数、seed、epoch、world size、rank、batch size、排列摘要和尾部丢弃摘要；恢复时重新计算并比较。
+3. 检查 `completed_updates` 是整数且与已消费游标精确相等；固定单 rank/batch 1，不允许把不同布局的状态强行恢复。缺失模型、优化器、任意 RNG，或数据/源码/配方/排列不一致时立即拒绝。
+4. 先将所有张量复制成独立 CPU 快照，再以 exclusive create 写同目录 `.partial` 文件；flush 和文件 fsync 后，用不可覆盖的原子硬链接发布最终文件，删除临时硬链接，并 fsync 目录。写入失败保留 partial，最终文件不出现；已有最终文件或 partial 均不得覆盖。不要分别保存一个新游标和一个旧模型。
+5. 连续进程完成更新 1–5 后退出。另起全新进程重新加载原生冻结组件和 FP32 DiT/AdamW，校验更新 2 checkpoint 的完整大小与 SHA256，严格加载模型、优化器及 sampler；重新创建使用独立 RNG 的数据 worker，最后恢复训练 CPU/CUDA RNG。从更新 3 开始读取真实数据并重放 3–5，不从数据开头读两批再丢弃。
+6. 连续与恢复分支逐更新精确比较：17 个 CPU 输入数组的 dtype/shape/完整内容摘要、冻结编码结果、图像和动作噪声、各项 loss、梯度范数、全部 171 个参数张量、完整优化器状态、CPU/CUDA RNG 和消费游标。两进程均检查冻结编码器前后不变且无梯度，保留峰值显存。首次不一致即失败，不提高容差、不挑选成功批次。
+
+逻辑更新共 5 次，实际更新共 8 次（连续 5 次加重放 3 次）。只保留更新 2 和恢复后的更新 5 诊断保存点；收到停止信号时在当前完整更新后保存自己的中断点并退出。所有诊断权重保持独立，不能作为正式 SFT 或 benchmark 候选的初始化权重。Ascend 实现还须替换并验证对应设备 RNG、同步及保存恢复 API，不能认为 CUDA RNG 字节可以直接用于 NPU。
+
+### 12.3 CPU 与 GPU 验收边界
+
+每节点 CPU 前置最多 0 GPU、8 CPU、32 GiB RAM、45 分钟，真实数据子进程最多 1,800 秒。要求 69 项检查真实通过且零 skip；核对原始 21 个模型文件和配置、已有读取依赖的完整 wheel/member 摘要、原视频与数值身份、五个真实 batch、原生 processor 输出及全局 CPU RNG。此阶段保存的 checkpoint metadata 只是数据边界预览，没有模型加载或优化器更新，不能算联合恢复通过。
+
+该节点完整 CPU receipt、所有原始日志、源码和环境前后检查经独立验收后，才生成本节点放行文件。放行文件绑定同一源码/输入、CPU 运行身份、CPU receipt SHA256、全部 CPU 产物大小/摘要及指定 GPU 运行身份；GPU 入口须验证所有字段与文件。调度完成、producer 摘要或缺少原件的清单不能代替放行。
+
+每节点 GPU 诊断最多 1 GPU、8 CPU、192 GiB RAM、120 分钟；连续和恢复子进程各最多 3,000 秒。checkpoint 峰值预算 200 GB，开始前至少有 200 GB 可用空间，并仍满足集群磁盘门槛；完整小型 JSON/日志回交上限 100 MB，大 checkpoint/partial 保留源节点并记录完整大小和 SHA256。两站合计最多 4 GPU·小时，是预算而非已消耗量。尚未验收真实联合恢复、多卡、梯度累积、随机增强、全量训练或 Ascend；现有单独模块的成功不能代替这些结果。
