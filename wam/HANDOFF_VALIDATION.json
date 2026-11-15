@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T10:26:17.693316+00:00",
+    "checked_at": "2026-11-15T11:11:48.451565+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 80,
+    "local_wam_links_checked": 81,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 19,
+    "inline_python_blocks_syntax_checked": 20,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -155,7 +155,8 @@
       "Genuine Trainer batch/checkpoint replay contract and first CPU failure, with independent earliest-divergence diagnosis requirements",
       "Read-only loader and per-microbatch observations, preserved continuous oracle comparison and first observed CPU RNG divergence",
       "Direct zero-worker resume RNG protection code, unchanged initial iteration and real production loader/sampler validation contract",
-      "Direct DDP optimizer-state pruning code with canonical names, numeric-ID fallback and reported world1/world2 exact replay; full original PT/DCP files remain unaccepted."
+      "Direct DDP optimizer-state pruning code with canonical names, numeric-ID fallback and reported world1/world2 exact replay; full original PT/DCP files remain unaccepted.",
+      "Real Human ConfigNode/Trainer data bridge with five frozen train windows, complete sampler/loader core code, seventeen-array comparisons and reported fresh-process data replay; full raw originals pending."
     ],
     "public_upstream_commit_checks": [
       {
@@ -218,7 +219,8 @@
         "wam/IMPLEMENTATION_DETAILS.md section 12",
         "wam/IMPLEMENTATION_DETAILS.md section 14",
         "wam/IMPLEMENTATION_DETAILS.md sections 15-16.3",
-        "wam/IMPLEMENTATION_DETAILS.md sections 16.4-16.6"
+        "wam/IMPLEMENTATION_DETAILS.md sections 16.4-16.6",
+        "wam/IMPLEMENTATION_DETAILS.md section 17"
       ],
       "changes": [
         "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
@@ -226,7 +228,8 @@
         "Specified local provenance, frozen protocols, initial-state checks, process exits and artifact indexing without external engineering-repository dependencies.",
         "Documented initial-state diagnosis, native history observation and renderer cleanup directly, including fixed inputs, implementation behavior, validation boundaries and rerun budgets.",
         "Added the exact tiny model, real Checkpointer API sequence, optimizer and RNG comparison contract, budgets and limitations directly to the public handover.",
-        "Updated the reader-facing overview with the loader RNG and DDP pruning algorithms, observed replay result and explicit unvalidated training/device scope, all directly in the handover."
+        "Updated the reader-facing overview with the loader RNG and DDP pruning algorithms, observed replay result and explicit unvalidated training/device scope, all directly in the handover.",
+        "Directly documented the RoboDojo-versus-RoboCasa input mismatch, actual five-window Human data factory contract and reported CPU data replay without referring to a development repository."
       ],
       "unbundled_payloads": "GPU tensors, full historical asset indexes, checkpoints and raw rollouts remain subject to the explicitly documented delivery boundaries; no new payload delivery or runtime validation is claimed."
     },
@@ -321,7 +324,7 @@
       "remaining_delivery_boundary": "Published weights and Human inputs use pinned public sources. Historical raw tensors and rollouts are not included; independent regeneration and validation are required as documented.",
       "input_pins_and_experimental_results_changed": false,
       "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name.",
-      "latest_documentation_addendum": "The overview and section 16 now directly describe both the zero-worker loader RNG and DDP optimizer-state repairs, the reported world1/world2 exact CPU replay, the retained earlier failures and the complete-originals acceptance boundary. Full setup, real Human/WAM, multiworker, CUDA/NPU and formal SFT remain unvalidated.",
+      "latest_documentation_addendum": "Section 17 directly provides fixed real Human inputs, source checks, full core loader/sampler code, ConfigNode interface, exact CPU data replay contract and reported result; no full setup/model/optimizer/GPU/NPU/SFT acceptance.",
       "changes_in_this_recheck": [
         "Verified all 60 current tracked files, including code, environment snapshots and JSON, against known private identifiers and development history; no additional reference removals were necessary.",
         "Updated the standalone overview and implementation cross-references through section 16.6 instead of requiring another repository or old scheduling records.",

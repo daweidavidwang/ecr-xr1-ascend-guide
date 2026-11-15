@@ -1172,3 +1172,144 @@ def prune_unrecorded_optimizer_state(model, optimizer, checkpoint_state_keys):
 **修正后现场结果（2026-11-15 09:44:32–09:45:06 UTC）：** 执行端报告四个阶段、六个rank结果全部通过：world size 1/2各自连续更新1–5，保存完成更新2，再从新进程精确重放3–5；恢复后、迭代前核心状态也精确一致。调度终态`COMPLETED / 0:0`，运行34秒，程序报告约32.27秒。97份源码逐文件与固定版本及计划一致，基础环境和prefix前后不变，自有进程已退出。
 
 节点54份原件共757,879 bytes仍待正常容量下完整回传；维护者已核结果元数据、源码、环境与索引，**尚未独立读取全部PT/DCP原件**。该结果支持执行端报告的生产loader/sampler及真实Trainer方法的CPU恢复进展，不等于完整Trainer setup、真实HDF5/Human/WAM、多worker真实预取、FSDP/DTensor、CUDA/NPU或正式SFT通过。接手者须保留前两项失败，并在自己的目标栈重新验证这些边界。
+
+## 17. 真实 Human 数据接入训练器接口
+
+**2026-11-15 新准备，执行端已报告通过，完整原件待验。** 完整入口审计确认，公开的 RoboDojo 启动器要求四节点、每节点八卡；其训练器另固定 world32/global batch256/local batch8、HDF5、320×288 BGR hero-top 图像和20槽历史。RoboCasa 本项目采用 Parquet/共享视频、320×224 原生画布、9槽历史、16×80动作和11个有效动作坐标。安装缺失的 Hydra/HDF5 依赖不能消除这些语义差异。两者共享的通用 Trainer、配置构造和可恢复 loader 可以复用，RoboDojo 数据集、normalizer和训练配方不能直接套用。
+
+本次新增数据工厂直接返回通用 `Trainer.setup()` 所需的 `(loader, sampler)`。输入使用第1–4节的真实 Human 读取、H264、画布及原生 processor；只复用通用 Dense sampler 与 TorchData 状态逻辑。首轮明确限制为单进程、batch1、workers0，拒绝其他几何配置。这里尚未调用完整setup或优化器。
+
+### 17.1 固定输入、来源校验和接口
+
+使用第4节固定训练窗口表中的以下五个窗口，均为train，不能替换成validation或test：
+
+| 全局窗口行号 | 组 | 任务 | 每任务episode_index | 起始控制帧 |
+|---:|---|---|---:|---:|
+| 830901 | composite_unseen | SeparateFreezerRack | 433 | 992 |
+| 357660 | composite_seen | SearingMeat | 180 | 624 |
+| 267255 | composite_seen | PackIdenticalLunches | 349 | 624 |
+| 893913 | composite_unseen | WeighIngredients | 42 | 64 |
+| 418544 | composite_seen | SteamInMicrowave | 218 | 64 |
+
+构造时核对整表25307个episode、910723个train窗口，以及本文既定数据摘要；每个行号还须核对episode身份、train划分、起始帧、numeric文件大小与SHA256、三路video的大小与SHA256、逐camera offset及episode来源metadata。Qwen processor文件按公共输入清单逐一校验，拒绝未登记的processor/tokenizer覆盖文件，使用`local_files_only=True`。输入清单自身以SHA256绑定配置，恢复时不得换清单。
+
+以下是可复制的核心接口。`native_dataset[global_index]`必须由第1–3节的真实读取器实现，返回`sample/vl/instruction/identity`；`cases`按上表顺序构造，含`index`和完整`identity`。调用前完成上一段的逐文件核验。代码中的`binding`是本次独立运行记录，至少包含清单SHA256、数据集SHA256、site和五个全局行号；它不是对旧开发工程的引用。
+
+```python
+from copy import deepcopy
+import torch
+from torchdata.stateful_dataloader import StatefulDataLoader
+
+class Pool:
+    def __init__(self, native_dataset, cases):
+        assert len(cases) == 5 and len({c['index'] for c in cases}) == 5
+        assert all(c['identity']['split'] == 'train' for c in cases)
+        self.native, self.cases = native_dataset, deepcopy(cases)
+    def __len__(self):
+        return len(self.cases)
+    def __getitem__(self, index):
+        case = self.cases[index]
+        item = self.native[case['index']]
+        assert item['identity'] == case['identity']
+        return {'pool_index': index, 'window_index': case['index'], 'item': item}
+
+class DenseIterator:
+    def __init__(self, rows, position):
+        self.rows, self.position = rows, position
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.position >= len(self.rows):
+            raise StopIteration
+        batch = self.rows[self.position].tolist()
+        self.position += 1
+        return batch
+    def state_dict(self):
+        return {'position': self.position}
+    def load_state_dict(self, state):
+        position = int(state['position'])
+        assert 0 <= position <= len(self.rows)
+        self.position = position
+
+class DenseSampler:
+    def __init__(self):
+        self.length, self.seed = 5, 1541
+        self.local_batch_size = self.world_size = 1
+        self.rank = self.epoch = self.data_step = 0
+    def __len__(self):
+        return 5
+    def set_epoch(self, epoch):
+        self.epoch = int(epoch)
+    def state_dict(self):
+        return {'epoch': self.epoch, 'data_step': self.data_step}
+    def load_state_dict(self, state):
+        self.epoch, self.data_step = state['epoch'], state['data_step']
+    def __iter__(self):
+        generator = torch.Generator().manual_seed(self.seed + self.epoch)
+        rows = torch.randperm(5, generator=generator).reshape(5, 1)
+        return DenseIterator(rows, max(0, self.data_step - self.epoch * 5))
+
+class HumanLoader(StatefulDataLoader):
+    def __init__(self, *args, binding, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.binding, self.resume_pending = deepcopy(binding), False
+    def state_dict(self):
+        state = super().state_dict()
+        sampler = self.batch_sampler
+        state['_human'] = deepcopy(self.binding)
+        state['_geometry'] = {
+            'workers': self.num_workers, 'prefetch': self.prefetch_factor,
+            'persistent': self.persistent_workers,
+            'sampler': {k: getattr(sampler, k) for k in
+                        ('length', 'seed', 'local_batch_size', 'rank', 'world_size')}}
+        return state
+    def load_state_dict(self, state):
+        state = dict(state)
+        assert state.pop('_human') == self.binding
+        sampler = self.batch_sampler
+        expected_geometry = {
+            'workers': self.num_workers, 'prefetch': self.prefetch_factor,
+            'persistent': self.persistent_workers,
+            'sampler': {k: getattr(sampler, k) for k in
+                        ('length', 'seed', 'local_batch_size', 'rank', 'world_size')}}
+        assert state.pop('_geometry') == expected_geometry
+        super().load_state_dict(state)
+        self.resume_pending = True
+    def __iter__(self):
+        rng = torch.get_rng_state() if self.resume_pending else None
+        try:
+            iterator = super().__iter__()
+        finally:
+            if rng is not None:
+                torch.set_rng_state(rng)
+        self.resume_pending = False
+        return iterator
+
+def collate_one(batch):
+    assert len(batch) == 1
+    return batch[0]
+
+def build_loader(native_dataset, cases, binding, dp_rank, dp_world_size,
+                 batch_size, num_workers=0, seed=1541):
+    values = (dp_rank, dp_world_size, batch_size, num_workers, seed)
+    assert all(type(v) is int for v in values) and values == (0, 1, 1, 0, 1541)
+    sampler = DenseSampler()
+    loader = HumanLoader(Pool(native_dataset, cases), batch_sampler=sampler,
+                         num_workers=0, collate_fn=collate_one, pin_memory=False,
+                         binding=binding)
+    return loader, sampler
+```
+
+这里为五窗口单rank写出完整采样规则，不是完整数据训练配方。新顺序是独立Torch generator的seed1541，不沿用此前PCG64排序；连续与恢复必须在这一新顺序内比较。原始样本值按全局窗口身份与旧已验参考比较，不能按新旧batch位置直接比较。原生H264压缩与tokenizer不做替换，不补齐可变prompt，不引入RoboDojo历史增强。
+
+将已核验的输入构造放在本地工厂函数中，随后调用上述`build_loader`。配置的`data.dataloader._target_`指向这个本地工厂；它接受输入清单/摘要/根目录，`ConfigNode.instantiate(dp_rank=0, dp_world_size=1, batch_size=1)`注入实际几何参数并返回二元组。这与通用setup的真实调用接口一致。公开上游的`ConfigNode`和`Trainer`按第4节的SFT基底固定版本获取；先验证此接口，不能据配置构造成功声称完整setup通过。
+
+### 17.2 本次CPU验证合同与剩余工作
+
+只读组合已有PyAV/Arrow读取依赖和Trainer依赖；新子进程离线、CUDA不可见。先验证两套依赖的真实文件、版本和导入来源，前后比较基础环境及依赖目录。无需安装Hydra/HDF5，也不得导入`RoboDojoHDF5Dataset`。
+
+真实`Trainer`登记cfg、loader、sampler、RNG、StepScheduler五项状态；实际StepScheduler每批产出一个样本。连续读取五批，消费第二批后保存loader、RNG和下一批step=2。新进程重新核验和构造真实数据入口，按RNG→step→sampler epoch→loader顺序恢复，再读取后三批。逐叶比较完整RNG以及17个数组：video、history、history_valid、state、action，七个原生VL字段，以及五个独立标准processor参考字段。每个数组保留dtype、shape、SHA256；八次读取全部保存完整NPZ，不能只留摘要。另检查错误输入绑定被拒绝且未改变当前loader状态、数据保存未改变RNG、恢复未修改checkpoint、loader总长度仍为5。
+
+本地7项标准库检查覆盖几何限制、validation拒绝、重复/越界/布尔行号拒绝、原始payload保持、case独立复制与错误episode拒绝；103份Python语法检查通过。它们未执行原生Torch。现场请求预算为0GPU、4CPU、32GiB、25分钟；每阶段540秒、driver1200秒、原件上限256MB。现场于2026-11-15 11:08:11–11:08:46 UTC完成，调度终态为`COMPLETED / 0:0`，程序用时34.32秒。执行端报告连续五批和新进程恢复后三批通过；实际全局窗口顺序为`418544,357660,267255,893913,830901`。维护者独立核对回传的136个数组指纹与已验固定参考、恢复记录与连续后三批、输入绑定拒绝、109份源码及基础环境/两套依赖不变和进程退出。共17份原件66,184,134 bytes，包括八个完整NPZ和两个PT，仍未完整回传；完整RNG/张量验收尚未完成。这是**数据接口执行端报告通过**，没有模型或优化器更新。
+
+下一步仍须实现完整RoboCasa Trainer子类，把原生encoder和本项目明确的损失接入真实setup与完整训练循环，再分别验证真实模型/优化器保存恢复、多worker和目标设备。上述五样本接口通过也不能替代这些步骤、正式配方或基线前置。原件按正常容量门槛回传，未回传的PT/NPZ不视为交付；本次不释放旧GPU工单，也不增加正式SFT或Ascend计数。
