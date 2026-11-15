@@ -1134,4 +1134,41 @@ class ResumeSafeStatefulDataLoader(StatefulDataLoader):
 
 为单独导入loader/sampler，数据集类的运行时import移到真实构建函数内部；类型注解使用延迟解析，静态检查保留类型导入。构建真实HDF5数据集时仍导入并检查实际数据集类，缺少Hydra/HDF5等依赖仍须失败，不能用此变更冒充完整数据环境就绪。
 
-四个本地真实方法体检查覆盖：零worker恢复、多worker恢复、首次迭代保留原始随机消耗，以及重建异常时恢复RNG并保留pending。旧条件在其中两个零worker用例失败，候选四项通过；这些检查使用假RNG，未运行Torch。96份源码已固定、94份Python语法通过；新的0GPU/4CPU/16GiB/15分钟现场请求已提交，**尚无该修复的现场通过结论**。多worker真实预取、完整setup、真实Human/WAM和Ascend仍需分别验收。
+四个本地真实方法体检查覆盖：零worker恢复、多worker恢复、首次迭代保留原始随机消耗，以及重建异常时恢复RNG并保留pending。旧条件在其中两个零worker用例失败，候选四项通过；这些检查使用假RNG，未运行Torch。96份源码固定、94份Python语法通过；现场复验结果见下文。多worker真实预取、完整setup、真实Human/WAM和Ascend仍需分别验收。
+
+**现场复验（2026-11-15 09:35 UTC）：** 执行端报告world size 1连续5更新与新进程恢复3–5全部精确通过；world size 2的两个rank也各完成连续5更新，但两个恢复rank都在创建loader迭代器前失败，位置为`restored-core-before-loader-iteration.optimizer.state`的字典键集合比较。整体调度终态为`FAILED / 1:0`，运行34秒，程序报告32.39秒。双进程恢复尚未到达本次RNG保护位置，不能据单进程结果推定双进程已通过。96份源码、基础环境与prefix前后不变，自有进程已退出；54份节点原件共754,657 bytes待完整回传。下一项独立修复候选见第16.6节。
+
+### 16.6 DDP优化器状态名称匹配候选
+
+源码审计发现，优化器加载末尾会删除checkpoint中不存在的参数状态。DCP的规范名称不带DDP包装层，而直接对DDP对象调用`named_parameters()`会多出包装前缀；用两者直接匹配，可能把已经恢复的有效状态误删。当前失败位置与这一问题一致，但仅凭字典键断言还不能认定现场因果链已完全验证。
+
+候选修复保持DCP实际加载顺序，只在后续名称到Parameter对象的匹配中识别真正的`DistributedDataParallel`并访问其`.module`。底层Parameter身份不变，数字参数ID的fallback仍保留；不要对所有名字盲目删除字符串`module.`，因为真实模型也可能有同名子模块。完整清理规则如下：
+
+```python
+import torch
+
+def prune_unrecorded_optimizer_state(model, optimizer, checkpoint_state_keys):
+    prefixes = {key.rsplit('.', 1)[0] for key in checkpoint_state_keys}
+    parameter_model = (model.module if isinstance(
+        model, torch.nn.parallel.DistributedDataParallel) else model)
+    recorded = {
+        parameter for name, parameter in parameter_model.named_parameters()
+        if 'optim.state.' + name.replace('_checkpoint_wrapped_module.', '') in prefixes
+    }
+    native_groups = optimizer.state_dict()['param_groups']
+    for native, live in zip(native_groups, optimizer.param_groups, strict=True):
+        for parameter_id, parameter in zip(native['params'], live['params'], strict=True):
+            if f'optim.state.{parameter_id}' in prefixes:
+                recorded.add(parameter)
+    for _, parameter in parameter_model.named_parameters():
+        if parameter not in recorded:
+            optimizer.state.pop(parameter, None)
+```
+
+`checkpoint_state_keys`只接受经过原加载器完整性检查的`optim.state.*`键。其余模型/优化器元数据、dtype、shape及调度器验证不变，不能用此函数跳过前置检查。三项真实清理尾部的本地替身检查覆盖普通模型、DDP命名状态和DDP数字键fallback，均要求保留活动参数状态并删除未参与更新的状态；旧代码在DDP命名用例失败，候选三项通过。这些检查没有执行原生Torch。
+
+后继现场复验固定97份源码和95份Python语法检查，保持第16.5节完全相同的模型、数据、shuffle、loader与预算，重新建立world size 1/2各自的连续5更新和新进程恢复3–5对照。原失败与全部原件保留，使用新运行身份，不放宽任何比较。
+
+**修正后现场结果（2026-11-15 09:44:32–09:45:06 UTC）：** 执行端报告四个阶段、六个rank结果全部通过：world size 1/2各自连续更新1–5，保存完成更新2，再从新进程精确重放3–5；恢复后、迭代前核心状态也精确一致。调度终态`COMPLETED / 0:0`，运行34秒，程序报告约32.27秒。97份源码逐文件与固定版本及计划一致，基础环境和prefix前后不变，自有进程已退出。
+
+节点54份原件共757,879 bytes仍待正常容量下完整回传；维护者已核结果元数据、源码、环境与索引，**尚未独立读取全部PT/DCP原件**。该结果支持执行端报告的生产loader/sampler及真实Trainer方法的CPU恢复进展，不等于完整Trainer setup、真实HDF5/Human/WAM、多worker真实预取、FSDP/DTensor、CUDA/NPU或正式SFT通过。接手者须保留前两项失败，并在自己的目标栈重新验证这些边界。

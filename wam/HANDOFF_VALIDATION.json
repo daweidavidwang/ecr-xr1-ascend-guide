@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T09:35:34.951900+00:00",
+    "checked_at": "2026-11-15T09:46:55.512322+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 18,
+    "inline_python_blocks_syntax_checked": 19,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -1447,7 +1447,7 @@
     "full_originals_returned": false
   },
   "zero_worker_loader_repair": {
-    "state": "prepared_request_published",
+    "state": "producer_reports_world1_exact_world2_optimizer_key_failure",
     "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 16.5",
     "source_files": 96,
     "syntax_checks": 94,
@@ -1470,6 +1470,55 @@
     "new_shuffled_continuous_control": true,
     "full_setup_tested": false,
     "formal_sft_credit": 0,
-    "ascend_credit": 0
+    "ascend_credit": 0,
+    "world1_continuous_and_replay_reported_passed": true,
+    "world2_continuous_reported_passed": true,
+    "world2_resume_rank_failures": 2,
+    "first_failure": "restored-core-before-loader-iteration.optimizer.state",
+    "producer_elapsed_seconds": 32.39482924801996,
+    "node_files": 54,
+    "node_bytes": 754657,
+    "full_originals_returned": false
+  },
+  "ddp_optimizer_pruning_candidate": {
+    "state": "producer_reports_world1_world2_exact_replay_passed_full_raw_pending",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 16.6",
+    "source_files": 97,
+    "syntax_checks": 95,
+    "local_fake_pruning_tests": 3,
+    "passed": 3,
+    "previous_candidate_failed": 1,
+    "native_locally_executed": false,
+    "actual_ddp_parameter_identity_preserved": true,
+    "numeric_id_fallback_preserved": true,
+    "world_sizes": [
+      1,
+      2
+    ],
+    "full_setup_tested": false,
+    "formal_sft_credit": 0,
+    "ascend_credit": 0,
+    "scheduler_terminal": "COMPLETED 0:0",
+    "rank_results": 6,
+    "all_rank_results_reported_passed": true,
+    "continuous_updates": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "resumed_updates": [
+      3,
+      4,
+      5
+    ],
+    "node_files": 54,
+    "node_bytes": 757879,
+    "source_files_postflight_matched": 97,
+    "base_and_overlay_unchanged": true,
+    "process_exit_verified": true,
+    "full_originals_returned": false,
+    "complete_raw_owner_acceptance": false
   }
 }
