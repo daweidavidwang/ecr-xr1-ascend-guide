@@ -1053,3 +1053,85 @@ for name in ('save_checkpoint', 'load_checkpoint', '_load_checkpoint_tracked_sta
 首个报告的模型权重差异是比较器遇到的第一个不相等字段，**不是因果链中的最早差异**。它不能证明DataLoader迭代器消耗RNG就是根因。后续独立定位应保持上述固定模型、数据、seed和更新顺序，在新运行身份中依次记录：恢复刚完成、创建迭代器前后、取得每个microbatch后、生成noise/scale后、前向后、反向后及optimizer step后的实际状态。比较数据ID、输入、三类RNG、noise/scale、loss、裁剪前梯度及完整优化器状态，找到最早分歧。不得先补偿RNG、改generator或放宽容差再把结果当作原路径通过；任何修复另存差异，并重新验证连续与新进程重放。
 
 本项不增加正式SFT、官方评测或Ascend通过计数。第16节的CPU方法集成仍未通过，完整setup、真实WAM/Human及NPU训练恢复保持待验。
+
+### 16.4 首个恢复更新的分阶段观察方案
+
+本项独立CPU诊断的执行端结果已返回，见本节末尾。模型、训练计算、seed、数据、loader默认generator与第16.1节相同；StepScheduler和LR schedule仍保留原来的5步终点，避免改变第3步的学习率。但本次只执行world size 1：连续更新1–3，保存完成更新2的checkpoint；随后新进程恢复并只执行更新3，共4次实际更新。不会运行更新4/5或world size 2。
+
+**观察器不修复任何状态。** Trainer登记与保存的仍是真实StatefulDataLoader。只在传给StepScheduler的入口加一个转发对象：`__len__`返回真实loader长度，`__iter__`使用下面的生成器；不得替换sampler、generator、batch内容或checkpoint状态。所有迭代器和next调用均只发生一次。
+
+```python
+def observed_batches(loader, observe):
+    observe('loader_iter_before')
+    iterator = iter(loader)
+    observe('loader_iter_after')
+    while True:
+        observe('loader_next_before')
+        try:
+            batch = next(iterator)
+        except StopIteration:
+            observe('loader_exhausted')
+            return
+        observe('loader_next_after', {'batch': batch})
+        yield batch
+```
+
+`observe(point, payload=None)`记录当前StepScheduler内部step、三类完整RNG状态和payload的独立深拷贝。记录前后再次读取RNG并逐叶精确比较，观察本身不得消耗随机数；张量在记录前detach，不能保存仍连着计算图的对象。额外观察点为：每个microbatch开始、生成noise/scale后、前向及loss计算后、全部累积反向完成但裁剪前、优化器与LR更新后，以及保存和恢复前后。每阶段最多100条事件，事件原件保存在独立PT文件中，即使后续失败也保留。
+
+连续分支的更新1–3必须与第16.3节原失败实验保留的完整oracle逐叶一致，先检查旧文件大小及SHA256，再加载比较，运行后再次核旧文件不变。这是观察器不改变原计算的对照；仅对比loss不足以通过。已有三份参考文件均为24,768 bytes，其SHA256依次为：
+
+| 完成更新 | 原始oracle SHA256 |
+|---|---|
+| 1 | `794913cbb797bffae08b633fcfd5f1a423076a5616116fe9b93544c44d84c126` |
+| 2 | `3659104b48a380a4c86ffa67b2d63399218ac264c81f297ff22779a99031b0e9` |
+| 3 | `668fb69d7d41666e50803c0573b4a6041cb069a5a70a8f6854371e7384809ea5` |
+
+这些摘要标识未随指南交付的历史原件，不是下载入口。独立Ascend实现需在自己的固定GPU对照环境先运行第16.1–16.2节，保留真实oracle，再用同一环境执行有观察器的对照；跨设备另按数值验收规则比较，不能要求新文件的序列化摘要与历史文件相同。
+
+恢复分支分别报告迭代器创建前后Python、NumPy、Torch CPU及CUDA RNG字段是否相同；按事件顺序比较连续与恢复分支在内部step2的共同观察点。每个事件同时比较完整记录与单独的payload，防止先遇到RNG差异就看不到数据ID是否相同。分别记录保存前后核心状态是否不变、首个完整状态差异、数据差异、noise/scale差异、梯度差异和更新后差异。若观察完整但仍存在差异，只能称“诊断完成”，不能称恢复通过。任何源码、原始oracle、环境不符或连续计算偏离对照均立即停止。
+
+预算沿用0GPU、4CPU、16GiB、15分钟及10MB输出上限；只读复用已校验依赖prefix，无安装或下载。此方案已完成93份Python语法检查，并通过AST比较确认模型及去除观察语句后的train_step计算不变；原生执行仍交由执行端完成，本地检查不代表现场通过。
+
+**现场诊断结果（2026-11-15 09:28 UTC）：** 执行端报告15.91秒完成，连续与恢复两进程均退出0。连续更新1–3与前述原始oracle全部精确相同；保存前后核心状态不变，恢复后迭代前核心状态也相同。连续/恢复分别记录40/16个观察点。重新创建真实迭代器时，Python和NumPy RNG不变，**Torch CPU RNG发生变化**；两个实际microbatch的数据均精确相同，而noise、prediction、裁剪前梯度和更新后权重依次不同，恢复更新3仍未通过。CUDA状态为空，本项没有CUDA测试。
+
+95份源码与基础环境核对通过，依赖prefix和三个旧oracle前后不变，自有进程已退出。节点21份新原件共1,181,548 bytes仍未完整回传；以上为已核对执行端元数据支持的定位，原始trace张量尚待独立读取。结果把首个观察到的差异定位到迭代器重建阶段，不能推及完整setup、其他worker配置或NPU。
+
+### 16.5 零worker恢复保护候选与生产loader复验
+
+已有生产loader在恢复后重建迭代器时保护Torch CPU RNG，但原条件同时要求`num_workers`为非零，因此漏掉第16.4节观察到的零worker路径。修复候选只去掉这个worker数量条件：正常首次创建迭代器仍保留原始随机数消耗；只有`load_state_dict`之后的首次重建会保存并恢复主进程Torch CPU RNG。以下给出完整核心实现，不能把补偿操作偷偷加入第16.4节的原诊断。
+
+```python
+import torch
+from torchdata.stateful_dataloader import StatefulDataLoader
+
+class ResumeSafeStatefulDataLoader(StatefulDataLoader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._resume_pending = False
+
+    def load_state_dict(self, state):
+        # 先完成本节下文的配置身份校验，再调用真实恢复。
+        super().load_state_dict(state)
+        self._resume_pending = True
+
+    def __iter__(self):
+        saved_rng = torch.get_rng_state() if self._resume_pending else None
+        try:
+            iterator = super().__iter__()
+        finally:
+            if saved_rng is not None:
+                torch.set_rng_state(saved_rng)
+        # 若创建失败，此行不执行，保留pending以免把失败当作完成恢复。
+        self._resume_pending = False
+        return iterator
+```
+
+生产RoboDojoDataLoader继续使用其真实TorchData状态读写。保存时额外附带配置身份：版本1、num_workers、prefetch_factor、persistent_workers，以及batch sampler的length、seed、local_batch_size、rank、world_size；恢复时复制状态字典、取出此身份并要求完全相等，之后把其余完整状态交给父类，不静默丢弃任何字段。该配置校验不能由上面的核心示例省略。
+
+实际DenseBatchSampler使用独立`torch.Generator().manual_seed(seed+epoch)`生成全局randperm；按全局batch大小补齐，再reshape为`[-1, world_size, local_batch_size]`并取本rank连续分区。补齐不足时重复原索引到所需长度。其迭代器保存下一批position并检查恢复位置范围；sampler另保存epoch与data_step，初始offset为`max(0, data_step-epoch*len(sampler))`。这些状态仍由真实loader保存，不用一个手写计数器代替。
+
+新的复验调用**真实RoboDojoDataLoader、DenseBatchSampler及Trainer方法**。本次全局数据有`24×world_size`行，ID为`arange(24×world_size)`，input/target公式沿用第16.1节，sampler seed1541、local batch2、workers0、每次更新累积2批。world size 1与2分别建立新的shuffle连续对照，各连续5更新、保存完成更新2、全新进程重放3–5。因为输入顺序已切换为实际生产sampler，本项不与第16.3节旧未shuffle轨迹比较；同一world size的完整连续/恢复记录仍须逐叶精确一致。没有第16.4节的观察转发对象。
+
+为单独导入loader/sampler，数据集类的运行时import移到真实构建函数内部；类型注解使用延迟解析，静态检查保留类型导入。构建真实HDF5数据集时仍导入并检查实际数据集类，缺少Hydra/HDF5等依赖仍须失败，不能用此变更冒充完整数据环境就绪。
+
+四个本地真实方法体检查覆盖：零worker恢复、多worker恢复、首次迭代保留原始随机消耗，以及重建异常时恢复RNG并保留pending。旧条件在其中两个零worker用例失败，候选四项通过；这些检查使用假RNG，未运行Torch。96份源码已固定、94份Python语法通过；新的0GPU/4CPU/16GiB/15分钟现场请求已提交，**尚无该修复的现场通过结论**。多worker真实预取、完整setup、真实Human/WAM和Ascend仍需分别验收。
