@@ -1316,7 +1316,7 @@ def build_loader(native_dataset, cases, binding, dp_rank, dp_world_size,
 
 ## 18. RoboCasa 完整 Trainer 候选：原生编码、真实损失与恢复身份
 
-2026-11-15 增补。当前已实现独立 `RoboCasaTrainer` 候选和训练入口，真实依赖下的 CPU 导入/配置检查已获执行端通过报告；**完整 setup、真实模型前后向、完整循环和模型/优化器恢复尚未通过本项现场验收**。下述内容直接给出实现合同，不要求获取其他开发仓库。第 17 节的数据接口结果、第 16 节的小模型恢复结果和旧手工 GPU 诊断各自保留，均不能代替本项。
+2026-11-15 增补。独立 `RoboCasaTrainer` 和训练入口现已通过 B300 单卡的真实 setup、模型前后向、完整循环和新进程恢复工程验收，结果及证据边界见第 18.5 节。第 18.3–18.4 节保留此前 CPU 准备与 13:31 启动快照，不能当作最新运行状态。下述内容直接给出实现合同，不要求获取其他开发仓库。第 17 节数据接口、第 16 节小模型及旧手工 GPU 诊断各自保留；多卡、正式 SFT 和 Ascend 仍未由本项验证。
 
 ### 18.1 固定工程配方与入口
 
@@ -1489,3 +1489,103 @@ def stream_index(root):
 本次 NVIDIA 预算为单张 B300、8CPU、256GiB 主存、最多两小时，启动前至少 250,000,000,000 bytes 可用磁盘，输出上限 240,000,000,000 bytes。每个训练子进程上限 2,700 秒，中断宽限 300 秒，驱动上限 6,900 秒；首个异常、非有限值或比较不一致立即失败，不自动重试。信号到达且训练器已初始化时尝试同步保存；新增 `interrupted=true` 标记才允许保存完成更新 1 的诊断中断点，正常保存点仍只接受 2/3，尚未发布完成标记的目录不能恢复。超时只清理本次所属子进程，保留部分产物和原因；不保证模型构造阶段中断能产生 checkpoint。
 
 观察含完整 CPU 拷贝、摘要、保存和比较，计时应标为“包含观察钩子的步耗时”，不可作为无观察开销的训练吞吐。该三步配方是恢复工程诊断，正式 Human/recovery SFT 仍为 0。Ascend 需把 CUDA 设备、autocast、RNG、同步与通信适配到目标运行时；先验证同一 NPU 环境自身的连续/恢复一致性，再按执行手册报告 GPU/NPU 数值差异，不能把 NVIDIA 的精确重放标准当作跨硬件逐位一致的既有结论。
+
+### 18.5 真实单卡完整训练与恢复的验收结果
+
+**独立验收时间：2026-11-15 14:21:44 UTC。** 本次在 B300 gpu2 的一张 B300 上使用第 18.1–18.4 节配方，实际调用完整 `setup()` 与通用训练循环。连续分支完成更新 1、2、3，新进程从已完成更新 2 的完整 checkpoint 恢复，只重放更新 3。两个子进程 PID 不同，均退出 0，执行端复核未留下本次进程。程序总耗时 1,674.525 秒（约 27.9 分钟）；以程序计时换算为约 0.465 单卡小时，不作为调度计费时长。调度记录已过期且 accounting 未启用，**调度终态和调度退出码未知**。
+
+本次已核对的内容如下：
+
+- 四个实际 batch 的 48 项原生数组指纹与固定参考一致。全部 171 个 FP32 参数张量、3,876,166,656 个元素以及每步 171 组 Adam 状态/计数均检查；更新 2 和 3 各有全部 171 个参数张量发生变化。
+- 恢复更新 3 的完整 JSON 与连续对照一致，包含 14 个字段：`completed_updates`、`window_index`、`batch`、`native_arrays`、`rng_before`、`forward_inputs`、`forward_outputs`、`preclip_gradients`、`metrics`、`grad_norm`、`core`、`loader`、`sampler`、`step_state`。不是仅比较 loss。
+- 执行程序对完整 forward 输入/输出、全部裁剪前梯度和最终模型/优化器/RNG/loader/sampler/step 的原始张量逐叶精确比较，通过。恢复后、首次迭代前的模型/Adam/RNG 指纹也与完成更新 2 时一致。观察前后 RNG 未变，冻结 encoder/VAE 在两个分支前后均保持一致。
+- 连续更新 2、连续更新 3、恢复更新 3 共三份 DCP 均具有完整身份文件和完成标记；恢复未修改连续分支的任何文件。117 份源码与固定部署及节点记录逐项相符，基础环境和依赖前后不变。
+
+| 完成更新 | total loss | 图像速度 loss | 动作速度 loss | 裁剪前梯度范数 |
+|---:|---:|---:|---:|---:|
+| 1 | 0.1639657319 | 0.1611591280 | 0.0028066081 | 0.4055251181 |
+| 2 | 0.2000952214 | 0.1869101226 | 0.0131851006 | 0.5575968623 |
+| 3 | 0.2445213646 | 0.1853700429 | 0.0591513254 | 1.8788301945 |
+
+三个更新使用不同窗口和噪声，不能从这三个 loss 推断收敛或泛化。观测到的峰值 allocated 为 72,567,701,504 bytes（约 67.59 GiB），reserved 为 81,086,382,080 bytes（约 75.52 GiB）。连续三步包含观察钩子的耗时分别为 97.007、28.470、59.217 秒，恢复步为 61.323 秒；完整程序还有初始化、CPU 拷贝、写盘和摘要开销，不能据此给出未观测的纯训练吞吐。
+
+**证据边界：** 执行端独立复核了 155 份原件，共 218,189,043,305 bytes 的大小和 SHA256；维护者取得并逐文件验收 35 份完整小型 JSON/日志原件，共 5,469,789 bytes，并核对上述全部数组、参数和状态指纹。大型 PT/DCP 原件仍保留在执行端，维护端没有重新加载它们；原始张量精确比较由固定执行程序在节点上完成，维护者审核该实现及完整小型记录。这支持本配方的**单卡完整训练/恢复工程验收**，不宣称所有大文件已交付给接手者。接手者按第 18.4 节生成自己的原件并重复验收。
+
+本次正式 Human SFT、recovery SFT、benchmark、多卡和 Ascend 计数均增加 0。官方累计仍为 Awomo 810/1,500 与 LoopWAM 2,100/2,500，ECR target 0/5,000；这些是完成量，不是成功率。下一步工程前置是独立多 rank 数据与恢复验证；不能直接把三步诊断权重接续为正式训练。
+
+## 19. 双 rank 候选与部署清单闭包
+
+本节直接说明接手端可重建的两 rank 候选。**截至 2026-11-15 14:22 UTC，首轮 CPU 准备失败，实际双卡模型训练、NCCL 和 HCCL 均未验证。** 它是第 18 节之后的独立工程合同，不改变此前单卡配方或历史结论。
+
+### 19.1 数据顺序、模型与 checkpoint 身份
+
+使用第 17 节相同的五个真实训练窗口和原生读取/processor。固定 world size=2、local batch=1、global batch=2、num_workers=0、数据 seed=1541、无梯度累计。对五窗口做同一全局 shuffle，再重复首项一次补齐为六次抽取，按 rank 交错划分：
+
+| 全局更新 | rank 0 窗口 | rank 1 窗口 |
+|---:|---:|---:|
+| 1 | 418544 | 357660 |
+| 2 | 267255 | 893913 |
+| 3 | 830901 | 418544（重复补齐） |
+
+全局顺序为 `418544,357660,267255,893913,830901,418544`，只包含五个唯一窗口。这个小型诊断的重复补齐与第 4 节全量 epoch 的尾部丢弃是不同合同，不应互换。三次逻辑全局更新，连续与恢复合计四次实际全局更新、八次 rank 更新；global batch 从 1 变为 2，不能要求它与单卡三步权重相同。
+
+数据工厂复用第 17 节已核验的真实 dataset、视频检查和 collate，建立实际 `RoboDojoDataLoader`/`DenseBatchSampler`，传入真实 `dp_rank` 和 `dp_world_size`。loader 的保存身份加入 `world_size`、`rank`、`local_batch_size`、固定输入 SHA256 和补齐规则；恢复先精确比较身份，错误输入或错误 rank 必须在修改运行状态前拒绝。不能把 rank 0 的数据/RNG 状态发给 rank 1。
+
+模型继续使用第 18 节 FP32 全 DiT、冻结 encoder/VAE、BF16 数学 SDPA、sigma=0.5 与相同 AdamW/裁剪。NVIDIA 候选使用复制式 DDP，`find_unused_parameters=False`、`broadcast_buffers=True`、FSDP 关闭；保留真实模型构造、`train_step`、通用 `setup`、批次/完整循环和保存恢复。模型加载与通用恢复完成后才包装 DDP。以下是需嵌入自己的 Trainer 的核心方法；调用前须已验证两个本地 rank、正确设备分配和 NCCL 进程组：
+
+```python
+def wrap_two_rank_model(self):
+    import torch
+    from torch.nn.parallel import DistributedDataParallel
+    if self.world_size != 2 or torch.distributed.get_backend() != 'nccl':
+        raise ValueError('Expected exactly two NCCL ranks')
+    self.device_mesh = None
+    self.model = DistributedDataParallel(
+        self.model, device_ids=[self.local_rank], output_device=self.local_rank,
+        find_unused_parameters=False, broadcast_buffers=True)
+
+def checkpoint_model_keys(self):
+    # Save unwraps DDP; restore runs before wrapping. Use the same key space.
+    return list(self.model.module.state_dict())
+```
+
+将这两个方法分别接到通用训练器的分布式包装位置和 checkpoint 模型键过滤位置。第 16.6 节的优化器参数名修复仍需保留。共享 checkpoint 身份文件由 rank 0 写一次，记录 world size=2、rank=0、local batch=1；每个 rank 的 RNG/loader 状态分别保存并核对。保存点仍为完成更新 2/3，新建两个恢复进程重放更新 3。每个 rank 先与自身连续分支精确比较，另核对两个 rank 的 all-reduce 后梯度与更新后模型/Adam 状态相同；不要要求不同 rank 的输入或随机状态相同。Ascend 需另行实现 NPU/HCCL 包装并验证，不把上面 CUDA/NCCL 代码称为可直接运行的 NPU 入口。
+
+### 19.2 CPU 准备失败及接手端的闭包检查
+
+首轮 CPU 合同为 0 GPU、4 CPU、32 GiB、30 分钟上限，按 rank 0 连续、rank 0 新进程恢复、rank 1 连续、rank 1 新进程恢复四个串行独立进程执行；每个 rank 连续读取三批，消费第二批后保存 loader/RNG，新进程只恢复第三批。预期共八个实际 batch，每批 17 个数组，136 项指纹，并验证错误输入/rank 绑定拒绝。CPU 阶段只验证真实数据、配置和恢复，不能创建模型、优化器或分布式进程组。
+
+实际于 14:20:52–14:21:04 UTC 在 B300 gpu2 的 CPU 上执行，调度 `FAILED / 1:0`、12 秒，程序用时 10.562 秒。在 rank 0 连续阶段构造恢复身份时，程序需要读取一个配套输入清单，但该清单未列入 116 文件部署集合，干净目录不存在它，触发 `FileNotFoundError`。静态复核还发现恢复身份所需的训练入口也未列入该部署集合。失败发生在 RNG/loader 构造前：**0/4 阶段完成、0 batch、0 模型/优化器更新**。116 份已列源码、基础环境及依赖前后未变，所属进程退出。三份完整 receipt/stdout/stderr 共 43,791 bytes 已回传，逐文件 SHA256 和原始 traceback 已核对。没有向原目录临时补件或原样重跑。
+
+这个失败说明：逐文件校验已列出的文件，并不能证明运行依赖没有遗漏。接手者在自己的实现中把训练代码、入口、所有配置/输入清单，以及这些清单引用的本地辅助文件显式纳入同一部署集合。在调用原生模型或分配设备前，从**干净暂存目录**执行真实配置构造和恢复身份生成；仅在完整开发目录导入成功不足以证明包完整。
+
+下面的标准库检查可用于强制“恢复身份依赖集合是部署集合的子集”，`identity_files` 必须由实际恢复身份构造逻辑返回，不能另写一份更短的手工列表。两种索引格式分别为相对路径→SHA256 和相对路径→`{bytes, sha256}`。路径均相对于接手端的新暂存目录，无需原运行端目录：
+
+```python
+from pathlib import Path
+import hashlib
+
+def verify_identity_closure(staging, deployment, identity_files):
+    root = Path(staging).resolve(strict=True)
+    missing = set(identity_files) - set(deployment)
+    if missing:
+        raise ValueError('Identity dependencies missing from deployment: ' +
+                         ', '.join(sorted(missing)))
+    for name, expected_sha in identity_files.items():
+        path = root / name
+        if (Path(name).is_absolute() or '..' in Path(name).parts
+                or path.is_symlink() or not path.is_file()
+                or not path.resolve().is_relative_to(root)):
+            raise ValueError('Invalid dependency path: ' + name)
+        record = deployment[name]
+        digest = hashlib.sha256()
+        with path.open('rb') as stream:
+            for block in iter(lambda: stream.read(8 << 20), b''):
+                digest.update(block)
+        if (path.stat().st_size != record['bytes']
+                or digest.hexdigest() != record['sha256']
+                or record['sha256'] != expected_sha):
+            raise ValueError('Identity dependency mismatch: ' + name)
+```
+
+先加入“删除一个身份依赖”“修改内容”和“错误 rank/输入”的失败对照，再用新的固定部署执行四阶段 CPU 准备。首错停止并保留完整日志。只有其真实数据与新进程恢复通过后，才运行实际双卡完整模型/NCCL 的连续与恢复对照。当前候选、上述检查代码以及单卡验收都不能替代该现场多卡结果；正式 Human/recovery 配方和目标基线仍需单独完成。

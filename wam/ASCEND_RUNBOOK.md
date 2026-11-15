@@ -18,6 +18,7 @@
 | 真实 Trainer 的保存与恢复方法集成 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 16 节保留实际方法、原生步数和默认loader RNG，使用新进程逐状态比较；完整setup和目标设备训练仍须另验 |
 | 真实 Human 数据接入 Trainer 配置接口 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第 17 节的固定五窗口、完整采样/loader 代码和输入绑定重建数据工厂；不能直接沿用 RoboDojo 的数据与历史布局。CPU 数据接口结果不代替完整训练器与模型恢复验收 |
 | RoboCasa 专用完整训练器候选 | 按[实现细节](IMPLEMENTATION_DETAILS.md)第18节的固定配方、原生模型构造、可微train_step和恢复身份规则实现；先验真实完整setup/循环/保存恢复，再做目标设备适配，不能直接启动正式SFT |
+| 双 rank 数据与部署完整性 | 按[实现细节第 19 节](IMPLEMENTATION_DETAILS.md#19-双-rank-候选与部署清单闭包)重建两个 rank 的固定序列、重复补齐和身份；先在干净目录验证全部运行依赖，再执行四阶段 CPU 数据恢复。当前首轮缺件失败，多卡模型/NCCL/HCCL 均未验 |
 
 在本仓库根目录执行 `sha256sum -c PUBLIC_SHA256SUMS` 核对交付内容。文档中的历史成功记录仅用于确定对照合同；新实现仍须逐阶段验收。缺少尚未交付的参考张量或目标平台实现时，明确记录缺项与生成步骤，不以申请其他 GitHub 仓库权限作为默认解决办法。
 

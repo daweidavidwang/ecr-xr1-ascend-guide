@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T13:35:10.086930+00:00",
+    "checked_at": "2026-11-15T14:33:41.115041+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 87,
+    "local_wam_links_checked": 91,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 24,
+    "inline_python_blocks_syntax_checked": 26,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -343,7 +343,16 @@
       "implementation_added": "Section 18.4 includes lifecycle observation order, exact tensor comparison and streaming file hashes, independent process recovery, failure handling, budgets and factual validation boundaries",
       "runtime_results": "CPU metadata review and time-stamped GPU startup only; no GPU completion or Ascend validation inferred",
       "limitation": "URL allowlist and known-identifier scanning cannot automatically prove the absence of every possible bare repository name; current text was also reviewed"
-    }
+    },
+    "identity_closure_example_checks": [
+      "valid staged identity",
+      "omitted deployment entry rejected",
+      "wrong digest rejected",
+      "modified file rejected",
+      "missing staged file rejected"
+    ],
+    "source_history_commits_crosschecked": 395,
+    "non_public_source_tokens_matched": 0
   },
   "engineering_addendum": {
     "checked_at": "2026-11-14T07:23:17.189660+00:00",
@@ -1624,6 +1633,170 @@
     },
     "gpu_or_ascend_success_claimed": false,
     "formal_sft_credit": 0,
+    "private_development_references_added": false
+  },
+  "full_trainer_single_gpu_acceptance": {
+    "observed_at": "2026-11-15T14:21:44.875701+00:00",
+    "state": "full_single_gpu_trainer_replay_engineering_evidence_accepted",
+    "source_files_git_plan_node_matched": 117,
+    "producer_elapsed_seconds": 1674.5250193869579,
+    "producer_gpu_hours": 0.4651458387185994,
+    "producer_phase_exit_codes": [
+      0,
+      0
+    ],
+    "process_exit_verified": true,
+    "scheduler_state": null,
+    "scheduler_exit_code": null,
+    "scheduler_limitation": "scontrol job expired; accounting storage disabled",
+    "continuous_updates": [
+      1,
+      2,
+      3
+    ],
+    "fresh_process_resumed_updates": [
+      3
+    ],
+    "model_elements": 3876166656,
+    "model_parameters_and_gradient_tensors": 171,
+    "adam_states_verified_each_update": 171,
+    "native_array_fingerprints_matched": 48,
+    "update3_all_fields_exact": [
+      "completed_updates",
+      "window_index",
+      "batch",
+      "native_arrays",
+      "rng_before",
+      "forward_inputs",
+      "forward_outputs",
+      "preclip_gradients",
+      "metrics",
+      "grad_norm",
+      "core",
+      "loader",
+      "sampler",
+      "step_state"
+    ],
+    "frozen_fingerprints_exact": true,
+    "parameter_tensors_changed_on_updates2_and3": [
+      171,
+      171
+    ],
+    "metrics": [
+      {
+        "completed_updates": 1,
+        "total_loss": 0.16396573185920715,
+        "dynamics_loss": 0.16115912795066833,
+        "action_loss": 0.002806608099490404,
+        "grad_norm": 0.4055251181125641
+      },
+      {
+        "completed_updates": 2,
+        "total_loss": 0.20009522140026093,
+        "dynamics_loss": 0.18691012263298035,
+        "action_loss": 0.013185100629925728,
+        "grad_norm": 0.5575968623161316
+      },
+      {
+        "completed_updates": 3,
+        "total_loss": 0.244521364569664,
+        "dynamics_loss": 0.1853700429201126,
+        "action_loss": 0.05915132537484169,
+        "grad_norm": 1.8788301944732666
+      }
+    ],
+    "observed_performance": [
+      {
+        "observed_step_seconds_including_hooks": 97.00713574700058,
+        "peak_allocated_bytes": 72566958080,
+        "peak_reserved_bytes": 78594965504,
+        "unobserved_training_throughput_claimed": false
+      },
+      {
+        "observed_step_seconds_including_hooks": 28.46968859201297,
+        "peak_allocated_bytes": 72567701504,
+        "peak_reserved_bytes": 81086382080,
+        "unobserved_training_throughput_claimed": false
+      },
+      {
+        "observed_step_seconds_including_hooks": 59.21736787504051,
+        "peak_allocated_bytes": 72567701504,
+        "peak_reserved_bytes": 81086382080,
+        "unobserved_training_throughput_claimed": false
+      },
+      {
+        "observed_step_seconds_including_hooks": 61.32307183701778,
+        "peak_allocated_bytes": 72567664640,
+        "peak_reserved_bytes": 76449579008,
+        "unobserved_training_throughput_claimed": false
+      }
+    ],
+    "peak_allocated_bytes": 72567701504,
+    "peak_reserved_bytes": 81086382080,
+    "complete_checkpoint_count": 3,
+    "node_original_files_verified": 155,
+    "node_original_bytes_verified": 218189043305,
+    "owner_small_original_files_verified": 35,
+    "owner_small_original_bytes_verified": 5469789,
+    "large_originals_returned": false,
+    "receipt_sha256": "6129bfdcf08ed1b32063943c3b7a90d829c06fa7ba88fc45a612c6c234bdc65e",
+    "formal_sft_credit": 0,
+    "benchmark_credit": 0,
+    "ascend_credit": 0,
+    "multi_gpu_credit": 0,
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md sections 18.1–18.5",
+    "evidence_boundary": "Full raw tensor leaf comparisons executed on the training node. Maintainer independently inspected complete small original traces and source; large PT/DCP retained and independently hashed on node, not reloaded by maintainer. No large originals delivered in this repository.",
+    "private_development_references_added": false
+  },
+  "two_rank_cpu_preparation_failure": {
+    "observed_at": "2026-11-15T14:32:50.830361+00:00",
+    "state": "failed_deployment_closure_owner_audited",
+    "scheduler_state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 12,
+    "native_elapsed_seconds": 10.561676829995122,
+    "phases_completed": 0,
+    "phases_planned": 4,
+    "data_batches_consumed": 0,
+    "optimizer_updates": 0,
+    "gpu_or_npu_runs": 0,
+    "formal_sft_credit": 0,
+    "source_files_git_plan_node_matched": 116,
+    "source_environment_unchanged": true,
+    "overlays_unchanged": true,
+    "process_exit_verified": true,
+    "small_original_files_verified": 3,
+    "small_original_bytes_verified": 43791,
+    "receipt_sha256": "fc750271fe86582ebdfbfbc561d9f0ff502704451e53da34715e1144e9b8785e",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 19",
+    "failure": "Recovery identity construction tried reading an input manifest omitted from the clean deployment; FileNotFoundError before RNG/loader construction. Another required entrypoint was also absent by static closure review.",
+    "contract": {
+      "world_size": 2,
+      "local_batch_size": 1,
+      "global_batch_size": 2,
+      "num_workers": 0,
+      "seed": 1541,
+      "rank_window_order": {
+        "0": [
+          418544,
+          267255,
+          830901
+        ],
+        "1": [
+          357660,
+          893913,
+          418544
+        ]
+      },
+      "continuous_batches_per_rank": 3,
+      "save_after_consumed_batches": 2,
+      "fresh_process_resumed_batches_per_rank": 1,
+      "unique_windows": 5,
+      "global_draws": 6
+    },
+    "proposed_remedy": "Build source inventory from the actual identity dependency closure; verify a clean staged package and negative controls before a new four-phase CPU run.",
+    "multi_gpu_validated": false,
+    "ascend_validated": false,
     "private_development_references_added": false
   }
 }
