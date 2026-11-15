@@ -1907,7 +1907,7 @@
   },
   "model_tracking_repair": {
     "checked_at": "2026-11-15T15:38:57.279502+00:00",
-    "state": "local_checks_passed_native_retest_pending",
+    "state": "local_checks_and_repaired_source_cpu_report_passed_native_gpu_retest_pending",
     "implementation_location": "wam/IMPLEMENTATION_DETAILS.md sections 19.1 and 19.4",
     "algorithm": "Require existing model registration; replace only its dictionary value with the distributed wrapper. Keep the generic tracking guard and original key.",
     "tracking_checks": 5,
@@ -1924,7 +1924,8 @@
     "full_two_gpu_passed": false,
     "ascend_passed": false,
     "formal_sft_credit": 0,
-    "private_development_references_added": false
+    "private_development_references_added": false,
+    "new_cpu_preparation_completed": true
   },
   "latest_research_status": {
     "checked_at": "2026-11-15T15:38:57.279502+00:00",
@@ -1942,5 +1943,47 @@
     "formal_human_sft_updates": 0,
     "formal_recovery_sft_updates": 0,
     "ascend_runs": 0
+  },
+  "repaired_model_registration_cpu_preparation": {
+    "observed_at": "2026-11-15T15:44:55.716252+00:00",
+    "scheduler_state": "COMPLETED",
+    "exit_code": "0:0",
+    "producer_elapsed_seconds": 57.138952788955066,
+    "phase_count": 4,
+    "distinct_pids": 4,
+    "actual_batches": 8,
+    "array_fingerprints_matched": 136,
+    "rank_orders": {
+      "0": [
+        418544,
+        267255,
+        830901
+      ],
+      "1": [
+        357660,
+        893913,
+        418544
+      ]
+    },
+    "five_unique_windows_six_global_draws": true,
+    "rank_resumed_json_records_exact": true,
+    "phase_json_content_reconstitutes_indexed_original_sha": true,
+    "rank_rng_full_leaf_comparison": "Producer executed on node; raw PT not reloaded by owner.",
+    "wrong_input_and_rank_rejected": true,
+    "source_files_git_plan_node_matched": 120,
+    "source_and_environment_unchanged_monitor_verified": true,
+    "process_exit_verified": true,
+    "original_files": 25,
+    "original_bytes": 54220327,
+    "complete_raw_returned": false,
+    "node_receipt_sha256": "caad77a9e0e6b9a50ee9a6fdb6b5a3547cd8314dfbf66984c25b55d88f0fe3ed",
+    "tracking_tests_remote_complete_log_verified": 5,
+    "gpu_or_npu_runs": 0,
+    "optimizer_updates": 0,
+    "formal_sft_credit": 0,
+    "state": "real_rank_data_and_resume_report_passed_metadata_independently_audited",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 19.4",
+    "native_two_gpu_successor": "submitted_no_pass_claim",
+    "private_development_references_added": false
   }
 }
