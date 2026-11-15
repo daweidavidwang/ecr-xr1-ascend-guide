@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T01:20:09.143524+00:00",
+    "checked_at": "2026-11-15T01:27:32.042713+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 59,
@@ -1078,7 +1078,7 @@
     ]
   },
   "joint_training_resume_preparation": {
-    "state": "implemented_and_requested_not_runtime_accepted",
+    "state": "both_cpu_producers_report_passed_full_raw_owner_acceptance_pending",
     "local_tests": {
       "total": 69,
       "passed": 67,
@@ -1101,6 +1101,22 @@
     ],
     "source_repository_dependencies": "Only fixed public upstreams and the implementation algorithm written directly in section 12.",
     "formal_sft_credit": 0,
-    "ascend_execution_credit": 0
+    "ascend_execution_credit": 0,
+    "producer_reported_tests_passed_per_site": 69,
+    "source_after_pins_verified_per_site": 48,
+    "base_environment_unchanged_reported": true,
+    "complete_cpu_artifacts_owner_accepted": false,
+    "gpu_release_created": false,
+    "scheduler_observations": {
+      "b300-1": {
+        "state": "COMPLETED",
+        "exit_code": "0:0"
+      },
+      "b300-2": {
+        "state": "record_missing",
+        "exit_code": null
+      }
+    },
+    "evidence_scope": "Delivered terminal metadata only; complete producer receipts, previews, unit records and raw logs are retained on nodes and pending independent acceptance."
   }
 }
