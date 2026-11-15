@@ -820,3 +820,70 @@ def publish_complete_marker(path):
 两进程对照依次测试：正常完成、前一次 future 失败、当前模型 future 失败、当前优化器 future 失败、rank 0 附件失败、配置失败、普通状态失败、loss metadata 失败、已有 partial 目录。前三类 future 故障在 rank 1 注入，后四种写入故障在 rank 0 注入；每种失败都要求两个 rank 报告同一汇总错误，且没有完成标记或 LATEST。正常情形在 rank 1 的当前 future 内短暂等待，并确认这时尚未发布。
 
 固定预算：0 GPU、4 CPU、16 GiB RAM、15 分钟；每个 Gloo group 超时 20 秒，每组两个子进程总等待上限 55 秒，总 driver 预算 600 秒，文件输出不超过 10 MB。保存每个 rank 的错误、实际后端、future 等待事件、源码/环境前后摘要及退出码；父进程只终止自己超时的子进程。该对照即使通过，也只证明上述控制流程和 CPU Gloo 传播；真实 DCP、实际模型保存恢复、NCCL/HCCL、跨节点及 Ascend 都仍需另验。
+
+## 14. 真实 DCP 的独立 CPU 保存与恢复诊断
+
+**状态（2026-11-15）：** 18 份相关源码的语法检查通过。B300 执行端已报告单/双 rank 的连续运行与新进程恢复共四阶段通过，六个 rank 进程均退出 0，driver 用时 24.05 秒；调度终态为 COMPLETED、退出码 0:0。18 份源码及环境前后摘要已核对。节点索引列出 45 件、678,601 bytes 的原件，包括六份 rank JSON、15 份 oracle、四份 DCP metadata、六个 DCP shard 和三份 rank 辅助状态；完整原件仍待正常磁盘容量下回传，尚未完成独立内容验收。本节直接给出接手端可独立实现的完整实验规格。它使用真实 `Checkpointer`、PyTorch DCP 和 AdamW，不使用模型/存储替身；模型是下述 61 参数的合成小模型，不能计作 WAM、Human SFT、完整训练器、FSDP、GPU 或 Ascend 验收。
+
+### 14.1 固定模型、运行路径与比较对象
+
+使用本指南公开 SFT 基底的 checkpoint 模块，并先按第 13 节接入保存完成边界。以下模型、优化器与调度器用于诊断：
+
+```python
+import torch
+from awomo.training.checkpoint.checkpointing import Checkpointer, CheckpointingConfig
+
+
+class TinyModel(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layers = torch.nn.Sequential(
+            torch.nn.Linear(4, 7), torch.nn.Tanh(),
+            torch.nn.Dropout(0.25), torch.nn.Linear(7, 3),
+        )
+        self.unused = torch.nn.Parameter(torch.zeros(2))
+        self.register_buffer('batches', torch.zeros((), dtype=torch.int64))
+
+    def forward(self, x):
+        self.batches.add_(1)
+        return self.layers(x)
+
+
+def make_checkpoint_probe(checkpoint_root, rank, world_size, resuming=False):
+    torch.manual_seed(9876 if resuming else 1541)
+    model = TinyModel()
+    assert sum(p.numel() for p in model.parameters()) == 61
+    train_model = (torch.nn.parallel.DistributedDataParallel(
+        model, find_unused_parameters=True) if world_size == 2 else model)
+    optimizer = torch.optim.AdamW(
+        train_model.parameters(), lr=0.003, betas=(0.9, 0.95), foreach=False)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
+    config = CheckpointingConfig(
+        enabled=True, checkpoint_dir=checkpoint_root, model_save_format='torch_save',
+        model_cache_dir=checkpoint_root.parent / 'unused-cache', model_repo_id='tiny-cpu-fixture',
+        save_consolidated=False, is_peft=False, is_async=False,
+    )
+    checkpointer = Checkpointer(config, dp_rank=rank, tp_rank=0, pp_rank=0)
+    return model, train_model, optimizer, scheduler, checkpointer
+```
+
+当前对照环境固定 `torch==2.8.0+cu129`，实际只使用 CPU，`CUDA_VISIBLE_DEVICES` 为空；不安装依赖、不下载权重。所有进程设 Torch intra-op/inter-op 线程各为 1，启用 deterministic algorithms。使用真实 Gloo，分别运行 world size 1 和 2。双 rank 训练通过 DDP 平均梯度；保存与加载传入未包装的 `model`，优化器持有同一组参数。该实验不验证 DDP 前缀转换或 DTensor 分片。
+
+训练前分别设置 Torch、NumPy、Python 随机种子为 `2000+rank`、`3000+rank`、`4000+rank`。每次更新生成 `x=torch.randn(5,4)`、`target=torch.randn(5,3)`，以及 `scale=float(np.random.uniform(0.8,1.2)+random.random()/10)`；loss 为 `((train_model(x)*scale-target)**2).mean()`。依次清梯度、前向、反向、检查有限值、AdamW step、scheduler step，最后推进已完成更新计数。每次须有参数改变；四个参与训练的参数张量有梯度，`unused` 不得出现 AdamW 状态。其他优化器默认值由上述固定 Torch 版本确定，实际完整 `param_groups` 必须保存并比较。
+
+### 14.2 连续分支与全新进程恢复
+
+每个 world size 独立使用新目录，先连续完成更新 1–5，再退出全部进程；随后重新 spawn 同样数量的进程，从更新 2 恢复并重放更新 3–5。总计四个运行阶段、六个 rank 进程，每个 rank 的逻辑更新为 5、实际更新为 8。两种 world size 分别比较各自连续与恢复分支，不要求不同 world size 得到相同权重。
+
+1. 每次更新后保存独立 oracle，包含全部模型参数与 buffer、完整 optimizer state/param_groups、scheduler state、rank/world size/已完成计数、Torch CPU RNG、NumPy RNG、Python RNG，并保存本次输入、target、scale、loss 与四份梯度。
+2. 连续分支更新 2 后，rank 0 新建保存目录，各 rank 同步。调用真实 `save_model(model, path)`、`save_on_dp_ranks(rank_state, state_name, path)`、`save_optimizer(optimizer, model, path, scheduler)` 和 `async_wait()`。辅助状态的 `state_name` 使用包含本次运行与 world size 身份的唯一名字，避免该写入器的临时路径与其他运行相撞。
+3. 所有 rank 的保存返回后同步，再由 rank 0 发布第 13 节的完成标记，之后再次同步。必须存在真实 `model/.metadata`、`optim/.metadata` 及其 DCP 文件；保存动作本身不得改变参数、优化器、schedule 或任何 RNG。保留更高 step 的不完整目录，确认选择器忽略它且显式完成检查拒绝它。
+4. 恢复进程采用不同的模型初始化 seed（上例 `9876`），证明恢复确实改变了初始化参数。依次调用 `load_model(model, path/'model')`、`load_optimizer(optimizer, model, path, scheduler)`，最后调用 `load_on_dp_ranks(rank_state, state_name, path)` 恢复 rank 身份、计数和三类 RNG。辅助状态先核对 world size/rank 及计数恰为整数 2，再设置 RNG。
+5. 在下一次更新前，将完整恢复状态与更新 2 的 oracle 逐叶比较。每次重放更新 3–5 后，再逐叶比较全部状态和本次输入、loss、梯度。张量与数组的 dtype、shape、每个元素必须完全一致，字典键、列表/tuple 类型及标量也须一致；不能只比较 loss 或参数摘要。
+6. 恢复结束后重新计算 checkpoint 目录下全部普通文件的大小与 SHA256，要求与连续分支结束时完全相同。原 checkpoint 和 oracle 保留，恢复过程不能修改它们。
+
+### 14.3 预算、失败与解释边界
+
+资源上限为 0 GPU、4 CPU、16 GiB RAM、15 分钟；每个 Gloo group 超时 30 秒，每个阶段等待全部子进程最多 120 秒，总 driver 预算 600 秒，完整小型输出不超过 10 MB。导入失败即停，不用临时模块替身或额外安装把失败改成通过。父进程保留各子进程退出码、日志、JSON 和完整失败栈；超时时只结束自己的子进程，不原样重试。源码和环境在运行前后均核验。
+
+回交材料包括四阶段结果、六个 rank 的原始日志/JSON、全部 oracle、实际 DCP 目录及逐文件索引。只有完整原件经独立读取、校验和内容比较后，才能记作本项通过。该实验的计数器不是真实 DataLoader/prefetch 游标；也没有实例化完整 `Trainer`、执行异步 DCP、测试 HCCL/NCCL 或恢复真实 WAM 权重。现有联合数据/训练恢复及完整训练器验收仍须单独完成。

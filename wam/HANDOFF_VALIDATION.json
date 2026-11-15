@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T05:42:04.383349+00:00",
+    "checked_at": "2026-11-15T06:26:29.696262+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 72,
+    "local_wam_links_checked": 74,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 13,
+    "inline_python_blocks_syntax_checked": 14,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -149,7 +149,8 @@
       "Native nine-slot history observation, source-frame provenance and fixed development inputs",
       "EGL context cleanup and restoration, validation limits and fixed failed-shard reruns",
       "Joint consumed-loader, model, optimizer and RNG checkpoint with fresh-process replay",
-      "Checkpoint completion marker and selector, early setup resume gate, future draining, local rank failure boundaries and validation scope"
+      "Checkpoint completion marker and selector, early setup resume gate, future draining, local rank failure boundaries and validation scope",
+      "Real synchronous DCP with a 61-parameter CPU fixture, world1/world2 fresh-process replay and full-state exact comparisons"
     ],
     "public_upstream_commit_checks": [
       {
@@ -209,13 +210,15 @@
         "wam/EVALUATION.md section 3.1",
         "wam/ASCEND_RUNBOOK.md dependency table",
         "wam/IMPLEMENTATION_DETAILS.md sections 9-11",
-        "wam/IMPLEMENTATION_DETAILS.md section 12"
+        "wam/IMPLEMENTATION_DETAILS.md section 12",
+        "wam/IMPLEMENTATION_DETAILS.md section 14"
       ],
       "changes": [
         "Replaced vague references to the former evaluation wrapper with explicit launch and validation requirements.",
         "Replaced old queue revision identifiers with standalone timeout and attempt-preservation rules.",
         "Specified local provenance, frozen protocols, initial-state checks, process exits and artifact indexing without external engineering-repository dependencies.",
-        "Documented initial-state diagnosis, native history observation and renderer cleanup directly, including fixed inputs, implementation behavior, validation boundaries and rerun budgets."
+        "Documented initial-state diagnosis, native history observation and renderer cleanup directly, including fixed inputs, implementation behavior, validation boundaries and rerun budgets.",
+        "Added the exact tiny model, real Checkpointer API sequence, optimizer and RNG comparison contract, budgets and limitations directly to the public handover."
       ],
       "unbundled_payloads": "GPU tensors, full historical asset indexes, checkpoints and raw rollouts remain subject to the explicitly documented delivery boundaries; no new payload delivery or runtime validation is claimed."
     },
@@ -1227,5 +1230,64 @@
     "source_after_files_matched": 9,
     "environment_after_unchanged": true,
     "full_original_rank_payloads_accepted": false
+  },
+  "real_dcp_cpu_probe_preparation": {
+    "checked_at": "2026-11-15T06:26:27.160031+00:00",
+    "state": "native_producer_reports_passed_full_originals_pending",
+    "scope": "Real production Checkpointer and synchronous DCP with a 61-parameter CPU fixture; not a full Trainer, WAM model, Human dataset, FSDP or device validation.",
+    "local_source_files_syntax_checked": 18,
+    "native_dcp_executed_locally": false,
+    "world_sizes": [
+      1,
+      2
+    ],
+    "fresh_process_phases": 4,
+    "rank_processes": 6,
+    "save_update": 2,
+    "replay_updates": [
+      3,
+      4,
+      5
+    ],
+    "state_compared": [
+      "all model parameters and buffers",
+      "complete AdamW state and param_groups",
+      "StepLR state",
+      "rank, world size and completed counter",
+      "Torch CPU, NumPy and Python RNG",
+      "inputs, target, scale, loss and gradients"
+    ],
+    "checkpoint_model": "unwrapped replicated CPU module; DDP used only for two-rank training gradients",
+    "resources": {
+      "gpus": 0,
+      "cpus": 4,
+      "ram_gib": 16,
+      "walltime_minutes": 15
+    },
+    "payload_limit_bytes": 10000000,
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 14",
+    "native_result_owner_accepted": false,
+    "private_github_dependencies": false,
+    "formal_sft_credit": 0,
+    "ascend_credit": 0,
+    "scheduler_state": "COMPLETED",
+    "scheduler_exit_code": "0:0",
+    "producer_elapsed_seconds": 24.050276862981264,
+    "reported_phase_passes": 4,
+    "reported_rank_process_exitcodes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "source_before_after_files_verified": 18,
+    "environment_before_after_matches": true,
+    "node_artifact_index_files": 45,
+    "node_artifact_index_bytes": 678601,
+    "complete_producer_receipt_returned": false,
+    "per_rank_raw_json_independently_read": false,
+    "oracle_and_dcp_payloads_returned": false
   }
 }
