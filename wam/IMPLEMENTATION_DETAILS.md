@@ -1313,3 +1313,97 @@ def build_loader(native_dataset, cases, binding, dp_rank, dp_world_size,
 本地7项标准库检查覆盖几何限制、validation拒绝、重复/越界/布尔行号拒绝、原始payload保持、case独立复制与错误episode拒绝；103份Python语法检查通过。它们未执行原生Torch。现场请求预算为0GPU、4CPU、32GiB、25分钟；每阶段540秒、driver1200秒、原件上限256MB。现场于2026-11-15 11:08:11–11:08:46 UTC完成，调度终态为`COMPLETED / 0:0`，程序用时34.32秒。执行端报告连续五批和新进程恢复后三批通过；实际全局窗口顺序为`418544,357660,267255,893913,830901`。维护者独立核对回传的136个数组指纹与已验固定参考、恢复记录与连续后三批、输入绑定拒绝、109份源码及基础环境/两套依赖不变和进程退出。共17份原件66,184,134 bytes，包括八个完整NPZ和两个PT，仍未完整回传；完整RNG/张量验收尚未完成。这是**数据接口执行端报告通过**，没有模型或优化器更新。
 
 下一步仍须实现完整RoboCasa Trainer子类，把原生encoder和本项目明确的损失接入真实setup与完整训练循环，再分别验证真实模型/优化器保存恢复、多worker和目标设备。上述五样本接口通过也不能替代这些步骤、正式配方或基线前置。原件按正常容量门槛回传，未回传的PT/NPZ不视为交付；本次不释放旧GPU工单，也不增加正式SFT或Ascend计数。
+
+## 18. RoboCasa 完整 Trainer 候选：原生编码、真实损失与恢复身份
+
+2026-11-15 增补。当前已实现独立 `RoboCasaTrainer` 候选和训练入口，真实依赖下的 CPU 导入/配置检查已获执行端通过报告；**完整 setup、真实模型前后向、完整循环和模型/优化器恢复尚未通过本项现场验收**。下述内容直接给出实现合同，不要求获取其他开发仓库。第 17 节的数据接口结果、第 16 节的小模型恢复结果和旧手工 GPU 诊断各自保留，均不能代替本项。
+
+### 18.1 固定工程配方与入口
+
+本项在第 17 节相同五窗口池上只消费前三批：窗口 `418544,357660,267255`；完整池及其采样顺序不变。连续分支做三次真实更新，在完成第二、第三次后分别保存；新进程从第二次保存点恢复，只重放第三次。共三次逻辑更新、四次实际更新。它与第 5 节旧的“保存第一次、重放第二/三次”诊断是两个独立合同，不互换证据。
+
+| 项目 | 固定值及作用 |
+|---|---|
+| 启动几何 | 单 CUDA 卡；RANK/LOCAL_RANK=0，WORLD_SIZE/LOCAL_WORLD_SIZE=1；local/global batch 均 1，零 worker，无梯度累计 |
+| 随机数 | 训练 seed=20261115；数据顺序 seed=1541；开启 deterministic algorithms，启动前设置 `CUBLAS_WORKSPACE_CONFIG=:4096:8`，关闭 TF32 |
+| 参数策略 | 全部 DiT，包括 proprio encoder；171 个参数张量、3,876,166,656 个元素，FP32 主参数。Qwen 基础参数、发布 LoRA、VAE 均冻结并处于 eval |
+| 前向与损失 | 数学 SDPA，BF16 autocast；固定 sigma=0.5、timestep=500；图像和全部 80 维动作分别采独立标准高斯噪声；图像速度 MSE 加 11 个有效动作维度的速度 MSE |
+| 优化器 | AdamW，lr=1e-5，betas=(0.9,0.999)，eps=1e-8，weight_decay=0；foreach=False、fused=False；全参数梯度裁剪 1.0，非有限或全零梯度失败 |
+| 调度 | num_epochs=1、max_steps=3、ckpt_every_steps=2、save_checkpoint_every_epoch=False、log_every=1；不使用 EMA 或学习率调度器 |
+| checkpoint | 同步 DCP，torch_save 格式；关闭 consolidated/HF 导出。恢复必须同时恢复模型、优化器、RNG、数据和步数；不允许 warm start 或跳过 optimizer/data |
+| 输入与输出 | 所有模型和 Human 输入从已校验的固定本地文件读取；HF/Transformers offline=1。每个分支新建独立输出目录，已存在目录立即失败 |
+
+配置采用公开 SFT 基底的 `ConfigNode`。`data.dataloader._target_` 指向第 17 节在接收端实现的数据工厂；其参数为输入根、站点身份、固定输入清单路径及 SHA256、num_workers=0、seed=1541。通用 setup 注入 dp_rank/dp_world_size/batch_size。`_model_cfg` 返回本地 `action_patch` 配置：dit.action_dim=max_state_dim=80、loss_lambda_action=1.0、noise_mode=`fixed_sigma_0_5`；scheduler.num_train_timesteps=1000、shift=1.0。为满足通用字段接口，设置 video_beta_alpha=high_noise_beta_alpha=1.0、num_frame_per_block=1、concat_first_frame_latent=False、tiled_vae=False、四个 tile size/stride 字段均 0、target_video_height=320、target_video_width=224、cfg_scale=1.0。固定噪声由下面的真实 train_step 计算，不调用通用随机 timestep 路径。
+
+### 18.2 模型构造及可微训练步骤
+
+按本指南的公开输入清单逐文件核验大小和 SHA256，拒绝额外 processor override。使用公开原生 `Awomo05i(checkpoint, device, qwen_path, vae_path)` 加载发布的 VLM/LoRA/VAE；冻结 encoder/vae，并删除其中仅供推理的 BF16 `dit`。原生 `encode()` 不依赖这个被删除的 DiT。再从同一个已核验 `model.pt` 构造训练模型：
+
+```python
+import torch
+from diffusers import Flux2Transformer2DModel
+from awomo.awomo_05i.model import ActionPatchModel
+
+weights = torch.load(checkpoint / 'model.pt', map_location='cpu',
+                     weights_only=True, mmap=True)
+with torch.device('meta'):
+    model = ActionPatchModel(
+        Flux2Transformer2DModel.from_config(weights['dit_config']), 80, 80, 1.0)
+expected = model.state_dict()
+assert set(expected) == set(weights['dit'])
+masters = {}
+for name, value in weights['dit'].items():
+    assert value.shape == expected[name].shape and value.device.type == 'cpu'
+    assert value.dtype in (torch.float32, torch.bfloat16, torch.float16)
+    assert torch.isfinite(value).all()
+    masters[name] = value.to(dtype=torch.float32, device='cpu', copy=True)
+model.load_state_dict(masters, strict=True, assign=True)
+model = model.to(device).requires_grad_(True).train()
+assert len(list(model.parameters())) == 171
+assert sum(p.numel() for p in model.parameters()) == 3876166656
+```
+
+FP32 主参数必须直接由发布值转换，不能先经过原生推理 DiT 的 BF16 再升回 FP32。冻结的原生编码对象不登记为训练模型：通用 Trainer 自动登记状态，应只把可训练 DiT 放入 `self.model`，冻结对象放入单独的非登记属性。发布权重加载器和通用 setup 均会开启 TF32，须在二者执行后、首次编码前再次关闭 CUDA matmul/cudnn 的 TF32。
+
+`batch['item']` 是第 17 节工厂给出的真实样本。以下方法直接写入自己的 Trainer 子类；保留公开原生的 ACTION_MASK 和 encode/DiT 参数顺序：
+
+```python
+from torch.nn.attention import sdpa_kernel, SDPBackend
+from eval_robocasa365.common import ACTION_MASK
+
+def train_step(self, batch, step, micro_idx):
+    assert micro_idx == 0 and 0 <= step < 3
+    item = batch['item']
+    assert item['identity']['split'] == 'train'
+    sample = dict(item['sample'], vl=item['vl'])
+    # 调用前按第 2–3 节检查 video/history/state/action 的形状、类型和值域。
+    with sdpa_kernel(SDPBackend.MATH), torch.no_grad():
+        e = self._native_conditioner.encode(sample)
+    image = e['target'].float()
+    action = torch.from_numpy(sample['action'])[None].to(self.device)
+    ni, na = torch.randn_like(image), torch.randn_like(action)
+    xi, xa = 0.5 * image + 0.5 * ni, 0.5 * action + 0.5 * na
+    vi, va = ni - image, na - action
+    timestep = torch.full((1,), 500.0, device=self.device)
+    with sdpa_kernel(SDPBackend.MATH), torch.autocast('cuda', dtype=torch.bfloat16):
+        pi, pa = self.model(e['reference'], xi, xa, e['context'], e['text_mask'],
+                            e['state'], timestep, e['image_grid'], e['history'],
+                            e['history_ids'], e['history_valid'])
+    mask = torch.as_tensor(ACTION_MASK, device=pa.device)
+    assert int(mask.sum()) == 11 and pa.shape[-2:] == (16, 80)
+    li = (pi.float() - vi.float()).square().mean()
+    la = (pa.float()[..., mask] - va.float()[..., mask]).square().mean()
+    total = li + la
+    assert torch.isfinite(total)
+    return {'total_loss': total, 'dynamics_loss': li, 'action_loss': la}
+```
+
+不要调用原生带 `no_grad` 的 `velocity()` 做训练。由通用 `_run_train_batch_group` 完成 backward、clip 和 optimizer.step；子类只提供上述 train_step、固定 AdamW 构造和裁剪钩子。裁剪前要求全部 171 个参数都有 FP32 梯度、冻结模块无梯度且仍为 eval；用 `clip_grad_norm_(..., error_if_nonfinite=True, foreach=False)`。单卡 `_setup_fsdp` 明确拒绝多 rank/FSDP，设置 device_mesh=None。复用通用 `setup()` 和 `run_train_validation_loop()`，不以手工三步循环替代完整生命周期。MFU 不作估计，报告实际 step time 和 samples/s。
+
+### 18.3 保存、恢复和下一次验收
+
+每个 checkpoint 在完成标记发布前写入 `robocasa_contract.json`，包含：完整固定配方、站点、全部实际训练模块逐文件 SHA256、固定输入清单 SHA256、loader 的 Human 数据绑定和 completed_updates。本诊断正常保存点只接受 2 或 3；输出目录及恢复来源不属于训练身份，因此新进程可写入新目录，而代码、数据、站点、配方必须完全一致。通用 step 值在 batch yield 内尚未递增：完成数为 `min(3, step+1)`。在通用恢复第一次读取训练权重前，先要求第 13 节完成标记存在，并逐项验证该身份文件；缺失、修改或不一致均失败。数据恢复继续使用第 16–17 节的 RNG 保护和输入绑定检查。
+
+本地七项标准库测试覆盖两站配置、独立恢复输出目录、错误模型/优化器/数据/预算参数、bool 冒充 batch=1、额外 EMA、相对路径、共享可变配方、恢复计数和源码/输入变化；104 份 Python 文件语法检查通过。本机没有运行 Torch。本次 CPU 请求仅验证真实导入、ConfigNode 往返、状态登记、通用方法继承、数据工厂签名及 CPU 在构造模型前被拒绝；0GPU、2CPU、16GiB、10分钟，单子进程180秒、证据上限10MB，复用已核验的八包依赖，不重复读取第17节数据或训练小模型。现场于 2026-11-15 12:32:34–12:32:43 UTC 在 B300 gpu2 执行一次，调度终态 COMPLETED/0:0，程序用时 9.065 秒；上述两套站点配置的检查均报告通过，但两套配置都在 gpu2 的同一 CPU 进程中检查，不能声称 gpu1 已执行。本次独立核对 109 份源码与固定版本、计划和节点记录一致，基础环境摘要、依赖未变和进程退出也已核对。四份原件共 41,066 bytes 留在节点，完整原件仍待正常容量回传；目前是元数据核验，无模型构造、完整 setup 或优化器更新。
+
+后继 GPU 诊断仍需完成观察驱动和独立资源准入：连续三更新与新进程重放第三更新，在实际模型输入、loss、梯度、完整 model/Adam/RNG/数据状态上比较；保留完整 DCP 和原始日志，验证冻结权重前后不变。三份全量 FP32 模型及 Adam 状态约需 140GB，不可只按日志大小预约磁盘；初步磁盘预算250GB、最多2GPU小时，须现场检查可用空间和精确入口后才提交执行。本节尚未产生 GPU 或 Ascend 通过结论，也不是正式 SFT 配方。

@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T11:51:31.482871+00:00",
+    "checked_at": "2026-11-15T12:36:04.295417+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 83,
+    "local_wam_links_checked": 85,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 20,
+    "inline_python_blocks_syntax_checked": 22,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -156,7 +156,8 @@
       "Read-only loader and per-microbatch observations, preserved continuous oracle comparison and first observed CPU RNG divergence",
       "Direct zero-worker resume RNG protection code, unchanged initial iteration and real production loader/sampler validation contract",
       "Direct DDP optimizer-state pruning code with canonical names, numeric-ID fallback and reported world1/world2 exact replay; full original PT/DCP files remain unaccepted.",
-      "Real Human ConfigNode/Trainer data bridge with five frozen train windows, complete sampler/loader core code, seventeen-array comparisons and reported fresh-process data replay; full raw originals pending."
+      "Real Human ConfigNode/Trainer data bridge with five frozen train windows, complete sampler/loader core code, seventeen-array comparisons and reported fresh-process data replay; full raw originals pending.",
+      "RoboCasa full Trainer candidate: fixed single-GPU three-update recipe, public native conditioning, FP32 all-DiT construction, direct differentiable loss, generic loop and strict pre-load resume identity; native CPU import/config report only, full GPU/NPU lifecycle unvalidated."
     ],
     "public_upstream_commit_checks": [
       {
@@ -325,7 +326,7 @@
       "remaining_delivery_boundary": "Published weights and Human inputs use pinned public sources. Historical raw tensors and rollouts are not included; independent regeneration and validation are required as documented.",
       "input_pins_and_experimental_results_changed": false,
       "review_limit": "Known-identifier checks and manual reference review do not prove the absence of every arbitrary unrecognized name.",
-      "latest_documentation_addendum": "Section 17 directly provides fixed real Human inputs, source checks, full core loader/sampler code, ConfigNode interface, exact CPU data replay contract and reported result; no full setup/model/optimizer/GPU/NPU/SFT acceptance.",
+      "latest_documentation_addendum": "Section 18 directly supplies the new full-Trainer candidate implementation contract, native CPU import/config result and outstanding complete-model/GPU acceptance; no private repository or development revision dependency.",
       "changes_in_this_recheck": [
         "Rechecked all 60 tracked files, including code, environment snapshots and JSON: no known private repository identifiers or non-public development commit references found; no further reference removal was necessary.",
         "Added the real Human data interface outcome, precise evidence boundary and remaining full-Trainer work directly to the overview and receiver runbook.",
@@ -1535,5 +1536,29 @@
     "process_exit_verified": true,
     "full_originals_returned": false,
     "complete_raw_owner_acceptance": false
+  },
+  "robocasa_full_trainer_candidate": {
+    "observed_at": "2026-11-15T12:35:58.215655+00:00",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 18",
+    "state": "native_cpu_import_config_reported_passed_full_gpu_lifecycle_unvalidated",
+    "local_stdlib_tests_passed": 7,
+    "syntax_files": 104,
+    "source_files_matched": 109,
+    "execution_node": "B300 gpu2",
+    "configurations_checked": [
+      "gpu2 input mapping",
+      "gpu1 input mapping"
+    ],
+    "gpu1_execution_claimed": false,
+    "producer_elapsed_seconds": 9.065325614006724,
+    "scheduler": "COMPLETED 0:0",
+    "node_original_files": 4,
+    "node_original_bytes": 41066,
+    "complete_originals_accepted": false,
+    "full_setup_tested": false,
+    "optimizer_updates": 0,
+    "gpu_or_npu_runs": 0,
+    "formal_sft_credit": 0,
+    "private_development_references_added": false
   }
 }
