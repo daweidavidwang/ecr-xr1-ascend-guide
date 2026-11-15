@@ -1406,4 +1406,86 @@ def train_step(self, batch, step, micro_idx):
 
 本地七项标准库测试覆盖两站配置、独立恢复输出目录、错误模型/优化器/数据/预算参数、bool 冒充 batch=1、额外 EMA、相对路径、共享可变配方、恢复计数和源码/输入变化；104 份 Python 文件语法检查通过。本机没有运行 Torch。本次 CPU 请求仅验证真实导入、ConfigNode 往返、状态登记、通用方法继承、数据工厂签名及 CPU 在构造模型前被拒绝；0GPU、2CPU、16GiB、10分钟，单子进程180秒、证据上限10MB，复用已核验的八包依赖，不重复读取第17节数据或训练小模型。现场于 2026-11-15 12:32:34–12:32:43 UTC 在 B300 gpu2 执行一次，调度终态 COMPLETED/0:0，程序用时 9.065 秒；上述两套站点配置的检查均报告通过，但两套配置都在 gpu2 的同一 CPU 进程中检查，不能声称 gpu1 已执行。本次独立核对 109 份源码与固定版本、计划和节点记录一致，基础环境摘要、依赖未变和进程退出也已核对。四份原件共 41,066 bytes 留在节点，完整原件仍待正常容量回传；目前是元数据核验，无模型构造、完整 setup 或优化器更新。
 
-后继 GPU 诊断仍需完成观察驱动和独立资源准入：连续三更新与新进程重放第三更新，在实际模型输入、loss、梯度、完整 model/Adam/RNG/数据状态上比较；保留完整 DCP 和原始日志，验证冻结权重前后不变。三份全量 FP32 模型及 Adam 状态约需 140GB，不可只按日志大小预约磁盘；初步磁盘预算250GB、最多2GPU小时，须现场检查可用空间和精确入口后才提交执行。本节尚未产生 GPU 或 Ascend 通过结论，也不是正式 SFT 配方。
+上述 CPU 检查时，后继 GPU 观察驱动和独立资源准入尚未完成；下节记录其后实现、准备和启动状态。三份全量 FP32 模型及 Adam 状态约需 140GB；新增完整比较参考后，证据约需 220GB，不能只按日志大小预约磁盘。本节尚未产生 GPU 或 Ascend 通过结论，也不是正式 SFT 配方。
+
+### 18.4 完整模型观察与独立进程恢复的重建合同
+
+**状态快照：2026-11-15 13:31:29 UTC。** 观察驱动已实现，本地 12 项标准库检查、110 份 Python 文件语法检查通过。配套 CPU 准备在 B300 gpu2 执行一次，用时 25.810 秒，调度完成、退出码 0:0；117 份源码、21 个模型输入文件、15 个视频与固定清单匹配，基础环境和两组隔离依赖未变。真实数据工厂构造成功，但消费 batch=0、模型构造=0、优化器更新=0、CUDA 初始化=false。五份原件共 58,584 bytes 留在节点；独立核对的是终态元数据，完整原件尚待回传验收。后继单卡 B300 实验于 13:30:50 UTC 启动，快照显示正在构造模型，尚无更新完成或恢复通过结果。两套站点配置在同一 gpu2 CPU 上检查，不能据此报告 gpu1 已执行。
+
+接手者在自己的公开上游 checkout 中实现以下观察层，保持第 18.1–18.3 节配方。观察层只包装 `_run_train_batch_group`：向原方法传入裁剪前回调，并原样返回其结果；`setup`、`train_step`、`run_train_validation_loop`、保存、恢复和裁剪方法全部继承。实际运行必须经过 `trainer.setup()` 和 `trainer.run_train_validation_loop()`，不能用另外编写的三步循环代替。
+
+| 顺序 | 观察位置与保留内容 | 判定要求 |
+|---|---|---|
+| 1 | 每个分支完成 setup；完整冻结 encoder/VAE、初始训练参数指纹 | 冻结权重全程不变；恢复分支开始创建迭代器之前，完整模型/Adam/RNG 与连续分支完成更新 2 后一致 |
+| 2 | 真正传入批次函数的 batch | 连续窗口为 `418544,357660,267255`，恢复只取第三个；五个样本数组与七个原生 VL 数组逐项对照第 17 节参考；四次实际 batch 全部保存 |
+| 3 | 真正训练模型的 forward pre-hook / post-hook | 保存每步全部输入与输出的完整指纹；第三更新在两个分支各保存原始输入和输出，并逐张量精确比较 |
+| 4 | 通用批次函数的 before-clip 回调 | 全部 171 个梯度存在且有限；对完整梯度取指纹，第三更新在两个分支各保存原始梯度并逐张量比较 |
+| 5 | 通用批次函数返回后 | 比较完整 loss 字典、裁剪前范数、模型、Adam、RNG、loader、sampler 和 step/epoch；完成数应分别为 1/2/3 或恢复后的 3 |
+| 6 | 连续分支完成更新 3 | 保存完整 CPU 状态参考，包括模型、优化器、RNG、loader、sampler 和步数；恢复第三更新后将全部叶子与此参考精确比较 |
+| 7 | 完整循环退出 | 验证训练参数确实变化，冻结模块不变；连续分支的更新 2/3 与恢复分支的更新 3 均有完整 DCP、身份文件和完成标记 |
+| 8 | 两个独立子进程退出后 | 两进程 PID 不同；连续分支所有文件在恢复前后摘要不变；源码、依赖、环境前后不变；完整日志、退出码和文件索引齐备 |
+
+每个观察或保存操作执行前后，对训练器管理的完整 RNG 状态取指纹并要求相同；不得只检查 Torch CPU RNG。指纹必须包含张量的 dtype、shape、完整 CPU contiguous 字节，不能抽样；NumPy 保留 dtype、shape，容器保留 dict/list/tuple 类型和键身份，标量区分 bool/int/float/str，float 用十六进制表示，非有限值失败。第三步的关键张量还必须与实际保存的原件比较，不能仅凭 loss 或摘要宣布恢复成功。以下函数可用于在接收端逐叶比较；运行前另按上述规则检查所有浮点叶子有限：
+
+```python
+def exact_tree(actual, expected, path='state'):
+    import numpy as np
+    import torch
+    if isinstance(expected, torch.Tensor):
+        if (not isinstance(actual, torch.Tensor) or actual.dtype != expected.dtype
+                or actual.shape != expected.shape
+                or not torch.equal(actual.detach().cpu(), expected.detach().cpu())):
+            raise AssertionError(path)
+    elif isinstance(expected, (np.ndarray, np.generic)):
+        if (type(actual) is not type(expected) or actual.dtype != expected.dtype
+                or actual.shape != expected.shape or not np.array_equal(actual, expected)):
+            raise AssertionError(path)
+    elif isinstance(expected, dict):
+        if not isinstance(actual, dict) or actual.keys() != expected.keys():
+            raise AssertionError(path + '.keys')
+        for key in expected:
+            exact_tree(actual[key], expected[key], path + '.' + str(key))
+    elif isinstance(expected, (tuple, list)):
+        if type(actual) is not type(expected) or len(actual) != len(expected):
+            raise AssertionError(path)
+        for i, (left, right) in enumerate(zip(actual, expected)):
+            exact_tree(left, right, path + '[' + str(i) + ']')
+    elif type(actual) is not type(expected) or actual != expected:
+        raise AssertionError(path)
+```
+
+分支目录各自新建，拒绝覆盖；先启动连续分支，等待其完整成功并生成文件索引，再启动全新进程，从 `continuous/checkpoints/epoch_0_step_1` 恢复到新的 `resumed` 目录。这里目录名的 step=1 对应已完成更新 2，不能误读为只完成一次更新。完整 CPU 状态参考约 46.5GB，两个第三步梯度文件合计约 31GB，三份 DCP 合计约 139.5GB；加上 batch、forward 和日志，总计约 220GB。大文件应按块计算摘要，不能整文件 `read_bytes()`：
+
+```python
+from pathlib import Path
+import hashlib
+
+def file_record(path):
+    path = Path(path)
+    if not path.is_file() or path.is_symlink():
+        raise ValueError('Expected a regular evidence file')
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for chunk in iter(lambda: stream.read(8 << 20), b''):
+            digest.update(chunk)
+    return {'bytes': path.stat().st_size, 'sha256': digest.hexdigest()}
+
+def stream_index(root):
+    root = Path(root).resolve()
+    result = {}
+    for path in sorted(root.rglob('*')):
+        if path.is_symlink():
+            if (path.name not in ('LATEST', 'LOWEST_VAL')
+                    or not path.resolve(strict=True).is_relative_to(root)):
+                raise ValueError('Unexpected output symlink')
+            continue
+        if path.is_file():
+            result[str(path.relative_to(root))] = file_record(path)
+    return result
+```
+
+文件索引保存每个普通文件相对于运行目录的路径、bytes、SHA256；只允许指向同一输出根内的 `LATEST`/`LOWEST_VAL` 链接，不重复计数。完整状态参考含 NumPy RNG 等对象，仅加载本次可信进程生成且摘要已核验的文件。原始张量/DCP 保留在执行端，交接仓库只放必要的说明和小型摘要；没有交付原件时明确标记，接收端按本节自行生成和验收。
+
+本次 NVIDIA 预算为单张 B300、8CPU、256GiB 主存、最多两小时，启动前至少 250,000,000,000 bytes 可用磁盘，输出上限 240,000,000,000 bytes。每个训练子进程上限 2,700 秒，中断宽限 300 秒，驱动上限 6,900 秒；首个异常、非有限值或比较不一致立即失败，不自动重试。信号到达且训练器已初始化时尝试同步保存；新增 `interrupted=true` 标记才允许保存完成更新 1 的诊断中断点，正常保存点仍只接受 2/3，尚未发布完成标记的目录不能恢复。超时只清理本次所属子进程，保留部分产物和原因；不保证模型构造阶段中断能产生 checkpoint。
+
+观察含完整 CPU 拷贝、摘要、保存和比较，计时应标为“包含观察钩子的步耗时”，不可作为无观察开销的训练吞吐。该三步配方是恢复工程诊断，正式 Human/recovery SFT 仍为 0。Ascend 需把 CUDA 设备、autocast、RNG、同步与通信适配到目标运行时；先验证同一 NPU 环境自身的连续/恢复一致性，再按执行手册报告 GPU/NPU 数值差异，不能把 NVIDIA 的精确重放标准当作跨硬件逐位一致的既有结论。

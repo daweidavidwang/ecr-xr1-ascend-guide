@@ -63,12 +63,12 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T12:36:04.295417+00:00",
+    "checked_at": "2026-11-15T13:35:10.086930+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
     "private_github_reference_scan": "passed",
-    "local_wam_links_checked": 85,
+    "local_wam_links_checked": 87,
     "public_github_repositories": [
       {
         "repository": "https://github.com/ARISE-Initiative/robosuite",
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 22,
+    "inline_python_blocks_syntax_checked": 24,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -335,6 +335,14 @@
       "private_references_removed_in_this_recheck": 0,
       "expanded_reference_scan": "HTTPS, SSH, raw, codeload, API, schemeless, percent-encoded, HTML-escaped and JSON-escaped forms reviewed; no unreviewed destination found.",
       "full_length_identifiers_compared": 67
+    },
+    "self_contained_review": {
+      "scope": "All current tracked text, including Markdown, code, JSON, JSONL, environment records and checksums; no history rewrite",
+      "private_repository_names_urls_branches_commits_and_development_paths": "Reviewed; no known private development repository identifiers remain",
+      "node_directory_paths": "Removed original WAM node roots; recipient uses its own WAM_ROOT",
+      "implementation_added": "Section 18.4 includes lifecycle observation order, exact tensor comparison and streaming file hashes, independent process recovery, failure handling, budgets and factual validation boundaries",
+      "runtime_results": "CPU metadata review and time-stamped GPU startup only; no GPU completion or Ascend validation inferred",
+      "limitation": "URL allowlist and known-identifier scanning cannot automatically prove the absence of every possible bare repository name; current text was also reviewed"
     }
   },
   "engineering_addendum": {
@@ -1558,6 +1566,63 @@
     "full_setup_tested": false,
     "optimizer_updates": 0,
     "gpu_or_npu_runs": 0,
+    "formal_sft_credit": 0,
+    "private_development_references_added": false
+  },
+  "full_model_observation_addendum": {
+    "observed_at": "2026-11-15T13:31:29.565029+00:00",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 18.4",
+    "state": "matched_cpu_preparation_reported_passed_gpu_started_no_completed_updates_observed",
+    "local_stdlib_tests_passed": 12,
+    "python_syntax_files": 110,
+    "source_files_matched": 117,
+    "fixed_model_files_matched": 21,
+    "fixed_video_files_matched": 15,
+    "cpu_preparation": {
+      "execution_node": "B300 gpu2",
+      "producer_elapsed_seconds": 25.810056388028897,
+      "scheduler": "COMPLETED 0:0",
+      "node_original_files": 5,
+      "node_original_bytes": 58584,
+      "complete_originals_accepted": false,
+      "model_constructed": false,
+      "data_batches_consumed": 0,
+      "optimizer_updates": 0,
+      "cuda_initialized": false
+    },
+    "gpu_snapshot": {
+      "execution_node": "B300 gpu2",
+      "allocated_gpus": 1,
+      "started_at": "2026-11-15T13:30:50Z",
+      "state": "RUNNING",
+      "phase": "continuous model construction",
+      "completed_updates_observed": [],
+      "full_recovery_passed": false
+    },
+    "contract": {
+      "continuous_updates": [
+        1,
+        2,
+        3
+      ],
+      "saved_completed_updates": [
+        2,
+        3
+      ],
+      "fresh_process_resumed_updates": [
+        3
+      ],
+      "actual_updates_planned": 4,
+      "window_order": [
+        418544,
+        357660,
+        267255
+      ],
+      "disk_required_bytes": 250000000000,
+      "output_limit_bytes": 240000000000,
+      "maximum_gpu_hours": 2
+    },
+    "gpu_or_ascend_success_claimed": false,
     "formal_sft_credit": 0,
     "private_development_references_added": false
   }
