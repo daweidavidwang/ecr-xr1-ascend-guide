@@ -6,6 +6,8 @@
 
 > **WAM / Ascend 复测请从 [LoopWAM 与 Awomo-0.5I 交接](WAM_HANDOFF.md) 开始。** WAM 使用该页及 `wam/` 内的公开源码 pins、公共输入清单、实现代码与规格、评测合同和 NPU 适配步骤；无需下载下文 XR1 的私有交接 ZIP，也无需取得其他 GitHub 仓库权限。尚未交付的 GPU 数值参考及其生成方法在 [WAM 执行手册](wam/ASCEND_RUNBOOK.md) 单独列明。以下 XR1 配方和下载前置不适用于 WAM。
 
+> **文档维护约定：** 本指南只引用可匿名读取的公开 GitHub 源码；不保留私有开发仓库的名称、链接、分支、提交编号或内部工作目录。实验方法、改动和验收要求直接写在对应交接页。已交付的源码包以下载清单、包 SHA256 和包内逐文件清单定位，不用开发仓库提交编号代替文件身份。
+
 > **公开指南与私有完整包。** 完整 v3 ZIP 已上传 ModelScope；固定版本、下载命令和权限说明见 [DOWNLOADS.md](DOWNLOADS.md)。当前接手阻塞项及解除条件见 [HANDOFF_STATUS.md](HANDOFF_STATUS.md)。GitHub 可公开阅读，完整包与训练数据仍需各自仓库的读取权限。
 
 版本：v3（原包不变）· 云端访问与接手审计更新：2026-11-12 · 交接对象：Ascend 集群 Codex / 训练工程师 / 实验分析人员
@@ -64,7 +66,7 @@ Xiaomi-Robotics-1-RoboCasa365 原版
 | 推荐的硬件迁移对照 | 同一份已冻结 20k 父模型 → Ascend 上重训最后 10k | “第二轮 SFT 在 Ascend 上复现”；前 20k 已在 GPU 上完成 |
 | 全部 SFT 都在 Ascend 上完成 | 原版 → A3 10k → A3 续训 10k → R2 10k；每阶段重置 optimizer / scheduler | “三阶段共 30k SFT 在 Ascend 上完成”；仍使用固定的历史 recovery 数据 |
 
-全链复现时，前两阶段使用 `data_ecr_a3_yixin.json` 的任务内 Human:R1=75:25，NAV 只用 Human。不能把三个阶段都替换成 R2 的 50:25:25。第一阶段源码 `3cf90b429d704a3d2e6609775f6dd1fc799e54e8`，续训源码 `e1d0ad63faeae74f156b20eb6b2292546b623a5b`；本包在 `reference/a3-first/` 和 `reference/a3-continue/` 保存了关键原文件。
+全链复现时，前两阶段使用 `data_ecr_a3_yixin.json` 的任务内 Human:R1=75:25，NAV 只用 Human。不能把三个阶段都替换成 R2 的 50:25:25。第一阶段与续训阶段的关键原文件分别位于完整交接包的 `reference/a3-first/` 和 `reference/a3-continue/`。按 [下载说明](DOWNLOADS.md) 核验固定 ZIP，再核验包内 `SHA256SUMS`；保留两阶段各自的配置和文件摘要，不能把两个目录当作同一训练实现。
 
 从原版直接按 R2 配方训练 10k 是 **Fresh** 对照：既有 seed 1 为 436/500（87.2%），不是最佳 Continue 模型的同起点复现。直接加载 455/500 的最终权重继续训练，则是新一轮实验。
 
@@ -177,7 +179,7 @@ R1 原始 manifest SHA256 为 `ad34dd82983b3f22036218b7129ab9d2d3ab5d3243018a86e
 
 ## 4. 必须保持一致的训练配方
 
-原第二轮源码固定于项目训练仓库的 commit **`45e7476b4d0ead4fa545da1d3fa390a0bfbdbaf7`**，子目录 `training/rc365_xr1_20261006/`；本包提供完整子目录快照 [source-round2（私有配套文件）](PRIVATE_INPUTS.md)。XR‑1 上游辅助代码固定为 **`0dd7aef8dc87296246aae812a1f59ccb708e5546`**，原路径 `$LEGACY_WORK/code/rc365_xr1_20261006/Xiaomi-Robotics-1`，需按 START_HERE 第 3 节获取这一公开上游。私有项目训练子目录已经包含在 ZIP 中，无需另行等待源码交付。不要用随时间变化的主分支代替。
+原第二轮训练源码已包含在完整交接包的 `reference/source-round2/`，文件范围见 [配套文件说明](PRIVATE_INPUTS.md)，按包内 `SHA256SUMS` 核验。实际训练配方直接列在下表；适配前保留未修改副本，并记录改动及逐文件摘要。XR‑1 公开上游辅助代码固定为 **`0dd7aef8dc87296246aae812a1f59ccb708e5546`**，按 [START_HERE 第 3 节](START_HERE.md#3-获取固定上游并生成-npu-适配候选) 获取这一公开版本。不要用随时间变化的主分支代替。
 
 | 参数 | 第二轮 Continue s1 实际设置 |
 |---|---|

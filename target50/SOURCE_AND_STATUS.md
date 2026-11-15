@@ -18,7 +18,7 @@
 | ModelScope repo / type | `dvdnh2026/ds-ecr-g16-archive-by-model-v2-20261023` / `dataset` |
 | 固定云revision | `26401275c1f3cfbaeb621e73f682c93c3a70e9d8` |
 | 仓库内路径 | `handoffs/xr1-target50-ascend-20261113-v1-be53dddf20f6/xr1-target50-ascend-20261113-v1.zip` |
-| 私有源快照 | `4bf26d9831a355651b820eb116d8b02ea44f300d` |
+| 源码文件身份 | 上述 ZIP SHA256；包内 `SOURCE_MANIFEST.json` 的逐文件 bytes/SHA256 与 `SHA256SUMS` |
 | 文件验收 | ZIP共104成员，103项内部SHA全部通过；其中101个source文件 |
 | 内容 | Target50 Human reader/sampler/trainer/restart、B300运行参考、评测与采集准备代码、必要历史loss/数据混合实现；SOURCE_MANIFEST和SHA256SUMS |
 | 不包含 | 数据载荷、权重、凭据、git历史、已验证NPU实现 |
@@ -74,16 +74,16 @@ Monitor在上述固定revision从空缓存通过网络下载完整ZIP，外层SH
 
 ## 2. 源码和运行版本关系
 
-| 对象 | revision / 身份 |
+| 对象 | 固定身份或运行职责 |
 |---|---|
 | XR上游模型/评测辅助代码 | `0dd7aef8dc87296246aae812a1f59ccb708e5546` |
 | RoboCasa | `456174f62b89b8fca99eaaf33949c29fec9cfc2a` |
-| 实际Human50核心11文件 | `d0fcba205f5dcfdd502159ae8d6cdd8a80b17b59` |
-| 1000→10000衔接controller | `288259d0337c79e6b68272a7c826faa2e4c29322` |
-| 10000→19200衔接controller | `074f1755dcb2055ea397c5dd9797d14919fd285b` |
-| 当前完整准备源快照 | `4bf26d9831a355651b820eb116d8b02ea44f300d` |
+| 实际Human50核心11文件 | reader、sampler、训练与恢复核心；与历史运行比对时逐项检查该运行记录中的文件路径、bytes 和 SHA256 |
+| 1000→10000衔接controller | 从 step 1000 完整恢复，运行至 step 10000；保留总 48000 步日程 |
+| 10000→19200衔接controller | 从 step 10000 完整恢复，运行至 step 19200；保留总 48000 步日程 |
+| 当前完整准备源码 | 本页第 1 节的固定 ZIP、`SOURCE_MANIFEST.json` 与 `SHA256SUMS` |
 
-源码交付以本页上方固定的补充包为准，无需访问开发仓库。补充包按表中快照导出必要文件，不包含历史；`SOURCE_MANIFEST.json`对每个文件记录SHA/bytes。训练时再保存实际run contract，防止后来准备代码替代原运行核心。
+源码交付以本页上方固定的补充包为准，不包含 Git 历史；`SOURCE_MANIFEST.json` 对每个文件记录 SHA/bytes。阶段间完整恢复的状态与采样规则直接见 [训练说明第 2 节](TRAINING_AND_ASCEND.md#2-采样和完整恢复)。训练时保存实际使用的逐文件清单、配置、起止 step 和完整恢复状态，防止后来准备代码替代原运行核心。历史各运行的完整逐文件清单未附在本公开页；取得并逐项核验前，不能宣称新实现与旧运行源码逐字节一致。
 
 ## 3. GPU参考模型路径
 

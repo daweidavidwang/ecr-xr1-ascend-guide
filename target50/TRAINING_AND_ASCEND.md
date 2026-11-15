@@ -48,7 +48,7 @@ B300分段已实现0→1000→10000→19200，后续到33600/48000；作业段�
 
 ## 3. 固定软件身份
 
-- 当前私有源码补充包：`4bf26d9831a355651b820eb116d8b02ea44f300d`；实际Human训练核心11文件版本 `d0fcba205f5dcfdd502159ae8d6cdd8a80b17b59`。后续改动主要是调度/评测准备；以run contract的逐文件SHA为最终身份。
+- 当前源码补充包固定为 `xr1-target50-ascend-20261113-v1.zip`，SHA256 `be53dddf20f67763a873d9a9998c6653b32ba6ba17c26db1fde8ba037658e9b7`；下载及逐文件核验见 [源码交付说明](SOURCE_AND_STATUS.md)。实际 Human 训练核心与调度/评测准备分别记录；本次运行以实际文件路径、bytes、SHA256 和配置为身份，不能仅用包名推断历史运行版本。
 - [XR上游仓库](https://github.com/XiaomiRobotics/Xiaomi-Robotics-1)，commit `0dd7aef8dc87296246aae812a1f59ccb708e5546`。不要跟随main。
 - B300环境参考：Torch2.9.1/CUDA13.0；Transformers4.57.1、NumPy2.1.3、Pillow11.3.0、safetensors0.6.2、accelerate1.11.0、einops0.8.1、av15.1.0、pandas2.3.3、pyarrow21.0.0、imageio2.37.0。这组是GPU来源，不是Ascend已验证组合。
 - Ascend按目标平台镜像与[官方TorchNPU兼容说明](https://github.com/Ascend/pytorch/blob/master/COMPATIBILITY.en.md)选定CANN、driver、PyTorch、torch-npu。记录Python/CPU架构、镜像digest、wheel版本、设备型号/HBM/互连。不要盲装GPU Torch或CUDA flash-attn到NPU环境。
