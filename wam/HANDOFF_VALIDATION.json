@@ -360,6 +360,12 @@
       "private_commit_history_candidates": 366,
       "private_revision_references": 0,
       "scope": "Current tracked text, Markdown code blocks, JSON, encoded text, bare repository names, branches, internal paths and private development commit prefixes; no historical Git rewrite."
+    },
+    "latest_content_addendum": {
+      "checked_at": "2026-11-16T13:28:50.665294+00:00",
+      "change": "Added independently checked fixed-source CPU result; public repository links and upstream pins unchanged.",
+      "new_repository_references": 0,
+      "new_code_blocks": 0
     }
   },
   "engineering_addendum": {
@@ -1927,26 +1933,7 @@
     "private_development_references_added": false,
     "new_cpu_preparation_completed": true
   },
-  "latest_research_status": {
-    "checked_at": "2026-11-15T16:16:23.494514+00:00",
-    "official_awomo_complete_episodes": 810,
-    "official_awomo_planned_episodes": 1500,
-    "official_loopwam_complete_episodes": 2100,
-    "official_loopwam_planned_episodes": 2500,
-    "ecr_target_complete_episodes": 0,
-    "ecr_target_planned_episodes": 5000,
-    "total_complete_episodes": 2910,
-    "total_planned_episodes": 9000,
-    "counts_are_completion_not_success_rates": true,
-    "awomo_full_single_gpu_recovery_engineering_passed": true,
-    "awomo_full_two_gpu_recovery_engineering_passed": false,
-    "formal_human_sft_updates": 0,
-    "formal_recovery_sft_updates": 0,
-    "ascend_runs": 0,
-    "latest_two_gpu_state": "failed_after_two_updates_per_rank_during_checkpoint_signal_collective",
-    "latest_two_gpu_end": "2026-11-15T16:05:28Z",
-    "full_two_gpu_replay_accepted": false
-  },
+  "latest_research_status": "Single-device complete Trainer save/resume accepted. Two-device run failed after two updates due to a rank-local collective signal query; cached-flag fix documented inline. Fixed-source four-phase CPU preparation passed; full two-device successor submitted, no native success claim. Formal Human/recovery SFT and Ascend remain zero.",
   "repaired_model_registration_cpu_preparation": {
     "observed_at": "2026-11-15T15:44:55.716252+00:00",
     "scheduler_state": "COMPLETED",
@@ -2097,5 +2084,27 @@
     "native_torch_locally_executed": false,
     "fixed_multirank_passed": false,
     "formal_sft_credit": 0
+  },
+  "checkpoint_artifact_signal_cpu_validation": {
+    "observed_at": "2026-11-16T13:27:57.682572+00:00",
+    "scheduler_state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 57.28311287902761,
+    "native_cpu_phases": 4,
+    "distinct_pids": 4,
+    "actual_batches": 8,
+    "array_fingerprints_matched": 136,
+    "source_files_verified": 121,
+    "artifact_signal_tests": 6,
+    "model_tracking_tests": 5,
+    "rank_resumed_records_exact": true,
+    "wrong_input_and_rank_rejected": true,
+    "node_original_files": 25,
+    "node_original_bytes": 54220648,
+    "node_receipt_sha256": "1f203a228cc96a6ba45eb67b7838295076e35f1d8cc147d0d553c5175d2e65fe",
+    "owner_validation_scope": "Complete phase JSON, fixed array fingerprints, source identity and complete test logs independently checked; raw NPZ/PT remain at executor and were not reloaded by maintainer.",
+    "full_two_rank_successor": "Submitted with the new CPU receipt and same fixed-source identity; no full native pass yet.",
+    "formal_sft_credit": 0,
+    "ascend_credit": 0
   }
 }
