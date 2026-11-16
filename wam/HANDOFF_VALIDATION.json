@@ -63,7 +63,7 @@
     "Large historical GPU numerical fixtures and ECR exact asset indexes/overlay are not included; reconstruction and outstanding validation requirements are explicitly documented."
   ],
   "public_reference_audit": {
-    "checked_at": "2026-11-15T15:39:00.689249+00:00",
+    "checked_at": "2026-11-16T13:23:56.290751+00:00",
     "result": "passed",
     "scope": "Current tracked repository content; Git history was not rewritten. This audit does not rerun model, training or input-payload validation.",
     "tracked_files_scanned": 60,
@@ -133,7 +133,7 @@
     ],
     "research_snapshot_unchanged": "2026-11-13T21:22:11Z",
     "checksums_verified": 59,
-    "inline_python_blocks_syntax_checked": 27,
+    "inline_python_blocks_syntax_checked": 28,
     "verification_method": "Scanned all tracked text files, including code blocks and JSON manifests, for private development-repository identifiers and GitHub URL forms. Every referenced repository was checked via anonymous HTML public-visibility metadata and every fixed source commit via its public HTML exact commitRoute OID in this run. A separate anonymous API probe is recorded with its actual response. Resolved local WAM file links, compiled all inline WAM Python blocks without executing them, parsed JSON files, and verified full checksum coverage. No research workload or payload validation was performed.",
     "public_upstream_commit_pins_checked": 6,
     "implementation_index_coverage": [
@@ -1928,7 +1928,7 @@
     "new_cpu_preparation_completed": true
   },
   "latest_research_status": {
-    "checked_at": "2026-11-15T15:38:57.279502+00:00",
+    "checked_at": "2026-11-15T16:16:23.494514+00:00",
     "official_awomo_complete_episodes": 810,
     "official_awomo_planned_episodes": 1500,
     "official_loopwam_complete_episodes": 2100,
@@ -1942,7 +1942,10 @@
     "awomo_full_two_gpu_recovery_engineering_passed": false,
     "formal_human_sft_updates": 0,
     "formal_recovery_sft_updates": 0,
-    "ascend_runs": 0
+    "ascend_runs": 0,
+    "latest_two_gpu_state": "failed_after_two_updates_per_rank_during_checkpoint_signal_collective",
+    "latest_two_gpu_end": "2026-11-15T16:05:28Z",
+    "full_two_gpu_replay_accepted": false
   },
   "repaired_model_registration_cpu_preparation": {
     "observed_at": "2026-11-15T15:44:55.716252+00:00",
@@ -1985,5 +1988,114 @@
     "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 19.4",
     "native_two_gpu_successor": "submitted_no_pass_claim",
     "private_development_references_added": false
+  },
+  "full_two_rank_checkpoint_failure": {
+    "observed_at": "2026-11-15T16:14:49.038208+00:00",
+    "scheduler_state": "FAILED",
+    "exit_code": "1:0",
+    "started_at": "2026-11-15T15:46:05Z",
+    "ended_at": "2026-11-15T16:05:28Z",
+    "scheduler_elapsed_seconds": 1163,
+    "producer_elapsed_seconds": 1110.7598084409838,
+    "allocated_gpus": 2,
+    "allocated_gpu_hours": 0.6461111111111111,
+    "returned_original_files": 24,
+    "returned_original_bytes": 4231695,
+    "node_indexed_original_files": 139,
+    "node_indexed_original_bytes": 47608461920,
+    "evidence_set_scope": "Node output index and returned control/original files have different coverage; do not sum sets.",
+    "complete_receipt_sha256": "120f598e1df337fe2c82534778e9ae81bf997ea45ebd06a72e8fa5416a2a75f4",
+    "source_files_git_plan_node_matched": 124,
+    "source_environment_unchanged": true,
+    "process_exit_verified": true,
+    "update_records": [
+      {
+        "rank": 0,
+        "completed_updates": 1,
+        "window_index": 418544,
+        "metrics": {
+          "total_loss": 0.18131524324417114,
+          "dynamics_loss": 0.17416350543498993,
+          "action_loss": 0.007151739904657006
+        },
+        "grad_norm": 0.32599085569381714
+      },
+      {
+        "rank": 1,
+        "completed_updates": 1,
+        "window_index": 357660,
+        "metrics": {
+          "total_loss": 0.18131524324417114,
+          "dynamics_loss": 0.17416350543498993,
+          "action_loss": 0.007151739904657006
+        },
+        "grad_norm": 0.32599085569381714
+      },
+      {
+        "rank": 0,
+        "completed_updates": 2,
+        "window_index": 267255,
+        "metrics": {
+          "total_loss": 0.26608190685510635,
+          "dynamics_loss": 0.24160893261432648,
+          "action_loss": 0.024472976103425026
+        },
+        "grad_norm": 0.7338384985923767
+      },
+      {
+        "rank": 1,
+        "completed_updates": 2,
+        "window_index": 893913,
+        "metrics": {
+          "total_loss": 0.26608190685510635,
+          "dynamics_loss": 0.24160893261432648,
+          "action_loss": 0.024472976103425026
+        },
+        "grad_norm": 0.7338384985923767
+      }
+    ],
+    "observed_logical_updates": 2,
+    "observed_rank_updates": 4,
+    "native_arrays_verified": 48,
+    "per_update_gradients_cross_rank_fingerprints_matched": 171,
+    "model_and_adam_fingerprints_cross_rank_matched": true,
+    "continuous_completed": false,
+    "third_update_observed": false,
+    "resumed_started": false,
+    "checkpoint_marker_present": true,
+    "checkpoint_replay_accepted": false,
+    "full_raw_returned": false,
+    "failure": "rank0 NCCL ALLGATHER Seq172 NumelIn1/Out2 timeout300000ms; rank1 enqueued/completed171, rank0 enqueued172/completed171, then SIGABRT.",
+    "source_diagnosis": "Trainer runs _save_checkpoint_artifacts on rank0 alone; both RoboCasa callbacks call StepScheduler.sigterm_received, which calls DistributedSignalHandler.signals_received/all_gather_item using a default-group int32 scalar ALLGATHER. Rank1 instead waits at the checkpoint Gloo error synchronization. This is an unmatched rank0 collective, consistent with exact observed scalar shape and sequence difference.",
+    "diagnosis_boundary": "Confirmed rank-local collective bug by actual-method replay with explicit stdlib signal stand-in; native fixed two-rank run still required. No claim that all possible distributed failures are solved.",
+    "repair": "Serialize last collectively established sigterm_flag in rank0-only artifact callback, without polling or changing scheduler/signal handling; both single and DDP callback fixed.",
+    "local_checks": {
+      "artifact_callback_actual_method_standin_tests": 6,
+      "ddp_tracking_tests": 5,
+      "deployment_closure_tests": 3,
+      "gpu_admission_tests": 6,
+      "prior_actual_callbacks_forbidden_poll_reproduced": 2,
+      "cpu_source_files": 121,
+      "cpu_python_syntax_files": 114,
+      "gpu_source_files": 125,
+      "gpu_python_syntax_files": 118,
+      "native_runtime_locally_executed": false
+    },
+    "formal_sft_credit": 0,
+    "ascend_credit": 0,
+    "state": "failed_unmatched_rank_local_signal_collective",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 19.5",
+    "private_development_references_added": false
+  },
+  "checkpoint_artifact_signal_repair": {
+    "checked_at": "2026-11-15T16:16:23.494514+00:00",
+    "state": "local_checks_passed_new_cpu_preparation_submitted",
+    "implementation_location": "wam/IMPLEMENTATION_DETAILS.md section 19.5",
+    "artifact_callback_tests_passed": 6,
+    "old_actual_callback_polls_reproduced": 2,
+    "total_local_checks_passed": 20,
+    "native_torch_locally_executed": false,
+    "fixed_multirank_passed": false,
+    "formal_sft_credit": 0
   }
 }
