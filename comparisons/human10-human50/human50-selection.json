@@ -1,0 +1,46 @@
+{
+  "scores": [
+    {
+      "seed": 1,
+      "step": 19200,
+      "successes": 773,
+      "denominator": 1000
+    },
+    {
+      "seed": 1,
+      "step": 33600,
+      "successes": 826,
+      "denominator": 1000
+    },
+    {
+      "seed": 1,
+      "step": 48000,
+      "successes": 842,
+      "denominator": 1000
+    },
+    {
+      "seed": 2,
+      "step": 19200,
+      "successes": 781,
+      "denominator": 1000
+    },
+    {
+      "seed": 2,
+      "step": 33600,
+      "successes": 835,
+      "denominator": 1000
+    },
+    {
+      "seed": 2,
+      "step": 48000,
+      "successes": 842,
+      "denominator": 1000
+    }
+  ],
+  "selected_steps": {
+    "1": 48000,
+    "2": 48000
+  },
+  "rule": "maximum dev success count, ties to later step",
+  "completed": 6000
+}

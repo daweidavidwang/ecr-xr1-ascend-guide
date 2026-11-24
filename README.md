@@ -1,5 +1,7 @@
 # ECR · Xiaomi XR‑1 最佳模型在 Ascend 上的训练复现与对比指南
 
+> **2026-11-24 update:** [Human-only 10-task / 50-task NVIDIA training and complete test results, plus Ascend comparison template](comparisons/human10-human50/README.md). Human50 both seeds are complete (2086/2500 and 2074/2500); older in-progress statements below are historical snapshots.
+
 > **新增：XR‑1 50-task 实验请从 [TARGET50_HANDOFF.md](TARGET50_HANDOFF.md) 开始。** 包含当前Human50全量SFT、固定公开数据下载、48k配方、Ascend适配、dev1000/test2500、三轮recovery及源码交付状态。下文保留旧10-task实验说明，不是Target50启动入口。
 
 > **Target50源码包已交付（2026-11-13）：** [ModelScope固定下载链接与命令](target50/SOURCE_AND_STATUS.md)，现有授权账号全量回下载及103项内部SHA校验通过；此包与下文旧10-task v3包分别保留。

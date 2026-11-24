@@ -1,5 +1,7 @@
 # ECR XR‑1 Target50：Ascend 接手与复现实验
 
+> **2026-11-24 update:** [Human-only 10-task / 50-task NVIDIA training and complete test results, plus Ascend comparison template](comparisons/human10-human50/README.md). Human50 both seeds are complete (2086/2500 and 2074/2500); older in-progress statements below are historical snapshots.
+
 版本 **v1，2026-11-13**。这是当前 **50-task** 工作的交接入口。仓库原有 README / START_HERE 描述的是旧 **10-task、R2 Continue 10k、test500** 实验；本文件与 `target50/` 定义新实验，不能混用数据、步数或成绩。
 
 **接手目标：先在 Ascend 从原始 Xiaomi checkpoint 重新训练完整 Target50 Human SFT，训练 seeds 1、2，各 48,000 updates；在 19,200 / 33,600 / 48,000 做 dev1000，按 dev 选点后做 test2500；随后按三轮 recovery 计划推进。** 对比同配方 GPU 与 NPU 的效果和训练时间。Ascend 实机适配尚未完成，不能把本文件当作已经验证的 NPU 一键启动器。

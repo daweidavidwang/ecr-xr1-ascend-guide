@@ -1,0 +1,36 @@
+[
+  {
+    "suite": "human10",
+    "training_seed": 5,
+    "hardware": "4 NVIDIA GPUs; exact SKU not established by this timing receipt",
+    "global_batch": 192,
+    "budget_optimizer_updates": 10000,
+    "sample_count": 83,
+    "first_sample_step": 9180,
+    "last_sample_step": 10000,
+    "filter": "all parseable log_tail JSON rows",
+    "mean_seconds_per_step": 4.345301204819277,
+    "median_seconds_per_step": 4.241,
+    "samples_per_second": 44.18565962402263,
+    "extrapolated_update_hours": 12.070281124497992,
+    "full_training_elapsed_hours": null,
+    "warning": "Partial log samples; extrapolation excludes unobserved startup, save, restart and queue time. Human10 log is sampled every 10 updates. Not a hardware-only comparison."
+  },
+  {
+    "suite": "human50",
+    "training_seed": 2,
+    "hardware": "4 NVIDIA B300 GPUs",
+    "global_batch": 192,
+    "budget_optimizer_updates": 48000,
+    "sample_count": 3289,
+    "first_sample_step": 19301,
+    "last_sample_step": 22589,
+    "filter": "step > 19300; exclude first 100 updates of resumed segment, retain all later measured rows",
+    "mean_seconds_per_step": 5.097827159452053,
+    "median_seconds_per_step": 4.056942438008264,
+    "samples_per_second": 37.663105082722616,
+    "extrapolated_update_hours": 67.97102879269404,
+    "full_training_elapsed_hours": null,
+    "warning": "Partial log samples; extrapolation excludes unobserved startup, save, restart and queue time. Human10 log is sampled every 10 updates. Not a hardware-only comparison."
+  }
+]

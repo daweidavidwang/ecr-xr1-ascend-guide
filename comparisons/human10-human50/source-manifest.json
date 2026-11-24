@@ -1,0 +1,122 @@
+{
+  "updated": "2026-11-24",
+  "sources": [
+    {
+      "source": "outputs/handoffs/xr1-ascend-reproduction-20261110-v1/manifests/human10.json",
+      "sha256": "d848763b9821332683c91f7744a3c59f408c86df1a8a7d33c99e2d7648d47a7e"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s1/eval/e2e_h_s1_test/eval_summary.json",
+      "sha256": "9bd1de87ba94082598aff1dcc1fec7dad3c347f757ecf34c273b5c51018ab731"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s1/sft/e2e_h_s1/selection.json",
+      "sha256": "b603f7bfa06f9e15c527fb6b10e91789e37d86361edf8f587030e13bccab2686"
+    },
+    {
+      "source": "e2e_h_s1/eval/e2e_h_s1_test/episodes.jsonl",
+      "sha256": "2f24efe3da3f49897992a2e1a2b14e057045064f83f68dde80948a1bcdb3377e"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s2/eval/e2e_h_s2_test/eval_summary.json",
+      "sha256": "e77c94aadbea44cf591019019e0388aaf60cfbad45ab06b76c879f3e401a9fb6"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s2/sft/e2e_h_s2/selection.json",
+      "sha256": "c3f0a60c5183ef5e3c258555dc3053513c11eba59e65965ebe56eabf9e6db086"
+    },
+    {
+      "source": "e2e_h_s2/eval/e2e_h_s2_test/episodes.jsonl",
+      "sha256": "befe65627fdf660c1d11787732b23207668f376b52fb8bc0c64c14795d80c11a"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s3/eval/e2e_h_s3_test/eval_summary.json",
+      "sha256": "9334a3c7b8f72dc30a37fa6fdc8b7e3d8f3c3d23f21c263c9003d3282adf8b69"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s3/sft/e2e_h_s3/selection.json",
+      "sha256": "2a0e8486c76d43836e6d856164e7b0d73961b3b57d9ff8a5c0981daeabba0242"
+    },
+    {
+      "source": "e2e_h_s3/eval/e2e_h_s3_test/episodes.jsonl",
+      "sha256": "8af1923b504f85a08779dfcfd710d8744b77bc07c54d89dfdde3c13f7640fb2e"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s4/eval/e2e_h_s4_test/eval_summary.json",
+      "sha256": "c05e38b3e36d57b76d11eb9d92fd1783790aabcc97eca295fb1b4a4397f8242a"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s4/sft/e2e_h_s4/selection.json",
+      "sha256": "9b030e18e1e51e185b01395d659f056cf00e2ea18de3d1191db4f95cc6080337"
+    },
+    {
+      "source": "e2e_h_s4/eval/e2e_h_s4_test/episodes.jsonl",
+      "sha256": "47caef4d3302e441e33bd9b9bcef3c78f2482222f1b66212a7e6b7e330b7b0d5"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s5/eval/e2e_h_s5_test/eval_summary.json",
+      "sha256": "c6d225a992e55f198e70d1e7cb44f7e18e737cd07ec541c28c43fa174ac1d804"
+    },
+    {
+      "source": "rc365x_evidence/e2e_h_s5/sft/e2e_h_s5/selection.json",
+      "sha256": "df7151c6c13909cf7e8ec7a006a6f6d8cc50c0387df27d275093d46e724e5bb5"
+    },
+    {
+      "source": "e2e_h_s5/eval/e2e_h_s5_test/episodes.jsonl",
+      "sha256": "7bc3e20b6320496a3af771c5cb087939d4c7d8f0a12c6541c660698ab49c9e3f"
+    },
+    {
+      "source": "embodiedclaw-robocasa/topics/embodiedclaw-robocasa/cases/human-s1-test2500-complete-20261123.json",
+      "sha256": "94f7859b2d85a74f89a15d2bd734824458d2c26fadec434feb94cf6f3825ee5d"
+    },
+    {
+      "source": "runs/ecr-human-s1-test2500-20261122-r1/results/task_0/metrics.json",
+      "sha256": "0926cfdaa155131234471b9b9c98f31c3da8f7838c8f7d7be54376270675a43b"
+    },
+    {
+      "source": "runs/ecr-human-s1-test2500-20261122-r1/results/task_1/metrics.json",
+      "sha256": "eadf3c7f1b771e88917726301ea133084cd2e647e0120b925c8ed83092f3fd06"
+    },
+    {
+      "source": "runs/ecr-human-s1-test2500-20261122-r1/results/task_2/metrics.json",
+      "sha256": "194b04535120385523060db786ac491ddab505b0c4ce60e83bd50b0dd42de3b5"
+    },
+    {
+      "source": "runs/ecr-human-s1-test2500-20261122-r1/results/task_3/metrics.json",
+      "sha256": "94156a8694505f7ae132154c22674b62806ec1fe0d9945a5bde961e38f6123ec"
+    },
+    {
+      "source": "embodiedclaw-robocasa/topics/embodiedclaw-robocasa/cases/human-s2-test2500-complete-20261123.json",
+      "sha256": "b235f12a4cd8007c69e64dc91bca3b714807eb291fede8fce356dc9a1bf41829"
+    },
+    {
+      "source": "runs/ecr-human-s2-test2500-20261122-r1/results/task_0/metrics.json",
+      "sha256": "74880359ea7981892ba60c4e46ebfbe16ac2f48a28a16bfadc78d1444dd267a0"
+    },
+    {
+      "source": "runs/ecr-human-s2-test2500-20261122-r1/results/task_1/metrics.json",
+      "sha256": "4df6cc1b287e1da0d25eab774cf2245415a8a14dca78bd5700cd065b2c816281"
+    },
+    {
+      "source": "runs/ecr-human-s2-test2500-20261122-r1/results/task_2/metrics.json",
+      "sha256": "e0496c3080bcba5bf2d39c9b03cb4e9f9bed6e317533cb8bdd311393ec43d4cc"
+    },
+    {
+      "source": "runs/ecr-human-s2-test2500-20261122-r1/results/task_3/metrics.json",
+      "sha256": "28567051bfd7333a0cb71fa1097cfa13feddbd69779f13cacc0191ee2961099c"
+    },
+    {
+      "source": "embodiedclaw-robocasa/topics/embodiedclaw-robocasa/cases/human-dev6000-complete-20261122.json",
+      "sha256": "a7de6cecd138ac54d899c867d129595abb9302a7245b9b96074fb9c3e5f3493d"
+    },
+    {
+      "source": "resource_control/jobs/rc365-xr1-e2e-h-s5-20261010/receipts/17332-training-output-controls.json",
+      "sha256": "c1dbd9ca18f29bef0b3125c04e7b259e97c9bf99ed7693c4bffa5c3e8e9397d0"
+    },
+    {
+      "source": "ecr-target50-xr1-human-s2-segment33600-20261115-r1/train33600/queue-evidence-20261115T112507Z/train_log.jsonl",
+      "sha256": "4a830c814d82e8be9a72f478e02547e1f3d637825d76f002a7ce5ff791099796"
+    }
+  ],
+  "scope": "Source identifiers and hashes; no credentials, private paths, model weights or video payloads are published."
+}

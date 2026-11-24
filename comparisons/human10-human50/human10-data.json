@@ -1,0 +1,62 @@
+{
+  "TurnOnSinkFaucet": {
+    "episodes": 506,
+    "frames": 113688,
+    "archive_sha256": "53016526194ccf69f4373beeba91d8d62d674ffb41b6f43b6c98b6c3e7d286bb",
+    "manifest_sha256": "d9e51f2a4069835093e7e36eefce0b6b182a5034d82e51abb798973bfdd398c8"
+  },
+  "TurnOffStove": {
+    "episodes": 500,
+    "frames": 114027,
+    "archive_sha256": "6681b88e5dfbc1511a511d5cfd250189723b160fbe853909f398815b1a9e29d4",
+    "manifest_sha256": "51f148772b848bf09ddffd3db0db0700e89d4b4e6dc87c9a3f152c039f42cf2c"
+  },
+  "CoffeeSetupMug": {
+    "episodes": 502,
+    "frames": 117168,
+    "archive_sha256": "33b63f30c9052b7466509fb030ff72bc4005b3fe4d0e7c2931ded4bf1b859935",
+    "manifest_sha256": "005055b941c38c3e6bcb5ec99eabd5e84cfb9955effdddd7f570c9d9f1ff2b5d"
+  },
+  "NavigateKitchen": {
+    "episodes": 500,
+    "frames": 72786,
+    "archive_sha256": "c32c27fac989988c010c95f94a1282a37bbebfb871c58471398302e34ffeedbe",
+    "manifest_sha256": "bff6c60a3e27a49c3e5c1822a5311436e0dd19feb531f358bb5b8b7217c4f6b4"
+  },
+  "KettleBoiling": {
+    "episodes": 501,
+    "frames": 228349,
+    "archive_sha256": "45ff37ca749f05babd3534d531ec7bff446e3c012ecbcc245b24a7ff8762159d",
+    "manifest_sha256": "ed11182fe5c0767470476f0994ad8fae89ad25c35b5f8144e85fcb223c103650"
+  },
+  "LoadDishwasher": {
+    "episodes": 501,
+    "frames": 369430,
+    "archive_sha256": "762c710b340d3e3e6011e8b699b6f7a5b598da692c315cea6f6f5218a23f6b22",
+    "manifest_sha256": "7d743c2cce3bfb74ce483a5f5b27cbd20236d19a19d1fddb753bf2c5167dd0bc"
+  },
+  "SteamInMicrowave": {
+    "episodes": 511,
+    "frames": 487012,
+    "archive_sha256": "e1645abecd679f65442cb68ce4c622bc3d4ff250d4cfee68a9948c423325e688",
+    "manifest_sha256": "d268e63968dd99b08bb6d09a0612ff2bcacecfdfb3703a9269decb99e710ec79"
+  },
+  "WashFruitColander": {
+    "episodes": 507,
+    "frames": 518903,
+    "archive_sha256": "3c64181e563be35e156bde3b8f4f04b011362d932019dd82a3c47fb1892c8667",
+    "manifest_sha256": "22bf894534d48692ccf6ec9b682c1b3bb08111bbd4a2f645add484524abd35fb"
+  },
+  "ArrangeTea": {
+    "episodes": 500,
+    "frames": 497956,
+    "archive_sha256": "15da357ff74eb605c426d0ecf7a67d9b0583f806667470ee4228bafa01652925",
+    "manifest_sha256": "a59bb61b515c407975c23b006a604ea151bc86c52bd6793e94241853915056f8"
+  },
+  "MakeIceLemonade": {
+    "episodes": 512,
+    "frames": 657664,
+    "archive_sha256": "fe8ee574379b1ced8002a16235c0ee90fe3939c93508100bb88ce03cc45fe6d6",
+    "manifest_sha256": "885a1174f656d0310b3e5b66e41827106ab5c426ee0c253c899af5044d1a0909"
+  }
+}

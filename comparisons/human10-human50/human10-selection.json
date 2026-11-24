@@ -1,0 +1,112 @@
+[
+  {
+    "training_seed": 1,
+    "rule": "max dev successes over the final tasks; ties -> later step",
+    "dev": {
+      "4000": {
+        "successes": 157,
+        "completed": 200,
+        "planned": 200
+      },
+      "7000": {
+        "successes": 165,
+        "completed": 200,
+        "planned": 200
+      },
+      "10000": {
+        "successes": 164,
+        "completed": 200,
+        "planned": 200
+      }
+    },
+    "selected_step": 7000
+  },
+  {
+    "training_seed": 2,
+    "rule": "max dev successes over the final tasks; ties -> later step",
+    "dev": {
+      "4000": {
+        "successes": 154,
+        "completed": 200,
+        "planned": 200
+      },
+      "7000": {
+        "successes": 173,
+        "completed": 200,
+        "planned": 200
+      },
+      "10000": {
+        "successes": 171,
+        "completed": 200,
+        "planned": 200
+      }
+    },
+    "selected_step": 7000
+  },
+  {
+    "training_seed": 3,
+    "rule": "max dev successes over the final tasks; ties -> later step",
+    "dev": {
+      "4000": {
+        "successes": 159,
+        "completed": 200,
+        "planned": 200
+      },
+      "7000": {
+        "successes": 172,
+        "completed": 200,
+        "planned": 200
+      },
+      "10000": {
+        "successes": 166,
+        "completed": 200,
+        "planned": 200
+      }
+    },
+    "selected_step": 7000
+  },
+  {
+    "training_seed": 4,
+    "rule": "max dev successes over the final tasks; ties -> later step",
+    "dev": {
+      "4000": {
+        "successes": 158,
+        "completed": 200,
+        "planned": 200
+      },
+      "7000": {
+        "successes": 168,
+        "completed": 200,
+        "planned": 200
+      },
+      "10000": {
+        "successes": 175,
+        "completed": 200,
+        "planned": 200
+      }
+    },
+    "selected_step": 10000
+  },
+  {
+    "training_seed": 5,
+    "rule": "max dev successes over the final tasks; ties -> later step",
+    "dev": {
+      "4000": {
+        "successes": 165,
+        "completed": 200,
+        "planned": 200
+      },
+      "7000": {
+        "successes": 165,
+        "completed": 200,
+        "planned": 200
+      },
+      "10000": {
+        "successes": 165,
+        "completed": 200,
+        "planned": 200
+      }
+    },
+    "selected_step": 10000
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "human10": {
+    "training_seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "updates_per_seed": 10000,
+    "global_batch": 192,
+    "sampled_observations_per_seed": 1920000,
+    "unique_demo_episodes": 5040,
+    "unique_demo_frames": 3176983,
+    "human_only": true,
+    "recovery_ratio": 0,
+    "source_job": "rc365-xr1-e2e-h-s5-20261010",
+    "code_revision": "86e8b0009e9455611bec34f48bc22ca54bc149ce"
+  },
+  "human50": {
+    "training_seeds": [
+      1,
+      2
+    ],
+    "updates_per_seed": 48000,
+    "global_batch": 192,
+    "sampled_observations_per_seed": 9216000,
+    "unique_demo_episodes": 25307,
+    "unique_demo_frames": 14957899,
+    "human_only": true,
+    "recovery_ratio": 0,
+    "hardware": "4 B300 per training run",
+    "config_reference": "../../target50/TRAINING_AND_ASCEND.md"
+  }
+}

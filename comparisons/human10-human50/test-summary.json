@@ -1,0 +1,72 @@
+[
+  {
+    "suite": "human10",
+    "training_seed": 1,
+    "selected_step": 7000,
+    "success": 424,
+    "completed": 500,
+    "success_rate": 0.848,
+    "allocated_eval_gpu_hours": null,
+    "status": "historical_complete_counts_rechecked"
+  },
+  {
+    "suite": "human10",
+    "training_seed": 2,
+    "selected_step": 7000,
+    "success": 406,
+    "completed": 500,
+    "success_rate": 0.812,
+    "allocated_eval_gpu_hours": null,
+    "status": "historical_complete_counts_rechecked"
+  },
+  {
+    "suite": "human10",
+    "training_seed": 3,
+    "selected_step": 7000,
+    "success": 397,
+    "completed": 500,
+    "success_rate": 0.794,
+    "allocated_eval_gpu_hours": null,
+    "status": "historical_complete_counts_rechecked"
+  },
+  {
+    "suite": "human10",
+    "training_seed": 4,
+    "selected_step": 10000,
+    "success": 407,
+    "completed": 500,
+    "success_rate": 0.814,
+    "allocated_eval_gpu_hours": null,
+    "status": "historical_complete_counts_rechecked"
+  },
+  {
+    "suite": "human10",
+    "training_seed": 5,
+    "selected_step": 10000,
+    "success": 411,
+    "completed": 500,
+    "success_rate": 0.822,
+    "allocated_eval_gpu_hours": null,
+    "status": "historical_complete_counts_rechecked"
+  },
+  {
+    "suite": "human50",
+    "training_seed": 1,
+    "selected_step": 48000,
+    "success": 2086,
+    "completed": 2500,
+    "success_rate": 0.8344,
+    "allocated_eval_gpu_hours": 71.88538358070281,
+    "status": "provisional_automatic_checks_passed"
+  },
+  {
+    "suite": "human50",
+    "training_seed": 2,
+    "selected_step": 48000,
+    "success": 2074,
+    "completed": 2500,
+    "success_rate": 0.8296,
+    "allocated_eval_gpu_hours": 79.09095355250639,
+    "status": "provisional_automatic_checks_passed"
+  }
+]
